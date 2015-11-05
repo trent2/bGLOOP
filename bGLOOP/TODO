@@ -1,0 +1,10 @@
+- decoration with AWT display cannot be switched while window
+is in displayable state
+- need a mechanism to conservatively bind textures, maybe extra
+  display lists for textured objects, grouped by textures?
+- document GLPrismoid
+
+- reimplement the drawing of the primitives
+
+- implement some kind of mesh loading mechanism to deploy cool
+ meshs of funny objects with the library

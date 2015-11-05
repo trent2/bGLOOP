@@ -1,0 +1,5 @@
+Manifest-Version: 1.0
+Implementation-Title: A better GLOOP
+Implementation-Version: 1.0
+Implementation-Build: 28
+Implementation-Vendor: Robert Spillner

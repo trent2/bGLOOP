@@ -1,0 +1,31 @@
+\documentclass[convert={density=1200,size=400x,outext=.png}]{standalone}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,calc,shadings}
+\pagestyle{empty}
+\begin{document}
+\begin{tikzpicture}[x={(1cm,0)},y={(0,1)},z={(-0.5cm,-0.5cm)},>={Stealth[scale=.4]}]
+  % Achsen
+  \draw (-1.2,0,0)--(.3,0,0) node[below]{$x$};
+  \draw (0,-1.2,0)--(0,.4,0);
+  \draw (0,0,-1.2)--(0,0,1);
+  % Skalenstriche
+  \draw \foreach\x in {-1,...,1} { (\x,-.05,.05)--(\x,.05,-.05) };
+  \draw \foreach\y in {-1,...,1} { (0,\y,-.05)--(0,\y,.05) };
+  \draw \foreach\z in {-1,...,2} { (0,-.05,\z)--(0,.05,\z) };
+  \path (0,0,-1) ++(120:.25) node[coordinate] (L) {};
+  \path (0,0,-1) ++(-30:.25) node[coordinate] (R) {};
+  \draw[dashed] (0,0,-1) ++(120:.25) arc(120:330:.25);
+  \fill[black!50,opacity=.5] (0,0,-1) circle (.25);
+  \fill[black!50,opacity=.7] (0,0,1) circle (.7);
+  \fill[inner color=black!50,opacity=.7] (0,0,1) ++(120:.7) arc(120:-30:.7) -- (R) arc(-30:120:.25) -- cycle;
+  \draw plot[mark=+] (0,0,1) (0,0,1) circle (.7) (0,0,1) (0,0,-1) ++(-30:.25) arc(-30:120:.25)
+    (0,0,1) ++(120:.7) -- (L) (0,0,1) ++(-30:.7) -- (R);
+  % draw last part of the z-axis
+  \draw[->] (.3,0,0)--(1.2,0,0) node[below]{$x$};
+  \draw[->] (0,.4,0)--(0,1.2,0) node[right]{$y$};
+  \draw[->] (0,0,1)--(0,0,2.5) node[right]{$z$};
+  \draw[blue,<->, >={Parenthesis[scale=.6]}] (0,0,1)-- node[scale=.3,below]{pRadius1} ++(0:.7);
+  \draw[blue,<->, >={Parenthesis[scale=.6]}] (0,0,-1)-- ++(0:.25) node[scale=.3,right]{pRadius2};
+  \draw[blue,<->, >={Bar[scale=.6]},shift={(-.05cm,.05cm)}] (0,0,1)--(0,0,-1) node[above,sloped,scale=.3,pos=.65] {pHoehe};
+\end{tikzpicture}
+\end{document}

@@ -1,0 +1,23 @@
+This is pdfTeX, Version 3.14159265-2.6-1.40.15 (TeX Live 2014) (preloaded format=pdflatex 2015.7.13)  5 NOV 2015 18:51
+entering extended mode
+ \write18 enabled.
+ %&-line parsing enabled.
+**\expandafter\def\csname sa@internal@run\endcsname{1}\input{Quader-1}^^M
+
+! Emergency stop.
+<read *> 
+         
+<*> ...a@internal@run\endcsname{1}\input{Quader-1}
+                                                  ^^M
+End of file on the terminal!
+
+ 
+Here is how much of TeX's memory you used:
+ 5 strings out of 494972
+ 128 string characters out of 6179838
+ 46246 words of memory out of 2000000
+ 3337 multiletter control sequences out of 15000+600000
+ 3640 words of font info for 14 fonts, out of 8000000 for 9000
+ 14 hyphenation exceptions out of 8191
+ 4i,0n,3p,86b,8s stack positions out of 5000i,500n,10000p,200000b,80000s
+!  ==> Fatal error occurred, no output PDF file produced!

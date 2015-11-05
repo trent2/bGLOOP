@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jardesc>
+    <jar path="bGLOOP/dist/bGLOOP.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/bGLOOP/desc.jardesc" exportErrors="false" exportWarnings="true" includeDirectoryEntries="false" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="false" manifestLocation="/bGLOOP/MANIFEST.MF" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="false">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{GLTextur.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{GLRenderer.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{GLMaterial.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{GLLicht.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{NEWTWindow.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{GLDevcamKeyboardListener.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{GLPrismoid.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{IGLTransformierbar.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{GLBoden.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{GLHimmel.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{GLKugel.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{GLKegel.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{GLObjekt.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{GLQuader.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{Sys.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{GLKamera.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{AWTMouseEventListener.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{IGLDisplaymodes.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{GLEntwicklerkamera.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{NEWTMouseEventListener.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{GLMovableObject.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{GLKegelstumpf.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{GLWindowConfig.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{Window.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{GLDisplayItem.java"/>
+        <file path="/bGLOOP/src/.bgloop"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{AWTWindow.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP{GLZylinder.java"/>
+        <javaElement handleIdentifier="=bGLOOP/src&lt;bGLOOP.linalg"/>
+    </selectedElements>
+</jardesc>
