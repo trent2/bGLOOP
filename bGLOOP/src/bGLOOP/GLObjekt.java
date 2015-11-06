@@ -17,7 +17,6 @@ public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
 	float[] aEmission = { 0, 0, 0, 1 };
 	private float aGlanz = 70; // between 0 and 128
 
-	final private GLRenderer associatedRenderer;
 	/** Der Darstellungsmodus beschreibt, wie ein Objekt gezeichnet wird. Dabei
 	 * gibt es drei Möglichkeiten: als Punktgrafik, als Gitternetzgrafik oder
 	 * als durchgehend gefüllte Struktur.
@@ -74,11 +73,15 @@ public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
 		aTex = pTextur;
 		associatedCam = GLKamera.aktiveKamera();
 		associatedRenderer = associatedCam.getRenderer();
+
+		if(aTex != null)
+			associatedRenderer.addObjectToTextureMap(aTex.aTexturImpl, this, null);
+		else
+			associatedRenderer.getNoTextureItemList().add(this);
 		wconf = associatedCam.getWconf();
 		conf.xDivision = wconf.xDivision;
 		conf.yDivision = wconf.yDivision;
 
-		GLKamera.aktiveKamera().getRenderer().getDisplayItemList().add(this);
 		transformationMatrix = new Matrix4();
 		scheduleRender();
 	}
@@ -147,7 +150,7 @@ public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
 	 * wiederherstellbar.
 	 */
 	public synchronized void loesche() {
-		GLKamera.aktiveKamera().getRenderer().getDisplayItemList().remove(this);
+		associatedRenderer.getNoTextureItemList().remove(this);
 		scheduleRender();
 	}
 
@@ -157,6 +160,13 @@ public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
 	 */
 	@Override
 	public synchronized void setzeTextur(GLTextur pTextur) {
+		if (aTex != null)
+			associatedRenderer.addObjectToTextureMap(pTextur.aTexturImpl, this,
+					aTex.aTexturImpl);
+		else {
+			associatedRenderer.getNoTextureItemList().remove(this);
+			associatedRenderer.addObjectToTextureMap(pTextur.aTexturImpl, this, null);
+		}
 		aTex = pTextur;
 		scheduleRender();
 	}
@@ -168,8 +178,7 @@ public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
 	 */
 	@Override
 	public synchronized void setzeTextur(String pTexturBilddatei) {
-		aTex = new GLTextur(pTexturBilddatei);
-		scheduleRender();
+		setzeTextur(new GLTextur(pTexturBilddatei));
 	}
 
 	@Override
@@ -177,11 +186,6 @@ public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
 		loadMaterial(gl);
 
 		gl.glPushMatrix();
-		if (aTex != null) {
-			aTex.load(gl);
-			aTex.aTexture.enable(gl);
-			aTex.aTexture.bind(gl);
-		}
 		gl.glMultMatrixf(transformationMatrix.getMatrix(), 0);
 		if (conf.objectRenderMode == Rendermodus.RENDER_GLU) {
 			if (quadric == null)
@@ -199,8 +203,6 @@ public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
 				gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, computeDrawMode(conf.displayMode, conf.objectRenderMode));
 			doRenderGL(gl);
 		}
-		if (aTex != null && aTex.isReady())
-			aTex.aTexture.disable(gl);
 		gl.glPopMatrix();
 	}
 

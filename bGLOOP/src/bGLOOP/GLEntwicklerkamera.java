@@ -157,6 +157,12 @@ public class GLEntwicklerkamera extends GLKamera {
 					getWconf().aWireframe = !getWconf().aWireframe;
 					getRenderer().scheduleRender();
 					break;
+				case 's':
+					aPos[0] = 0; aPos[1] = 0; aPos[2] = 500;
+					aLookAt[0] = 0; aLookAt[1] = 0; aLookAt[2] = 0;
+					aUp[0] = 0; aUp[1] = 1; aUp[2] = 0;
+					getRenderer().scheduleRender();
+					break;
 				}
 			}
 

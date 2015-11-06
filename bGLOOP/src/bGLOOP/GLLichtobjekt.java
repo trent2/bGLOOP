@@ -1,10 +1,5 @@
 package bGLOOP;
 
-import java.util.concurrent.CopyOnWriteArrayList;
-
-import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.glu.GLU;
-
 import bGLOOP.GLObjekt.Darstellungsmodus;
 
 /** <p>Ein GLLichtobjekt ist im Prinzip ein normales bGLOOP-Objekt, z.B. eine 
@@ -25,7 +20,7 @@ import bGLOOP.GLObjekt.Darstellungsmodus;
  * </pre> 
  * @author R. Spillner
  */
-public class GLLichtobjekt extends GLDisplayItem
+public class GLLichtobjekt
 		implements IGLTransformierbar, IGLDisplayable, IGLSubdivisable, IGLSurface {
 	// designed after the Decorator pattern, see
 	// GoF, Design Patterns, Addison Wesley
@@ -45,19 +40,10 @@ public class GLLichtobjekt extends GLDisplayItem
 		aLichtobjekt = pLichtobjekt;
 		aLicht = new GLLicht(aLichtobjekt.gibX(), aLichtobjekt.gibY(), aLichtobjekt.gibZ());
 
-		// replace aLichtobjekt with this object  
-		CopyOnWriteArrayList<GLDisplayItem> dil = aLichtobjekt.associatedCam.renderer.getDisplayItemList();
-		dil.remove(aLichtobjekt);
-		dil.add(this);
 		aLicht.setzeFarbe(aLichtobjekt.gibFarbe());
 
 		// make aLichtobjekt emitting light
 		aLichtobjekt.aEmission = aLichtobjekt.aDiffuse;
-	}
-
-	@Override
-	void render(GL2 gl, GLU glu) {
-		aLichtobjekt.render(gl, glu);
 	}
 
 	@Override
@@ -73,6 +59,7 @@ public class GLLichtobjekt extends GLDisplayItem
 	@Override
 	public void verschiebe(double pX, double pY, double pZ) {
 		aLichtobjekt.verschiebe(pX, pY, pZ);
+		aLicht.verschiebe(pX, pY, pZ);
 	}
 
 	@Override
@@ -143,7 +130,6 @@ public class GLLichtobjekt extends GLDisplayItem
 	@Override
 	public void setzeSichtbarkeit(boolean pSichtbar) {
 		aLichtobjekt.setzeSichtbarkeit(pSichtbar);
-		aVisible = pSichtbar;
 		aLicht.lichtAn(pSichtbar);
 	}
 }

@@ -4,7 +4,10 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 
 abstract class GLDisplayItem {
+	GLRenderer associatedRenderer;
+
 	GLKamera associatedCam;
+
 	boolean aVisible = true;
 	boolean hasChanged = true;
 

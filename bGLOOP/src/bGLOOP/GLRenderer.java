@@ -1,6 +1,8 @@
 package bGLOOP;
 
 import java.awt.Frame;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.jogamp.newt.opengl.GLWindow;
@@ -12,6 +14,8 @@ import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.Animator;
 
+import bGLOOP.GLTextur.GLTextureImpl;
+
 class GLRenderer implements GLEventListener {
 
 	private int window_rendering_needed = 2;
@@ -20,8 +24,11 @@ class GLRenderer implements GLEventListener {
 	private Animator animator;
 	private GLKamera aCam;
 	private GLWindowConfig wconf;
-	private CopyOnWriteArrayList<GLDisplayItem> displayableItemList;
+	private CopyOnWriteArrayList<GLDisplayItem> noTextureItemList;
+	private ConcurrentHashMap<GLTextureImpl, CopyOnWriteArrayList<GLDisplayItem>>
+		textureItemMap;
 	private Window win;
+	private boolean currentLighting;
 
 	GLRenderer(GLWindowConfig wc, int width, int height, GLKamera cam, boolean pFullscreen, boolean pNoDecoration) {
 		wconf = wc;
@@ -47,13 +54,33 @@ class GLRenderer implements GLEventListener {
 		animator.start();
 		animator.setUpdateFPSFrames(wconf.doubleBuffering?60:2000, null);
 		win.startDisplay();
+		currentLighting = !wconf.globalLighting;
+		textureItemMap = new ConcurrentHashMap<GLTextureImpl, CopyOnWriteArrayList<GLDisplayItem>>(10);
+		noTextureItemList = new CopyOnWriteArrayList<GLDisplayItem>();
 	}
 
-	CopyOnWriteArrayList<GLDisplayItem> getDisplayItemList() {
-		if (displayableItemList != null)
-			return displayableItemList;
-		else
-			return displayableItemList = new CopyOnWriteArrayList<GLDisplayItem>();
+	CopyOnWriteArrayList<GLDisplayItem> getNoTextureItemList() {
+			return noTextureItemList;
+	}
+
+	// remove oldImpl from map
+	void addObjectToTextureMap(GLTextureImpl tImp, GLDisplayItem di, GLTextureImpl oldImpl) {
+		if(oldImpl != null) {
+			CopyOnWriteArrayList<GLDisplayItem> dil = textureItemMap.get(oldImpl);
+			if(dil != null)
+				dil.remove(di);
+		}
+		addToTextureMap(tImp, di);
+	}
+
+	private void addToTextureMap(GLTextureImpl tImp, GLDisplayItem di) {
+		if(textureItemMap.containsKey(tImp))
+				textureItemMap.get(tImp).add(di);
+		else {
+			CopyOnWriteArrayList<GLDisplayItem> dil = new CopyOnWriteArrayList<GLDisplayItem>();
+			dil.add(di);
+			textureItemMap.put(tImp, dil);
+		}
 	}
 
 	Window getWindow() {
@@ -80,10 +107,12 @@ class GLRenderer implements GLEventListener {
 		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
 		doLighting(gl);
 
+		/*
 		gl.glEnable(GL2.GL_LINE_SMOOTH);
 		gl.glEnable(GL2.GL_BLEND);
 		gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 		gl.glHint(GL2.GL_LINE_SMOOTH_HINT, GL2.GL_DONT_CARE);
+		*/
 		gl.glLineWidth(wconf.wireframeLineWidth);
 
 		window_rendering_needed = wconf.doubleBuffering?3:1;
@@ -96,12 +125,16 @@ class GLRenderer implements GLEventListener {
 	}
 
 	private void doLighting(GL2 gl) {
-		if (wconf.globalLighting) {
-			gl.glEnable(GL2.GL_LIGHTING);
-			gl.glEnable(GL2.GL_NORMALIZE);
-		} else {
-			gl.glDisable(GL2.GL_LIGHTING);
-			gl.glDisable(GL2.GL_NORMALIZE);
+		// only call these when lighting has changed
+		if (currentLighting != wconf.globalLighting) {
+			currentLighting = wconf.globalLighting;
+			if (currentLighting) {
+				gl.glEnable(GL2.GL_LIGHTING);
+				gl.glEnable(GL2.GL_NORMALIZE);
+			} else {
+				gl.glDisable(GL2.GL_LIGHTING);
+				gl.glDisable(GL2.GL_NORMALIZE);
+			}
 		}
 	}
 
@@ -111,7 +144,7 @@ class GLRenderer implements GLEventListener {
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
-		if (window_rendering_needed > 0 && displayableItemList != null) {
+		if (window_rendering_needed > 0 && noTextureItemList != null) {
 			renderScene(drawable.getGL().getGL2());
 
 			if (window_rendering_needed > 0)
@@ -151,7 +184,26 @@ class GLRenderer implements GLEventListener {
 		synchronized (aCam) {
 			aCam.renderPreObjects(gl, glu);
 		}
-		for (GLDisplayItem di : displayableItemList)
+
+		GLTextureImpl tImp = null;
+		// render objects without texture
+		for (Map.Entry<GLTextureImpl, CopyOnWriteArrayList<GLDisplayItem>> entry : textureItemMap.entrySet()) {
+			// load texture
+			tImp = entry.getKey();
+			tImp.load(gl);
+			if (tImp.isReady()) {
+				tImp.getTexture().enable(gl);
+				tImp.getTexture().bind(gl);
+			}
+			// render objects
+			for (GLDisplayItem di : entry.getValue())
+				di.render(gl, glu);
+		}
+		if(tImp != null)
+			tImp.getTexture().disable(gl);
+
+		// render objects with texture
+		for (GLDisplayItem di : noTextureItemList)
 			if (di.aVisible)
 					di.render(gl, glu);
 

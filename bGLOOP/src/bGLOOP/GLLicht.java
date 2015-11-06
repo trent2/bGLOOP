@@ -29,7 +29,7 @@ public class GLLicht extends GLDisplayItem {
 		lightDiffusePosition = new float[] { (float) pX, (float) pY, (float) pZ, 1.0f };
 		id = lightCount++;
 		associatedCam = GLKamera.aktiveKamera();
-		associatedCam.getRenderer().getDisplayItemList().add(this);
+		(associatedRenderer = associatedCam.getRenderer()).getNoTextureItemList().add(this);
 
 	}
 
@@ -50,14 +50,14 @@ public class GLLicht extends GLDisplayItem {
 		lightAmbientValue[0] = (float)pR;
 		lightAmbientValue[1] = (float)pG;
 		lightAmbientValue[2] = (float)pB;
-		associatedCam.getRenderer().scheduleRender();
+		associatedRenderer.scheduleRender();
 	}
 
 	public void setzeFarbe(double pR, double pG, double pB) {
 		lightDiffuseValue[0] = (float)pR;
 		lightDiffuseValue[1] = (float)pG;
 		lightDiffuseValue[2] = (float)pB;
-		associatedCam.getRenderer().scheduleRender();
+		associatedRenderer.scheduleRender();
 	}
 
 	void setzeFarbe(double[] pCol) {
@@ -71,9 +71,9 @@ public class GLLicht extends GLDisplayItem {
 	 *            Wenn <code>true</code>, dann wird die Lichtquelle aktiviert,
 	 *            wenn <code>false</code>, dann wird sie deaktiviert.
 	 */
-	synchronized public void lichtAn(boolean an) {
+	public synchronized void lichtAn(boolean an) {
 		isOn = an;
-		associatedCam.getRenderer().scheduleRender();
+		associatedRenderer.scheduleRender();
 	}
 
 	@Override
@@ -88,14 +88,26 @@ public class GLLicht extends GLDisplayItem {
 			gl.glDisable(LIGHT_NUMS[id]);
 	}
 
-	/** Setze die Position der Lichtquelle im Koordinatensystem
+	/** Setzt die Position der Lichtquelle im Koordinatensystem.
 	 * @param pX x-Koordinate der Position
 	 * @param pY y-Koordinate der Position
 	 * @param pZ z-Koordinate der Position
 	 */
-	public void setzePosition(double pX, double pY, double pZ) {
+	public synchronized void setzePosition(double pX, double pY, double pZ) {
 		lightDiffusePosition[0] = (float)pX;
 		lightDiffusePosition[1] = (float)pY;
 		lightDiffusePosition[2] = (float)pZ;
+		associatedRenderer.scheduleRender();
+	}
+
+	/** Verschiebt die Lichtquelle im Koordinatensystem.
+	 * @param pX x-Koordinate der Position
+	 * @param pY y-Koordinate der Position
+	 * @param pZ z-Koordinate der Position
+	 */	public synchronized void verschiebe(double pX, double pY, double pZ) {
+		lightDiffusePosition[0] += (float)pX;
+		lightDiffusePosition[1] += (float)pY;
+		lightDiffusePosition[2] += (float)pZ;
+		associatedRenderer.scheduleRender();
 	}
 }
