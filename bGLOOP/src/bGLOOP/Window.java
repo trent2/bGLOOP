@@ -13,7 +13,7 @@ abstract class Window {
 
 	abstract Object createWindow(GLCapabilities caps, int width, int height);
 
-	abstract void addCameraMouseListener(MouseListener.MouseHandlerLogic mhl);
+	abstract void addMouseListener(MouseListener.MouseHandlerLogic mhl);
 
 	abstract void addKeyboardListener(KeyboardListener.KeyPressedLogic kpl);
 

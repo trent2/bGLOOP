@@ -31,18 +31,21 @@ public class GLHimmel extends GLObjekt {
 
 	@Override
 	void doRenderGL(GL2 gl) {
-		double radius = 1000;
+		double radius = 100;
 		int divs = 16;
 		double quality = 180.0 / divs;
 		double lX, lZ;
 
-		// gl.glDisable(GL2.GL_DEPTH_TEST);
+		// the GLHimmel sphere is permanently moved to the position of the camera.
+		// therefore it is displayed all the time
+
+		gl.glDisable(GL2.GL_DEPTH_TEST);
 		// gl.glDisable(GL2.GL_CULL_FACE);
 		gl.glCullFace(GL2.GL_FRONT);
 		gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
+		gl.glTranslated(associatedCam.aPos[0], associatedCam.aPos[1], associatedCam.aPos[2]);
 		gl.glRotatef(90, 1, 0, 0);
 
-		gl.glTranslated(associatedCam.aPos[0], associatedCam.aPos[1], associatedCam.aPos[2]);
 		for (int i = 0; i < divs; ++i) { // 16; i++) {
 			double lY1 = Math.cos(Math.toRadians(i * quality));
 			double lY2 = Math.cos(Math.toRadians((i + 1) * quality));
@@ -64,8 +67,7 @@ public class GLHimmel extends GLObjekt {
 			}
 			gl.glEnd();
 		}
-		// gl.glEnable(GL2.GL_DEPTH_TEST);
-		// gl.glEnable(GL2.GL_CULL_FACE);
+		gl.glEnable(GL2.GL_DEPTH_TEST);
 		gl.glCullFace(GL2.GL_BACK);
 		gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
 	}

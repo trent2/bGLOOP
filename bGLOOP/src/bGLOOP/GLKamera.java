@@ -300,9 +300,13 @@ public class GLKamera {
 		VectorUtil.normalizeVec3(dir);
 		VectorUtil.scaleVec3(dir, dir, (float) pSchrittweite);
 		VectorUtil.addVec3(pos, pos, dir);
+		VectorUtil.addVec3(lookAt, lookAt, dir);
 		this.aPos[0] = pos[0];
 		this.aPos[1] = pos[1];
 		this.aPos[2] = pos[2];
+		this.aLookAt[0] = lookAt[0];
+		this.aLookAt[1] = lookAt[1];
+		this.aLookAt[2] = lookAt[2];
 		renderer.scheduleRender();
 	}
 

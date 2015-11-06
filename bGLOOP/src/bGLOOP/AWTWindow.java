@@ -34,6 +34,9 @@ final class AWTWindow extends Window {
 			@Override
 			public void windowClosing(WindowEvent e) {
 				animator.stop();
+
+				// prevent jogl babbling about unimportant stuff
+				System.err.close();
 				System.exit(0);
 			}
 		});
@@ -41,7 +44,7 @@ final class AWTWindow extends Window {
 	}
 
 	@Override
-	void addCameraMouseListener(MouseListener.MouseHandlerLogic mhl) {
+	void addMouseListener(MouseListener.MouseHandlerLogic mhl) {
 		MouseListener ml = new MouseListener(mhl);
 		canvas.addMouseListener(ml);
 		canvas.addMouseMotionListener(ml);

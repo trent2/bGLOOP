@@ -10,7 +10,7 @@ import com.jogamp.opengl.util.Animator;
 import bGLOOP.windowimpl.KeyboardListener;
 import bGLOOP.windowimpl.MouseListener;
 
-final class NEWTWindow extends bGLOOP.Window {
+final class NEWTWindow extends Window {
 	private GLWindow glWin;
 
 	public static Window createWindowFactory() {
@@ -27,6 +27,8 @@ final class NEWTWindow extends bGLOOP.Window {
 			public void windowDestroyNotify(WindowEvent e) {
 				animator.stop();
 				glWin.setVisible(false);
+				// prevent jogl babbling about unimportant stuff
+				System.err.close();
 				System.exit(0);
 			}
 		});
@@ -38,7 +40,7 @@ final class NEWTWindow extends bGLOOP.Window {
 	}
 
 	@Override
-	void addCameraMouseListener(MouseListener.MouseHandlerLogic mhl) {
+	void addMouseListener(MouseListener.MouseHandlerLogic mhl) {
 		glWin.addMouseListener(new MouseListener(mhl));
 	}
 

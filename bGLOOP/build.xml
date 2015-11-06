@@ -1,4 +1,5 @@
 <project default="jar" name="bGLOOP built file">
+	<property name="VERSION" value="1.0" />
 	<target name="clean">
 		<delete dir="build" />
 		<delete file="dist/bGLOOP.jar" />
@@ -15,19 +16,16 @@
 		</javac>
 	</target>
 
-	<target name="injectVersion">
-		<property file="build.number" />
-		<replaceregexp file="MANIFEST.MF" match="Implementation-Build:(.*)" replace="Implementation-Build: ${build.number}" />
-	</target>
-
-	<target name="jar" depends="compile, injectVersion">
-		<property file="build.number" />
-		<jar destfile="dist/bGLOOP.jar" manifest="MANIFEST.MF">
-			<fileset file="src/.bgloop" />
-			<fileset dir="build/classes" />
-		</jar>
-		<echo message="Building built ${build.number}" />
-		<buildnumber />
+	<target name="latex">
+		<apply executable="pdflatex" dir="src/bGLOOP/doc-src">
+			<arg value="--shell-escape" />
+			<srcfile />
+			<fileset dir="src/bGLOOP/doc-src" includes="*.tex" />
+		</apply>
+		<move todir="src/bGLOOP/doc-files">
+			<fileset dir="src/bGLOOP/doc-src" includes="*.png" />
+		</move>
+		<delete dir="src/bGLOOP/doc-src" includes="*.log,*.aux,*.pdf" />
 	</target>
 
 	<target name="doc" depends="latex">
@@ -41,15 +39,22 @@
 		</javadoc>
 	</target>
 
-	<target name="latex">
-		<apply executable="pdflatex" dir="src/bGLOOP/doc-src">
-			<arg value="--shell-escape" />
-			<srcfile />
-			<fileset dir="src/bGLOOP/doc-src" includes="*.tex" />
-		</apply>
-		<move todir="src/bGLOOP/doc-files">
-			<fileset dir="src/bGLOOP/doc-src" includes="*.png" />
-		</move>
-		<delete dir="src/bGLOOP/doc-src" includes="*.log,*.aux,*.pdf" />
+	<target name="jar" depends="compile">
+		<property file="build.number" />
+		<tstamp>
+		  <format property="TODAY" pattern="dd. MMMM YYYY, HH:mm:ss" locale="de,DE"/>
+		</tstamp>
+		<jar destfile="dist/bGLOOP.jar">
+			<manifest>
+				<attribute name="Implementation-Title" value="A better GLOOP" />
+				<attribute name="Implementation-Version" value="${VERSION} ${TODAY}" />
+				<attribute name="Implementation-Build" value="${build.number}" />
+				<attribute name="Implementation-Vendor" value="Robert Spillner" />
+			</manifest>
+			<fileset file="src/.bgloop" />
+			<fileset dir="build/classes" />
+		</jar>
+		<echo message="Building built ${build.number}" />
+		<buildnumber />
 	</target>
 </project>

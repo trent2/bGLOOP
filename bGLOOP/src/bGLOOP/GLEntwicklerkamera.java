@@ -1,5 +1,7 @@
 package bGLOOP;
 
+import com.jogamp.opengl.math.VectorUtil;
+
 import bGLOOP.windowimpl.KeyboardListener.KeyPressedLogic;
 import bGLOOP.windowimpl.MouseListener.MouseHandlerLogic;
 
@@ -57,18 +59,30 @@ public class GLEntwicklerkamera extends GLKamera {
 	}
 
 	private void addMouseListener() {
-		renderer.getWindow().addCameraMouseListener(new MouseHandlerLogic() {
+		renderer.getWindow().addMouseListener(new MouseHandlerLogic() {
 			int xstart, ystart;
 			double[] aPrevPos, aPrevUp;
 			@Override
 			public void handleMouseWheel(float wheelRotation) {
-				vor(wheelRotation * getWconf().mouseWheelScale);
 				
+				float[] dir = new float[3];
+				float[] pos = { (float) GLEntwicklerkamera.this.aPos[0], (float) GLEntwicklerkamera.this.aPos[1], (float) GLEntwicklerkamera.this.aPos[2] };
+				float[] lookAt = { (float) GLEntwicklerkamera.this.aLookAt[0], (float) GLEntwicklerkamera.this.aLookAt[1], (float) GLEntwicklerkamera.this.aLookAt[2] };
+
+				VectorUtil.subVec3(dir, pos, lookAt);
+				VectorUtil.normalizeVec3(dir);
+				VectorUtil.scaleVec3(dir, dir, (float) (wheelRotation * getWconf().mouseWheelScale));
+				VectorUtil.addVec3(pos, pos, dir);
+				VectorUtil.addVec3(lookAt, lookAt, dir);
+				GLEntwicklerkamera.this.aPos[0] = pos[0];
+				GLEntwicklerkamera.this.aPos[1] = pos[1];
+				GLEntwicklerkamera.this.aPos[2] = pos[2];
+				getRenderer().scheduleRender();
 			}
 			
 			@Override
-			public void handleMousePressed(boolean button1Or3, int x, int y) {
-				if(button1Or3) {
+			public void handleMousePressed(boolean button1, boolean button3, int x, int y) {
+				if(button1 | button3) {
 					xstart = x;
 					ystart = y;
 					aPrevPos = aPos.clone();
@@ -115,6 +129,18 @@ public class GLEntwicklerkamera extends GLKamera {
 					}
 				}
 			}
+
+			@Override
+			public void handleMouseSingleClick(boolean button1, boolean button3) { }
+
+			@Override
+			public void handleMouseDoubleClick(boolean button1, boolean button3) { }
+
+			@Override
+			public void handleMouseMoved(int x, int y) { }
+
+			@Override
+			public void handleMouseReleased(boolean button1, boolean button3) { }
 
 		});
 	}

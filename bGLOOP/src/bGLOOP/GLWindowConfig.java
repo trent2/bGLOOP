@@ -45,6 +45,8 @@ class GLWindowConfig {
 	boolean globalLighting = true, aDisplayAxes = false, aWireframe = false,
 			doubleBuffering = true;
 
+	long clickTimeRange, moveTimeRange;
+
 	GLWindowConfig() {
 		InputStream defaultSettings;
 		File userFileName;
@@ -74,6 +76,8 @@ class GLWindowConfig {
 		xDivision = Integer.parseInt(bgloopSetting.getProperty("DEFAULT_QUALITY_X"));
 		yDivision = Integer.parseInt(bgloopSetting.getProperty("DEFAULT_QUALITY_X"));
 		axesLength = Double.parseDouble(bgloopSetting.getProperty("DEFAULT_AXES_LENGTH"));
+		clickTimeRange = Long.parseLong(bgloopSetting.getProperty("MOUSE_CLICK_TIME_RANGE"));
+		moveTimeRange = Long.parseLong(bgloopSetting.getProperty("MOUSE_MOVE_TIME_RANGE"));
 		mouseWheelScale = Double.parseDouble(bgloopSetting.getProperty("DEFAULT_MOUSE_WHEEL_SCALE"));
 
 		axesWidth = Float.parseFloat(bgloopSetting.getProperty("DEFAULT_AXES_WIDTH"));

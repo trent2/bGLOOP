@@ -2,7 +2,7 @@
 <classpath>
 	<classpathentry excluding="images/" kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
-	<classpathentry kind="lib" path="jar/GLOOP.jar"/>
 	<classpathentry kind="lib" path="jogl-2.3.2/jogamp-fat.jar" sourcepath="jogl-2.3.2/jogamp-fat-java-src.zip"/>
+	<classpathentry kind="lib" path="jar/GLOOP.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
