@@ -19,6 +19,11 @@ public class GLMesh extends GLObjekt {
 	}
 
 	@Override
+	void doRenderGL_VBO(GL2 gl) {
+		// TODO Auto-generated method stub
+	}
+
+	@Override
 	void doRenderGL(GL2 gl) {
 		// TODO Auto-generated method stub
 

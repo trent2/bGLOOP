@@ -1,8 +1,8 @@
 DEFAULT_WINDOW_WIDTH=800
 DEFAULT_WINDOW_HEIGHT=600
 
-DEFAULT_QUALITY_X=60
-DEFAULT_QUALITY_Y=60
+DEFAULT_QUALITY_X=30
+DEFAULT_QUALITY_Y=30
 
 # enable double buffering
 DOUBLE_BUFFERING = on
@@ -10,12 +10,19 @@ DOUBLE_BUFFERING = on
 # enable lighting of scenerey
 LIGHTING = on
 
-# can be "GLU" or "GL"
+# can be "GLU", "GL", or "VBO"
+#
 # using GLU makes flickering lines in GLU_LINE mode on my linux machine,
 # maybe that's different on other machines
-DEFAULT_OBJECT_RENDER_MODE = GL
+#
+# Using VBO uses vertex buffer objects for (hopefully) very fast rendering
+# of the bGLOOP objects.
+# This should be supported by all OpenGL implementations >= 2.0, so be
+# sure your graphic card supports this.
+#
+DEFAULT_OBJECT_RENDER_MODE = VBO
 
-# valid values are POINT, LINE, FILL
+# valid values are "POINT", "LINE", "FILL"
 DEFAULT_RENDER_DRAW_MODE = FILL
 
 
@@ -33,7 +40,7 @@ DEFAULT_AXES_WIDTH = 5
 DEFAULT_LINE_WIDTH = 1
 
 # by how many pixels will the camera zoom
-DEFAULT_MOUSE_WHEEL_SCALE = 25
+DEFAULT_MOUSE_WHEEL_SCALE = 10
 
 # time in milliseconds where GLMaus'
 # linksklick(), rechtsklick(), and doppelclick() methods

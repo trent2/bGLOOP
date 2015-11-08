@@ -19,6 +19,10 @@ public class GLTextur {
 	private static HashMap<File, GLTextureImpl> textures = new HashMap<File, GLTextureImpl>(10);
 	GLTextureImpl aTexturImpl = null;
 
+	// So why this? GLTextur objects are all mapped to
+	// the same GLTextureImpl object if the texture file is the same.
+	// This safes time and space when loading the textures and enables
+	// faster drawing of textured objects
 	static class GLTextureImpl {
 		File aTexFile;
 		Texture aTexture;

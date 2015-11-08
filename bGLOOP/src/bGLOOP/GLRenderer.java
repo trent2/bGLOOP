@@ -1,11 +1,10 @@
 package bGLOOP;
 
 import java.awt.Frame;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-
 import com.jogamp.newt.opengl.GLWindow;
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
 import com.jogamp.opengl.GLCapabilities;
@@ -13,7 +12,6 @@ import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.Animator;
-
 import bGLOOP.GLTextur.GLTextureImpl;
 
 class GLRenderer implements GLEventListener {
@@ -27,8 +25,15 @@ class GLRenderer implements GLEventListener {
 	private CopyOnWriteArrayList<GLDisplayItem> noTextureItemList;
 	private ConcurrentHashMap<GLTextureImpl, CopyOnWriteArrayList<GLDisplayItem>>
 		textureItemMap;
+
 	private Window win;
 	private boolean currentLighting;
+;
+
+	// this does not belong here!!!!!!! This is just a hack
+	// to be removed when I know better --- and when I have to subclass
+	// ConcurrentHashMap for that
+	private GLHimmel sky;
 
 	GLRenderer(GLWindowConfig wc, int width, int height, GLKamera cam, boolean pFullscreen, boolean pNoDecoration) {
 		wconf = wc;
@@ -65,19 +70,24 @@ class GLRenderer implements GLEventListener {
 
 	// remove oldImpl from map
 	void addObjectToTextureMap(GLTextureImpl tImp, GLDisplayItem di, GLTextureImpl oldImpl) {
-		if(oldImpl != null) {
-			CopyOnWriteArrayList<GLDisplayItem> dil = textureItemMap.get(oldImpl);
-			if(dil != null)
-				dil.remove(di);
+		if (!(di instanceof GLHimmel)) {
+			if (oldImpl != null) {
+				CopyOnWriteArrayList<GLDisplayItem> dil = textureItemMap.get(oldImpl);
+				if (dil != null)
+					dil.remove(di);
+			}
+			addObjectToTextureMap(tImp, di);
 		}
-		addToTextureMap(tImp, di);
+		else
+			sky = (GLHimmel)di;
 	}
 
-	private void addToTextureMap(GLTextureImpl tImp, GLDisplayItem di) {
+	private void addObjectToTextureMap(GLTextureImpl tImp, GLDisplayItem di) {
 		if(textureItemMap.containsKey(tImp))
-				textureItemMap.get(tImp).add(di);
+			textureItemMap.get(tImp).add(di);
 		else {
-			CopyOnWriteArrayList<GLDisplayItem> dil = new CopyOnWriteArrayList<GLDisplayItem>();
+			CopyOnWriteArrayList<GLDisplayItem> dil;
+			dil = new CopyOnWriteArrayList<GLDisplayItem>();
 			dil.add(di);
 			textureItemMap.put(tImp, dil);
 		}
@@ -100,7 +110,7 @@ class GLRenderer implements GLEventListener {
 		gl.glClearDepth(10000.0f); // clear z-buffer to the farthest
 		gl.glEnable(GL2.GL_DEPTH_TEST); // enables depth testing
 		gl.glDepthFunc(GL2.GL_LEQUAL); // the type of depth test to do
-
+		gl.glBindBuffer( GL.GL_ARRAY_BUFFER, 0);
 		gl.glEnable(GL2.GL_CULL_FACE);
 		gl.glCullFace(GL2.GL_BACK);
 		// Do the best perspective correction
@@ -186,8 +196,21 @@ class GLRenderer implements GLEventListener {
 		}
 
 		GLTextureImpl tImp = null;
+
+		// render sky before all other objects
+		if(sky != null && sky.aTex != null && sky.aTex.aTexturImpl != null) {
+			tImp = sky.aTex.aTexturImpl;
+			tImp.load(gl);
+			if (tImp.isReady()) {
+				tImp.getTexture().enable(gl);
+				tImp.getTexture().bind(gl);
+			}
+			sky.render(gl, glu);			
+		}
+
 		// render objects without texture
-		for (Map.Entry<GLTextureImpl, CopyOnWriteArrayList<GLDisplayItem>> entry : textureItemMap.entrySet()) {
+		for (ConcurrentHashMap.Entry<GLTextureImpl, CopyOnWriteArrayList<GLDisplayItem>> entry : textureItemMap
+				.entrySet()) {
 			// load texture
 			tImp = entry.getKey();
 			tImp.load(gl);

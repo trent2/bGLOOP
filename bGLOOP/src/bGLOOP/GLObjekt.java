@@ -39,7 +39,7 @@ public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
 	};
 
 	static enum Rendermodus {
-		RENDER_GLU, RENDER_GL
+		RENDER_GLU, RENDER_GL, RENDER_VBOGL
 	};
 
 	/** Klasse eines Konfigurations-Objektes, dass jedem {@link GLObjekt}
@@ -60,9 +60,9 @@ public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
 	Matrix4 transformationMatrix;
 	GLUquadric quadric;
 
-	abstract void doRenderGLU(GL2 gl, GLU glu);
-
 	abstract void doRenderGL(GL2 gl);
+	abstract void doRenderGL_VBO(GL2 gl);
+	abstract void doRenderGLU(GL2 gl, GLU glu);
 
 	GLObjekt() {
 		this(null);
@@ -74,15 +74,18 @@ public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
 		associatedCam = GLKamera.aktiveKamera();
 		associatedRenderer = associatedCam.getRenderer();
 
-		if(aTex != null)
-			associatedRenderer.addObjectToTextureMap(aTex.aTexturImpl, this, null);
-		else
-			associatedRenderer.getNoTextureItemList().add(this);
 		wconf = associatedCam.getWconf();
 		conf.xDivision = wconf.xDivision;
 		conf.yDivision = wconf.yDivision;
 
+		// this must be initialized BEFORE adding to any display lists
 		transformationMatrix = new Matrix4();
+
+		if(aTex != null)
+			associatedRenderer.addObjectToTextureMap(aTex.aTexturImpl, this, null);
+		else
+			associatedRenderer.getNoTextureItemList().add(this);
+
 		scheduleRender();
 	}
 
@@ -202,6 +205,12 @@ public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
 			else
 				gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, computeDrawMode(conf.displayMode, conf.objectRenderMode));
 			doRenderGL(gl);
+		} else if (conf.objectRenderMode == Rendermodus.RENDER_VBOGL) {
+			if (associatedCam.istDrahtgittermodell())
+				gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
+			else
+				gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, computeDrawMode(conf.displayMode, conf.objectRenderMode));
+			doRenderGL_VBO(gl);
 		}
 		gl.glPopMatrix();
 	}
@@ -228,20 +237,20 @@ public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
 		case PUNKT:
 			if (rm == Rendermodus.RENDER_GLU)
 				r = GLU.GLU_POINT;
-			else if (rm == Rendermodus.RENDER_GL)
+			else if (rm == Rendermodus.RENDER_GL || rm == Rendermodus.RENDER_VBOGL)
 				r = GL2.GL_POINT;
 			break;
 		case LINIE:
 			if (rm == Rendermodus.RENDER_GLU)
 				r = GLU.GLU_LINE;
-			else if (rm == Rendermodus.RENDER_GL)
+			else if (rm == Rendermodus.RENDER_GL || rm == Rendermodus.RENDER_VBOGL)
 				r = GL2.GL_LINE;
 			break;
 		case FUELLEN:
 		default:
 			if (rm == Rendermodus.RENDER_GLU)
 				r = GLU.GLU_FILL;
-			else if (rm == Rendermodus.RENDER_GL)
+			else if (rm == Rendermodus.RENDER_GL || rm == Rendermodus.RENDER_VBOGL)
 				r = GL2.GL_FILL;
 		}
 		if (r == -1)

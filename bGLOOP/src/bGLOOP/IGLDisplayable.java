@@ -17,12 +17,6 @@ public interface IGLDisplayable {
 	 */
 	public void setzeDarstellungsModus(Darstellungsmodus dm);
 
-	/**
-	 * Wechselt die Strategie der Gittergenerierung zwischen <code>GL</code> und
-	 * <code>GLU</code>.
-	 */
-	public void wechselRendermodus();
-
 	/** Stellt ein, ob das Objekt in der Szene sichtbar ist. Ein unsichtbares
 	 * Objekt wird nicht gerendert, ist aber noch Teil der Szene.
 	 * 

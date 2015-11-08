@@ -4,6 +4,7 @@ import bGLOOP.linalg.Matrix4;
 
 abstract class GLTransformableObject extends GLObjekt implements IGLTransformierbar,
 	IGLDisplayable, IGLSubdivisable {
+	boolean needsRedraw = true;
 
 	GLTransformableObject() {
 		this(null);
@@ -84,20 +85,13 @@ abstract class GLTransformableObject extends GLObjekt implements IGLTransformier
 	}
 
 	@Override
-	public synchronized void wechselRendermodus() {
-		if (conf.objectRenderMode == Rendermodus.RENDER_GLU)
-			conf.objectRenderMode = Rendermodus.RENDER_GL;
-		else
-			conf.objectRenderMode = Rendermodus.RENDER_GLU;
-		setzeDarstellungsModus(conf.displayMode);
-
-		scheduleRender();
-	}
-	@Override
 	public synchronized void setzeQualitaet(int pBreitengrade, int pLaengengrade) {
-		conf.xDivision = pBreitengrade;
-		conf.yDivision = pLaengengrade;
-		scheduleRender();
+		if(pBreitengrade != conf.xDivision || pLaengengrade != conf.yDivision) {
+			conf.xDivision = pBreitengrade;
+			conf.yDivision = pLaengengrade;
+			needsRedraw = true;
+			scheduleRender();
+		}
 	}
 
 	@Override

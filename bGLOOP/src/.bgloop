@@ -1,47 +1,16 @@
 DEFAULT_WINDOW_WIDTH=800
 DEFAULT_WINDOW_HEIGHT=600
-
 DEFAULT_QUALITY_X=40
 DEFAULT_QUALITY_Y=40
-
-# enable double buffering
 DOUBLE_BUFFERING = on
-
-# enable lighting of scenerey
 LIGHTING = on
-
-# can be "GLU" or "GL"
-# using GLU makes flickering lines in GLU_LINE mode on my linux machine,
-# maybe that's different on other machines
 DEFAULT_OBJECT_RENDER_MODE = GLU
-
-# valid values are POINT, LINE, FILL
 DEFAULT_RENDER_DRAW_MODE = FILL
-
-
-# GL_FLAT = 0x1D00, GL_SMOOTH = 0x1D01
 DEFAULT_SHADE_MODEL = 1D01
-
-# use java AWT or jogl NEWT jogl window implementation 
 DEFAULT_WINDOW_MODE = AWT
-
-# length and width of axes in the developer coordinate system
 DEFAULT_AXES_LENGTH = 250
 DEFAULT_AXES_WIDTH = 5
-
-# width of wireframe
 DEFAULT_LINE_WIDTH = 1.2
-
-# by how many pixels will the camera zoom
 DEFAULT_MOUSE_WHEEL_SCALE = 10
-
-# time in milliseconds where GLMaus'
-# linksklick(), rechtsklick(), and doppelclick() methods
-# return true after the click event.
-# In other words: when a leftclick happens at 0 milliseconds
-# and is checked CLICK_TIME_RANGE+1 milliseconds later by
-# calling linksklick(), the method will return false
 MOUSE_CLICK_TIME_RANGE=1000
-
-# the same for mouse movement
 MOUSE_MOVE_TIME_RANGE=100

@@ -1,5 +1,10 @@
 package bGLOOP;
 
+import java.nio.ByteOrder;
+import java.nio.FloatBuffer;
+
+import com.jogamp.common.nio.Buffers;
+import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 
@@ -11,6 +16,9 @@ import com.jogamp.opengl.glu.GLU;
  */
 public class GLKugel extends GLTransformableObject {
 	private double aRad;
+	private int bufferName = -1;
+	private FloatBuffer fb;
+	private int[] firstOffsets, countOffsets;
 
 	/**
 	 * Erzeugt eine Kugel mit Mittelpunkt <code>M(pMX, pMY, pMZ)</code> und
@@ -28,9 +36,7 @@ public class GLKugel extends GLTransformableObject {
 	 *            Radius der Kugel </div><div style="clear:right"></div>
 	 */
 	public GLKugel(double pMX, double pMY, double pMZ, double pRadius) {
-		super();
-		verschiebe(pMX, pMY, pMZ);
-		aRad = pRadius;
+		this(pMX, pMY, pMZ, pRadius, null);
 	}
 
 	/**
@@ -62,9 +68,9 @@ public class GLKugel extends GLTransformableObject {
 	@Override
 	void doRenderGL(GL2 gl) {
 		double lX, lZ;
-		double qx = 180.0 / conf.xDivision;
-		double qy = 360.0 / conf.yDivision;
 		boolean texturePresent = (aTex != null) && aTex.isReady();
+		float qx = (float) (180.0 / conf.xDivision);
+		float qy = (float) (360.0 / conf.yDivision);
 
 		for (int i = 0; i < conf.xDivision; ++i) { // conf.xDivision; i++) {
 			double ring1Y = Math.cos(Math.toRadians(i * qx));
@@ -73,8 +79,8 @@ public class GLKugel extends GLTransformableObject {
 			double ring1X = Math.sin(Math.toRadians(i * qx));
 			double ring2X = Math.sin(Math.toRadians((i + 1) * qx));
 
+			// need to go around one whole turn
 			gl.glBegin(GL2.GL_QUAD_STRIP);
-			// need to go around one hole turn
 			for (int j = 0; j <= conf.yDivision; j++) {
 				lX = Math.cos(Math.toRadians(j * qy));
 				lZ = Math.sin(Math.toRadians(j * qy));
@@ -95,5 +101,93 @@ public class GLKugel extends GLTransformableObject {
 			}
 			gl.glEnd();
 		}
+
+	}
+
+	@Override
+	void doRenderGL_VBO(GL2 gl) {
+		if(needsRedraw)
+			generateVBO(gl);
+
+		gl.glBindBuffer( GL.GL_ARRAY_BUFFER, bufferName);
+        gl.glEnableClientState( GL2.GL_VERTEX_ARRAY );
+        gl.glEnableClientState( GL2.GL_NORMAL_ARRAY );
+        gl.glEnableClientState( GL2.GL_TEXTURE_COORD_ARRAY);
+        gl.glNormalPointer(GL.GL_FLOAT, 8 * Buffers.SIZEOF_FLOAT, 0 );
+        gl.glTexCoordPointer( 2, GL.GL_FLOAT, 8 * Buffers.SIZEOF_FLOAT, 3 * Buffers.SIZEOF_FLOAT );
+        gl.glVertexPointer(3, GL.GL_FLOAT, 8 * Buffers.SIZEOF_FLOAT, 5 * Buffers.SIZEOF_FLOAT);
+        gl.glMultiDrawArrays(GL2.GL_TRIANGLE_STRIP, firstOffsets, 0, countOffsets, 0, conf.xDivision);
+        
+//        	gl.glDrawArrays( GL2.GL_TRIANGLE_STRIP, 2 * i * (conf.yDivision + 1), 2 * (conf.yDivision + 1));
+
+        gl.glDisableClientState( GL2.GL_VERTEX_ARRAY );
+        gl.glDisableClientState( GL2.GL_NORMAL_ARRAY );
+        gl.glDisableClientState( GL2.GL_TEXTURE_COORD_ARRAY);
+
+        // unbind buffer
+		gl.glBindBuffer( GL.GL_ARRAY_BUFFER, 0);
+	}
+
+	private void generateVBO(GL2 gl) {
+		int[] bufferNameArray = new int[1];
+		firstOffsets = new int[conf.xDivision];
+		countOffsets = new int[conf.xDivision];
+		for(int i=0; i<conf.xDivision; ++i) {
+			firstOffsets[i] = 2 * (conf.yDivision + 1) * i;
+			countOffsets[i] = 2 * (conf.yDivision + 1);
+		}
+		int vertexBufferSize = 16 * conf.xDivision * (conf.yDivision + 1) * Buffers.SIZEOF_FLOAT;
+
+		gl.glGenBuffers(1, bufferNameArray, 0);
+		bufferName = bufferNameArray[0];
+		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, bufferName);
+		gl.glBufferData(GL.GL_ARRAY_BUFFER, vertexBufferSize, null,
+				GL2.GL_STATIC_DRAW);
+		fb = gl.glMapBuffer(GL.GL_ARRAY_BUFFER, GL.GL_WRITE_ONLY).order(ByteOrder.nativeOrder())
+				.asFloatBuffer();
+
+		// ready for drawing (to buffer)
+		float lX, lZ;
+		float qx = (float)(180.0 / conf.xDivision);
+		float qy = (float)(360.0 / conf.yDivision);		for (int i = 0; i < conf.xDivision; ++i) { // conf.xDivision; i++) {
+			float ring1Y = (float)Math.cos(Math.toRadians(i * qx));
+			float ring2Y = (float)Math.cos(Math.toRadians((i + 1) * qx));
+
+			float ring1X = (float)Math.sin(Math.toRadians(i * qx));
+			float ring2X = (float)Math.sin(Math.toRadians((i + 1) * qx));
+
+			// need to go around one whole turn
+			for (int j = 0; j <= conf.yDivision; j++) {
+				lX = (float) Math.cos(Math.toRadians(j * qy));
+				lZ = (float) Math.sin(Math.toRadians(j * qy));
+				// vertex #1
+				// normals
+				fb.put(lX * ring1X);
+				fb.put(lZ * ring1X);
+				fb.put(ring1Y);
+				// texture coordinates
+				fb.put(1f * (conf.yDivision - j) / conf.yDivision);
+				fb.put(1f * (conf.yDivision - i) / conf.yDivision);
+				// vertex
+				fb.put(lX * (float) aRad * ring1X);
+				fb.put(lZ * (float) aRad * ring1X);
+				fb.put(ring1Y * (float) aRad);
+
+				// vertex #2
+				// normals
+				fb.put(lX * ring2X);
+				fb.put(lZ * ring2X);
+				fb.put(ring2Y);
+				// texture coordinates
+				fb.put(1f * (conf.yDivision - j) / conf.yDivision);
+				fb.put(1f * (conf.yDivision - i - 1) / conf.yDivision);
+				// vertex
+				fb.put(lX * (float) aRad * ring2X);
+				fb.put(lZ * (float) aRad * ring2X);
+				fb.put(ring2Y * (float) aRad);
+			}
+		}
+		gl.glUnmapBuffer(GL.GL_ARRAY_BUFFER);
+		needsRedraw = false;
 	}
 }

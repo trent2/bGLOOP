@@ -78,11 +78,6 @@ public class GLLichtobjekt
 	}
 
 	@Override
-	public void wechselRendermodus() {
-		aLichtobjekt.wechselRendermodus();
-	}
-
-	@Override
 	public void setzeQualitaet(int pBreitengrade, int pLaengengrade) {
 		aLichtobjekt.setzeQualitaet(pBreitengrade, pLaengengrade);
 	}

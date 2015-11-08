@@ -60,6 +60,12 @@ public class GLQuader extends GLTransformableObject {
 	}
 
 	@Override
+	void doRenderGL_VBO(GL2 gl) {
+		//		throw new UnsupportedOperationException("VBOs sind für diesen Objekttyp (noch) nicht implementiert.");
+		doRenderGL(gl);
+	}
+
+	@Override
 	void doRenderGLU(GL2 gl, GLU glu) {
 		doRenderGL(gl);
 	}

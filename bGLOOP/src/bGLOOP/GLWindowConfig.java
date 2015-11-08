@@ -90,10 +90,14 @@ class GLWindowConfig {
 		globalShadeModel = Integer.parseInt(bgloopSetting.getProperty("DEFAULT_SHADE_MODEL"), 16);
 
 		t = bgloopSetting.getProperty("DEFAULT_OBJECT_RENDER_MODE");
+
 		if ("GLU".equals(t))
 			globalObjectRenderMode = Rendermodus.RENDER_GLU;
 		else if ("GL".equals(t))
 			globalObjectRenderMode = Rendermodus.RENDER_GL;
+		else if ("VBO".equals(t))
+			globalObjectRenderMode = Rendermodus.RENDER_VBOGL;
+		System.err.println("DEBUG INFO: Rendering with mode " + t);
 
 		t = bgloopSetting.getProperty("DEFAULT_RENDER_DRAW_MODE");
 		if ("POINT".equals(t))

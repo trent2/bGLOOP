@@ -49,20 +49,13 @@ public class GLKegelstumpf extends GLPrismoid {
 	/**
 	 * Erzeugt einen Kegelstumpf mit Textur.
 	 * 
-	 * @param pMX
-	 *            x-Koordinate des Mittelpunkts
-	 * @param pMY
-	 *            y-Koordinate des Mittelpunkts
-	 * @param pMZ
-	 *            z-Koordinate des Mittelpunkts
-	 * @param pRadius1
-	 *            Radius der Bodenfläche
-	 * @param pRadius2
-	 *            Radius der Deckelfläche
-	 * @param pHoehe
-	 *            Höhe des Kegelstumpfs
-	 * @param pTextur
-	 *            Textur-Objekt des Kegelstumpfs
+	 * @param pMX x-Koordinate des Mittelpunkts
+	 * @param pMY y-Koordinate des Mittelpunkts
+	 * @param pMZ z-Koordinate des Mittelpunkts
+	 * @param pRadius1 Radius der Bodenfläche
+	 * @param pRadius2 Radius der Deckelfläche
+	 * @param pHoehe Höhe des Kegelstumpfs
+	 * @param pTextur Textur-Objekt des Kegelstumpfs
 	 */
 	public GLKegelstumpf(double pMX, double pMY, double pMZ, double pRadius1, double pRadius2, double pHoehe,
 			GLTextur pTextur) {
