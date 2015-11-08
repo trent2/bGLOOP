@@ -16,6 +16,7 @@ public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
 	private float[] aSpecular = { 0, 0, 0, 1 };
 	float[] aEmission = { 0, 0, 0, 1 };
 	private float aGlanz = 70; // between 0 and 128
+	int bufferName = -1;
 
 	/** Der Darstellungsmodus beschreibt, wie ein Objekt gezeichnet wird. Dabei
 	 * gibt es drei Möglichkeiten: als Punktgrafik, als Gitternetzgrafik oder

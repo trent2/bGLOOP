@@ -24,16 +24,11 @@ public class GLZylinder extends GLKegelstumpf {
 	 * folglich in <code>(0,0,1)</code>, die Spitze in <code>(0,0,-1)</code>.
 	 * </p>
 	 * 
-	 * @param pMX
-	 *            x-Koordinate des Mittelpunkts
-	 * @param pMY
-	 *            y-Koordinate des Mittelpunkts
-	 * @param pMZ
-	 *            z-Koordinate des Mittelpunkts
-	 * @param pRadius
-	 *            Radius der Deckelflächen
-	 * @param pHoehe
-	 *            Höhe des Zylinders </div><div style="clear:right"></div>
+	 * @param pMX x-Koordinate des Mittelpunkts
+	 * @param pMY y-Koordinate des Mittelpunkts
+	 * @param pMZ z-Koordinate des Mittelpunkts
+	 * @param pRadius Radius der Deckelflächen
+	 * @param pHoehe  Höhe des Zylinders </div><div style="clear:right"></div>
 	 */
 	public GLZylinder(double pMX, double pMY, double pMZ, double pRadius, double pHoehe) {
 		super(pMX, pMY, pMZ, pRadius, pRadius, pHoehe, null);
@@ -42,18 +37,12 @@ public class GLZylinder extends GLKegelstumpf {
 	/**
 	 * Erstellt einen Zylinder mit Textur.
 	 * 
-	 * @param pMX
-	 *            x-Koordinate des Mittelpunkts
-	 * @param pMY
-	 *            y-Koordinate des Mittelpunkts
-	 * @param pMZ
-	 *            z-Koordinate des Mittelpunkts
-	 * @param pRadius
-	 *            Radius der Deckelflächen
-	 * @param pHoehe
-	 *            Höhe des Zylinders
-	 * @param pTextur
-	 *            Textur-Objekt des Kegels.
+	 * @param pMX x-Koordinate des Mittelpunkts
+	 * @param pMY y-Koordinate des Mittelpunkts
+	 * @param pMZ z-Koordinate des Mittelpunkts
+	 * @param pRadius Radius der Deckelflächen
+	 * @param pHoehe Höhe des Zylinders
+	 * @param pTextur Textur-Objekt des Kegels.
 	 */
 	public GLZylinder(double pMX, double pMY, double pMZ, double pRadius, double pHoehe, GLTextur pTextur) {
 		super(pMX, pMY, pMZ, pRadius, pRadius, pHoehe, pTextur);

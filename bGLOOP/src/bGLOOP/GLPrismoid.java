@@ -9,7 +9,7 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 
 public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable {
-	int aEckenzahl, bufferName = -1;
+	int aEckenzahl;
 	double aRad1;
 	double aRad2;
 	double aTiefe;
@@ -74,12 +74,13 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 	}
 
 	@Override
-	void doRenderGL(GL2 gl) {
+	void generateDisplayList(GL2 gl) {
 		double lWinkel = 360.0 / aEckenzahl;
 
 		double lNorm = 0;
 		double lMantelschritt = aTiefe / aMantelqualitaet;
 
+		gl.glNewList(bufferName, GL2.GL_COMPILE);
 		for (int j = 0; j < aMantelqualitaet; j++) {
 			gl.glBegin(GL2.GL_QUAD_STRIP);
 
@@ -116,6 +117,7 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 				y = y2;
 			}
 			gl.glEnd();
+			
 		}
 
 		if (aRad1 > 0) {
@@ -144,6 +146,7 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 			}
 			gl.glEnd();
 		}
+		gl.glEndList();
 	}
 
 	public void setzeMantelglaettung(boolean pG) {
@@ -153,7 +156,14 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 	}
 
 	private void generateVBO(GL2 gl) {
-		int[] bufferNameArray = new int[1];
+		int[] t = new int[1];
+		if(bufferName != -1) {
+			t[0] = bufferName;
+			gl.glDeleteBuffers(1, t, 0);
+			fb.clear();
+		}
+		gl.glGenBuffers(1, t, 0);
+		bufferName = t[0];
 
 		firstOffsets = new int[aMantelqualitaet+2];
 		countOffsets = new int[aMantelqualitaet+2];
@@ -167,9 +177,6 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 		countOffsets[aMantelqualitaet + 1] = 8 * (aEckenzahl + 2);
 		
 		int vertexBufferSize = 16 * conf.xDivision * (conf.yDivision + 1) * Buffers.SIZEOF_FLOAT;
-
-		gl.glGenBuffers(1, bufferNameArray, 0);
-		bufferName = bufferNameArray[0];
 		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, bufferName);
 		gl.glBufferData(GL.GL_ARRAY_BUFFER, vertexBufferSize, null,
 				GL2.GL_STATIC_DRAW);

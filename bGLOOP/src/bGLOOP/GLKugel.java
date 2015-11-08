@@ -16,7 +16,6 @@ import com.jogamp.opengl.glu.GLU;
  */
 public class GLKugel extends GLTransformableObject {
 	private double aRad;
-	private int bufferName = -1;
 	private FloatBuffer fb;
 	private int[] firstOffsets, countOffsets;
 
@@ -66,12 +65,13 @@ public class GLKugel extends GLTransformableObject {
 	}
 
 	@Override
-	void doRenderGL(GL2 gl) {
+	void generateDisplayList(GL2 gl) {
 		double lX, lZ;
 		boolean texturePresent = (aTex != null) && aTex.isReady();
 		float qx = (float) (180.0 / conf.xDivision);
 		float qy = (float) (360.0 / conf.yDivision);
 
+		gl.glNewList(bufferName, GL2.GL_COMPILE);
 		for (int i = 0; i < conf.xDivision; ++i) { // conf.xDivision; i++) {
 			double ring1Y = Math.cos(Math.toRadians(i * qx));
 			double ring2Y = Math.cos(Math.toRadians((i + 1) * qx));
@@ -101,7 +101,7 @@ public class GLKugel extends GLTransformableObject {
 			}
 			gl.glEnd();
 		}
-
+		gl.glEndList();
 	}
 
 	@Override
@@ -117,8 +117,6 @@ public class GLKugel extends GLTransformableObject {
         gl.glTexCoordPointer( 2, GL.GL_FLOAT, 8 * Buffers.SIZEOF_FLOAT, 3 * Buffers.SIZEOF_FLOAT );
         gl.glVertexPointer(3, GL.GL_FLOAT, 8 * Buffers.SIZEOF_FLOAT, 5 * Buffers.SIZEOF_FLOAT);
         gl.glMultiDrawArrays(GL2.GL_TRIANGLE_STRIP, firstOffsets, 0, countOffsets, 0, conf.xDivision);
-        
-//        	gl.glDrawArrays( GL2.GL_TRIANGLE_STRIP, 2 * i * (conf.yDivision + 1), 2 * (conf.yDivision + 1));
 
         gl.glDisableClientState( GL2.GL_VERTEX_ARRAY );
         gl.glDisableClientState( GL2.GL_NORMAL_ARRAY );
@@ -129,7 +127,14 @@ public class GLKugel extends GLTransformableObject {
 	}
 
 	private void generateVBO(GL2 gl) {
-		int[] bufferNameArray = new int[1];
+		int[] t = new int[1];
+		if(bufferName != -1) {
+			t[0] = bufferName;
+			gl.glDeleteBuffers(1, t, 0);
+			fb.clear();
+		}
+		gl.glGenBuffers(1, t, 0);
+		bufferName = t[0];
 		firstOffsets = new int[conf.xDivision];
 		countOffsets = new int[conf.xDivision];
 		for(int i=0; i<conf.xDivision; ++i) {
@@ -138,8 +143,6 @@ public class GLKugel extends GLTransformableObject {
 		}
 		int vertexBufferSize = 16 * conf.xDivision * (conf.yDivision + 1) * Buffers.SIZEOF_FLOAT;
 
-		gl.glGenBuffers(1, bufferNameArray, 0);
-		bufferName = bufferNameArray[0];
 		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, bufferName);
 		gl.glBufferData(GL.GL_ARRAY_BUFFER, vertexBufferSize, null,
 				GL2.GL_STATIC_DRAW);

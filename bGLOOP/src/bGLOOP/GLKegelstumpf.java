@@ -87,6 +87,7 @@ public class GLKegelstumpf extends GLPrismoid {
 	@Override
 	public void setzeQualitaet(int pQ) {
 		aEckenzahl = pQ;
+		needsRedraw = true;
 		scheduleRender();
 	}
 }

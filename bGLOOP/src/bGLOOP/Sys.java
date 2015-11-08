@@ -1,10 +1,7 @@
 package bGLOOP;
 
-/**
- * Klasse mit einigen Hilfsfunktionen für das Entwickeln mit bGLOOP.
- * 
+/** Klasse mit einigen Hilfsfunktionen für das Entwickeln mit bGLOOP.
  * @author R. Spillner
- *
  */
 public class Sys {
 	public static void warte(long pMilliseconds) {

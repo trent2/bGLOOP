@@ -1,5 +1,7 @@
 package bGLOOP;
 
+import com.jogamp.opengl.GL2;
+
 import bGLOOP.linalg.Matrix4;
 
 abstract class GLTransformableObject extends GLObjekt implements IGLTransformierbar,
@@ -113,4 +115,19 @@ abstract class GLTransformableObject extends GLObjekt implements IGLTransformier
 	public double gibZ() {
 		return transformationMatrix.getMatrix()[14]/transformationMatrix.getMatrix()[15];
 	}
+
+	@Override
+	void doRenderGL(GL2 gl) {
+		if(needsRedraw) {
+			if(bufferName != -1)
+				gl.glDeleteLists(bufferName, 1);
+
+			bufferName = gl.glGenLists(1);
+			generateDisplayList(gl);
+			needsRedraw = false;
+		}
+		gl.glCallList(bufferName);
+	}
+
+	abstract void generateDisplayList(GL2 gl);
 }
