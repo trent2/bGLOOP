@@ -15,6 +15,9 @@ import com.jogamp.opengl.util.Animator;
 
 import bGLOOP.GLObjekt.Rendermodus;
 import bGLOOP.GLTextur.GLTextureImpl;
+import bGLOOP.windowimpl.AWTWindow;
+import bGLOOP.windowimpl.NEWTWindow;
+import bGLOOP.windowimpl.Window;
 
 class GLRenderer implements GLEventListener {
 

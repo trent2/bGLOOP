@@ -4,7 +4,7 @@ import java.awt.Toolkit;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import bGLOOP.windowimpl.MouseListener.MouseHandlerLogic;
+import bGLOOP.windowimpl.listener.MouseListenerFacade;
 
 /** Klasse zur direkten Abfrage der Maus.
  * <p>Mit dieser Klasse kann die Maus in Echtzeit abgefragt werden. Es wird dann
@@ -64,7 +64,7 @@ public class GLMaus {
 		};
 
 		associatedCam = GLKamera.aktiveKamera();
-		associatedCam.getRenderer().getWindow().addMouseListener(new MouseHandlerLogic() {
+		associatedCam.getRenderer().getWindow().addMouseListener(new MouseListenerFacade() {
 			@Override
 			public void handleMouseWheel(float wheelRotation) {
 			}

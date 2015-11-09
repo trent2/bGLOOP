@@ -1,7 +1,8 @@
 package bGLOOP;
 
 import com.jogamp.opengl.math.VectorUtil;
-import bGLOOP.windowimpl.MouseListener.MouseHandlerLogic;
+
+import bGLOOP.windowimpl.listener.MouseListenerFacade;
 
 /** Die Schwenkkamera ist gegenüber der {@link GLKamera} durch Maus-Dragging
  * um ihren Blickpunkt rotierbar. Außerdem ermöglicht sie Zoomen per Mausrad.
@@ -48,7 +49,7 @@ public class GLSchwenkkamera extends GLKamera {
 	}
 
 	private void addMouseListener() {
-		renderer.getWindow().addMouseListener(new MouseHandlerLogic() {
+		renderer.getWindow().addMouseListener(new MouseListenerFacade() {
 			float[] oldDir = new float[3];
 			int xstart, ystart;
 			double[] aPrevPos, aPrevUp;

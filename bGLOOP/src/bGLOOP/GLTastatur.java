@@ -1,6 +1,8 @@
 package bGLOOP;
 
-import bGLOOP.windowimpl.KeyboardListener.KeyPressedLogic;
+import com.jogamp.newt.event.KeyEvent;
+
+import bGLOOP.windowimpl.listener.KeyboardListenerFacade;
 
 /** <p>Klasse, mit der man Tastatureingaben abfragen kann.</p>
  * @author R. Spillner
@@ -24,43 +26,43 @@ public class GLTastatur {
 	/** Erzeugt ein GLTastatur-Objekt zur Abfrage der Tastatur.
 	 */
 	public GLTastatur() {
-		GLKamera.aktiveKamera().getRenderer().getWindow().addKeyboardListener(new KeyPressedLogic() {
+		GLKamera.aktiveKamera().getRenderer().getWindow().addKeyboardListener(new KeyboardListenerFacade() {
 			@Override
 			public void handleKeyPressed(char key, int keycode) {
 				// keycodes for NEWT KeyEvent and AWT KeyEvent are
 				// identical (whew)
 				switch(keycode) {
-				case java.awt.event.KeyEvent.VK_ALT:
+				case KeyEvent.VK_ALT:
 					aAlt = true;
 					break;
-				case java.awt.event.KeyEvent.VK_CONTROL:
+				case KeyEvent.VK_CONTROL:
 					aBack = true;
 					break;
-				case java.awt.event.KeyEvent.VK_SHIFT:
+				case KeyEvent.VK_SHIFT:
 					aShift = true;
 					break;
-				case java.awt.event.KeyEvent.VK_LEFT:
+				case KeyEvent.VK_LEFT:
 					aLeft = true;
 					break;
-				case java.awt.event.KeyEvent.VK_RIGHT:
+				case KeyEvent.VK_RIGHT:
 					aRight = true;
 					break;
-				case java.awt.event.KeyEvent.VK_UP:
+				case KeyEvent.VK_UP:
 					aUp = true;
 					break;
-				case java.awt.event.KeyEvent.VK_DOWN:
+				case KeyEvent.VK_DOWN:
 					aDown = true;
 					break;
-				case java.awt.event.KeyEvent.VK_ESCAPE:
+				case KeyEvent.VK_ESCAPE:
 					aEsc = true;
 					break;
-				case java.awt.event.KeyEvent.VK_TAB:
+				case KeyEvent.VK_TAB:
 					aTab = true;
 					break;
-				case java.awt.event.KeyEvent.VK_ENTER:
+				case KeyEvent.VK_ENTER:
 					aEnter = true;
 					break;
-				case java.awt.event.KeyEvent.VK_BACK_SPACE:
+				case KeyEvent.VK_BACK_SPACE:
 					aBack = true;
 					break;
 				default:
@@ -71,38 +73,38 @@ public class GLTastatur {
 			@Override
 			public void handleKeyReleased(char key, int keycode) {
 				switch(keycode) {
-				case java.awt.event.KeyEvent.VK_ALT:
-					aAlt = true;
+				case KeyEvent.VK_ALT:
+					aAlt = false;
 					break;
-				case java.awt.event.KeyEvent.VK_CONTROL:
-					aBack = true;
+				case KeyEvent.VK_CONTROL:
+					aBack = false;
 					break;
-				case java.awt.event.KeyEvent.VK_SHIFT:
-					aShift = true;
+				case KeyEvent.VK_SHIFT:
+					aShift = false;
 					break;
-				case java.awt.event.KeyEvent.VK_LEFT:
-					aLeft = true;
+				case KeyEvent.VK_LEFT:
+					aLeft = false;
 					break;
-				case java.awt.event.KeyEvent.VK_RIGHT:
-					aRight = true;
+				case KeyEvent.VK_RIGHT:
+					aRight = false;
 					break;
-				case java.awt.event.KeyEvent.VK_UP:
-					aUp = true;
+				case KeyEvent.VK_UP:
+					aUp = false;
 					break;
-				case java.awt.event.KeyEvent.VK_DOWN:
-					aDown = true;
+				case KeyEvent.VK_DOWN:
+					aDown = false;
 					break;
-				case java.awt.event.KeyEvent.VK_ESCAPE:
-					aEsc = true;
+				case KeyEvent.VK_ESCAPE:
+					aEsc = false;
 					break;
-				case java.awt.event.KeyEvent.VK_TAB:
-					aTab = true;
+				case KeyEvent.VK_TAB:
+					aTab = false;
 					break;
-				case java.awt.event.KeyEvent.VK_ENTER:
-					aEnter = true;
+				case KeyEvent.VK_ENTER:
+					aEnter = false;
 					break;
-				case java.awt.event.KeyEvent.VK_BACK_SPACE:
-					aBack = true;
+				case KeyEvent.VK_BACK_SPACE:
+					aBack = false;
 					break;
 				}
 			}

@@ -1,15 +1,20 @@
 package bGLOOP;
 
-import bGLOOP.windowimpl.KeyboardListener.KeyPressedLogic;
+import com.jogamp.newt.event.KeyEvent;
 
-/**
- * Die Entwicklerkamera hat zusätzliche Fähigkeiten gegenüber der
- * {@link GLKamera}. Sie ist durch Maus-Dragging um ihren Blickpunkt rotierbar.
- * Außerdem kann die dargestellte Szene durch folgende Tasten verändert werden:
+import bGLOOP.windowimpl.listener.KeyboardListenerFacade;
+
+/** Die Entwicklerkamera hat zusätzliche Fähigkeiten gegenüber der
+ * {@link GLSchwenkkamera}. Die dargestellte Szene kann durch folgende Tasten
+ * verändert werden:
  * <ul>
  * <li><code>g</code>: Wechselt zwischen individueller und
  * Drahtgitterdarstellung.</li>
  * <li><code>a</code>: Blendet die Koordinatenachsen ein und aus</li>
+ * <li><code>s</code>: Setzt die Kamera auf <code>(0,0,500)</code> mit Blickpunkt
+ * auf <code>(0,0,0)</code> </li>
+ * <li><code>&#8593;</code>: Rückt die Kamera ein Stück nach oben</li>
+ * <li><code>&#8595;</code>: Rückt die Kamera ein Stück nach unten</li>
  * </ul>
  * 
  * @author R. Spillner
@@ -54,7 +59,7 @@ public class GLEntwicklerkamera extends GLSchwenkkamera {
 	}
 
 	private void addKeyboardListener() {
-		renderer.getWindow().addKeyboardListener(new KeyPressedLogic() {
+		renderer.getWindow().addKeyboardListener(new KeyboardListenerFacade() {
 			@Override
 			public void handleKeyPressed(char key, int keycode) {
 				switch (key) {
@@ -69,6 +74,18 @@ public class GLEntwicklerkamera extends GLSchwenkkamera {
 					aPos[0] = 0; aPos[1] = 0; aPos[2] = 500;
 					aLookAt[0] = 0; aLookAt[1] = 0; aLookAt[2] = 0;
 					aUp[0] = 0; aUp[1] = 1; aUp[2] = 0;
+					getRenderer().scheduleRender();
+					break;
+				}
+				switch (keycode) {
+				case KeyEvent.VK_UP:
+					aPos[0] += aUp[0]*10; aPos[1] += aUp[1]*10; aPos[2] += aUp[2]*10;
+					aLookAt[0] += aUp[0]*10; aLookAt[1] += aUp[1]*10; aLookAt[2] += aUp[2]*10;
+					getRenderer().scheduleRender();
+					break;
+				case KeyEvent.VK_DOWN:
+					aPos[0] -= aUp[0]*10; aPos[1] -= aUp[1]*10; aPos[2] -= aUp[2]*10;
+					aLookAt[0] -= aUp[0]*10; aLookAt[1] -= aUp[1]*10; aLookAt[2] -= aUp[2]*10;
 					getRenderer().scheduleRender();
 					break;
 				}

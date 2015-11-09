@@ -1,5 +1,9 @@
 package bGLOOP;
 
+/** Methoden, die von Objekten unterstützt werden, die in kleinere Polygone
+ * unterteilbar sind.
+ * @author R. Spillner
+ */
 public interface IGLSubdivisable {
 	/** Anzahl der polygonalen Unterteilungen des Modells. Jedem Objekt liegt ein
 	 * Gittermodell zugrundeliegenden. Je größer die Anzahl der Unteilungen,

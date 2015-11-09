@@ -1,17 +1,21 @@
-package bGLOOP;
+package bGLOOP.windowimpl;
 
 import java.awt.Frame;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
+import com.jogamp.newt.event.awt.AWTKeyAdapter;
+import com.jogamp.newt.event.awt.AWTMouseAdapter;
 import com.jogamp.opengl.GLCapabilities;
 import com.jogamp.opengl.awt.GLCanvas;
 import com.jogamp.opengl.util.Animator;
 
-import bGLOOP.windowimpl.KeyboardListener;
-import bGLOOP.windowimpl.MouseListener;
+import bGLOOP.windowimpl.listener.KeyboardListener;
+import bGLOOP.windowimpl.listener.KeyboardListenerFacade;
+import bGLOOP.windowimpl.listener.MouseListener;
+import bGLOOP.windowimpl.listener.MouseListenerFacade;
 
-final class AWTWindow extends Window {
+final public class AWTWindow extends Window {
 	private GLCanvas canvas;
 	private Frame frame;
 
@@ -20,7 +24,7 @@ final class AWTWindow extends Window {
 	}
 
 	@Override
-	Object createWindow(GLCapabilities caps, int width, int height) {
+	public Object createWindow(GLCapabilities caps, int width, int height) {
 		final Animator animator;
 
 		frame = new Frame("bGLOOP");
@@ -44,27 +48,23 @@ final class AWTWindow extends Window {
 	}
 
 	@Override
-	void addMouseListener(MouseListener.MouseHandlerLogic mhl) {
-		MouseListener ml = new MouseListener(mhl);
-		canvas.addMouseListener(ml);
-		canvas.addMouseMotionListener(ml);
-		canvas.addMouseWheelListener(ml);
+	public void addMouseListener(MouseListenerFacade mhl) {
+		new AWTMouseAdapter(new MouseListener(mhl), canvas).addTo(canvas);
 	}
 
 	@Override
-	void addKeyboardListener(KeyboardListener.KeyPressedLogic kpl) {
-		KeyboardListener dckl = new KeyboardListener(kpl);
-		canvas.addKeyListener(dckl);
-		frame.addKeyListener(dckl);
+	public void addKeyboardListener(KeyboardListenerFacade kpl) {
+		new AWTKeyAdapter(new KeyboardListener(kpl), canvas).
+			addTo(canvas).addTo(frame);
 	}
 
 	@Override
-	void setDecoration(boolean pDecorate) {
+	public void setDecoration(boolean pDecorate) {
 		frame.setUndecorated(pDecorate);
 	}
 
 	@Override
-	void setFullscreen(boolean pFullscreen) {
+	public void setFullscreen(boolean pFullscreen) {
 		if (pFullscreen)
 			frame.setExtendedState(Frame.MAXIMIZED_BOTH);
 		else
@@ -72,7 +72,7 @@ final class AWTWindow extends Window {
 	}
 
 	@Override
-	void startDisplay() {
+	public void startDisplay() {
 		frame.setVisible(true);
 	}
 }
