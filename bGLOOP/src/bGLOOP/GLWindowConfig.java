@@ -97,7 +97,6 @@ class GLWindowConfig {
 			globalObjectRenderMode = Rendermodus.RENDER_GL;
 		else if ("VBO".equals(t))
 			globalObjectRenderMode = Rendermodus.RENDER_VBOGL;
-		System.err.println("DEBUG INFO: Rendering with mode " + t);
 
 		t = bgloopSetting.getProperty("DEFAULT_RENDER_DRAW_MODE");
 		if ("POINT".equals(t))

@@ -6,7 +6,6 @@ import bGLOOP.linalg.Matrix4;
 
 abstract class GLTransformableObject extends GLObjekt implements IGLTransformierbar,
 	IGLDisplayable, IGLSubdivisable {
-	boolean needsRedraw = true;
 
 	GLTransformableObject() {
 		this(null);

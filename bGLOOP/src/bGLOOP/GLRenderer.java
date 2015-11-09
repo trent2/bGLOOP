@@ -235,7 +235,7 @@ class GLRenderer implements GLEventListener {
 			for (GLDisplayItem di : entry.getValue())
 				di.render(gl, glu);
 		}
-		if(tImp != null)
+		if(tImp != null && tImp.isReady())
 			tImp.getTexture().disable(gl);
 
 		// render objects with texture

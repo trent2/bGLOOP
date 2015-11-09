@@ -55,6 +55,8 @@ public class GLQuader extends GLTransformableObject {
 	 */
 	public GLQuader(double pMX, double pMY, double pMZ, double pLX, double pLY, double pLZ, GLTextur pTextur) {
 		super(pTextur);
+		if(pLX<0 || pLY<0 || pLZ<0)
+			throw new IllegalArgumentException("Die Seitenlängen dürfen nicht negativ sein!");
 		skaliere(pLX, pLY, pLZ);
 		verschiebe(pMX, pMY, pMZ);
 	}

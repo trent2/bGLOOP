@@ -60,6 +60,7 @@ public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
 	GLTextur aTex;
 	Matrix4 transformationMatrix;
 	GLUquadric quadric;
+	boolean needsRedraw = true;
 
 	abstract void doRenderGL(GL2 gl);
 	abstract void doRenderGL_VBO(GL2 gl);

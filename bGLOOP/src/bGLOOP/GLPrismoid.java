@@ -19,7 +19,7 @@ import com.jogamp.opengl.glu.GLU;
  * @author R. Spillner
  */
 public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable {
-	int aEckenzahl;
+	int aEckenzahl, numberOfRadsNotEqualToZero = 0;
 	double aRad1;
 	double aRad2;
 	double aTiefe;
@@ -56,11 +56,14 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 	public GLPrismoid(double pMX, double pMY, double pMZ, double pRadius1, double pRadius2, int pEckenzahl, double pHoehe,
 			GLTextur pTextur) {
 		super(pTextur);
-		conf.objectRenderMode = Rendermodus.RENDER_GL;
+		if(conf.objectRenderMode == Rendermodus.RENDER_GLU)
+			conf.objectRenderMode = Rendermodus.RENDER_GL;
 		setzeDarstellungsModus(conf.displayMode);
 
 		verschiebe(pMX, pMY, pMZ);
 
+		if(pEckenzahl<0 || pRadius1<0 || pRadius2<0 || pHoehe < 0)
+			throw new IllegalArgumentException("Eckenzahl, Radien und Höhe dürfen nicht negativ sein!");
 		aEckenzahl = pEckenzahl;
 		aRad1 = pRadius1;
 		aRad2 = pRadius2;
@@ -85,7 +88,7 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 
         // drawing from buffer
         gl.glMultiDrawArrays(GL2.GL_TRIANGLE_STRIP, firstOffsets, 0, countOffsets, 0, aMantelqualitaet);
-        gl.glMultiDrawArrays(GL2.GL_TRIANGLE_FAN, firstOffsets, aMantelqualitaet, countOffsets, aMantelqualitaet, 2);
+        gl.glMultiDrawArrays(GL2.GL_TRIANGLE_FAN, firstOffsets, aMantelqualitaet, countOffsets, aMantelqualitaet, numberOfRadsNotEqualToZero);
         // ----------------
 
         gl.glDisableClientState( GL2.GL_VERTEX_ARRAY );
@@ -103,21 +106,22 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 
 	@Override
 	void generateDisplayList(GL2 gl) {
-		double lWinkel = 360.0 / aEckenzahl;
+		double lWinkel = 2 * Math.PI / aEckenzahl;
 
 		double lNorm = 0;
 		double lMantelschritt = aTiefe / aMantelqualitaet;
+		boolean texturePresent = (aTex != null) && aTex.isReady();
 
 		gl.glNewList(bufferName, GL2.GL_COMPILE);
 		for (int j = 0; j < aMantelqualitaet; j++) {
 			gl.glBegin(GL2.GL_QUAD_STRIP);
 
-			double x = Math.sin(Math.toRadians(lWinkel / 2));
-			double y = -Math.cos(Math.toRadians(lWinkel / 2));
+			double x = Math.sin(lWinkel / 2);
+			double y = -Math.cos(lWinkel / 2);
 
 			for (int i = 0; i <= aEckenzahl; i++) {
-				double x2 = Math.sin(Math.toRadians(lWinkel / 2 + ((i + 1) * lWinkel)));
-				double y2 = -Math.cos(Math.toRadians(lWinkel / 2 + ((i + 1) * lWinkel)));
+				double x2 = Math.sin(lWinkel / 2 + ((i + 1) * lWinkel));
+				double y2 = -Math.cos(lWinkel / 2 + ((i + 1) * lWinkel));
 
 				double rad1 = aRad1 + j * (aRad2 - aRad1) / aMantelqualitaet;
 				double rad2 = aRad1 + (j + 1) * (aRad2 - aRad1) / aMantelqualitaet;
@@ -128,16 +132,20 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 				} else {
 					gl.glNormal3d(x, y, 0);
 				}
-				gl.glTexCoord2d(i * lWinkel / 360, j / aMantelqualitaet);
+				if(texturePresent)
+					gl.glTexCoord2d(i * lWinkel / (2*Math.PI), j / aMantelqualitaet);
 				gl.glVertex3d(x * rad1, y * rad1, aTiefe / 2 - j * lMantelschritt);
-				gl.glTexCoord2d(i * lWinkel / 360, (j + 1) / aMantelqualitaet);
+				if(texturePresent)
+					gl.glTexCoord2d(i * lWinkel / (2*Math.PI), (j + 1) / aMantelqualitaet);
 				gl.glVertex3d(x * rad2, y * rad2, aTiefe / 2 - (j + 1) * lMantelschritt);
 
 				if (!aMantelglaettung) {
 					gl.glNormal3d((x + x2) / lNorm, (y + y2) / lNorm, 0);
-					gl.glTexCoord2d((i * lWinkel + lWinkel) / 360, j / aMantelqualitaet);
+					if(texturePresent)
+						gl.glTexCoord2d((i * lWinkel + lWinkel) / (2*Math.PI), j / aMantelqualitaet);
 					gl.glVertex3d(x2 * rad1, y2 * rad1, aTiefe / 2 - j * lMantelschritt);
-					gl.glTexCoord2d((i * lWinkel + lWinkel) / 360, (j + 1) / aMantelqualitaet);
+					if(texturePresent)
+						gl.glTexCoord2d((i * lWinkel + lWinkel) / (2*Math.PI), (j + 1) / aMantelqualitaet);
 					gl.glVertex3d(x2 * rad2, y2 * rad2, aTiefe / 2 - (j + 1) * lMantelschritt);
 				}
 
@@ -145,31 +153,34 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 				y = y2;
 			}
 			gl.glEnd();
-			
 		}
 
-		if (aRad1 > 0) {
+		if (aRad1 != 0) {
 			gl.glBegin(GL2.GL_TRIANGLE_FAN);
 			gl.glNormal3d(0, 0, 1);
-			gl.glTexCoord2d(0.5, 0.5);
+			if(texturePresent)
+				gl.glTexCoord2d(0.5, 0.5);
 			gl.glVertex3d(0, 0, aTiefe / 2);
 			for (int i = 0; i <= aEckenzahl; i++) {
-				double x = Math.sin(Math.toRadians(lWinkel / 2 + i * lWinkel));
-				double y = -Math.cos(Math.toRadians(lWinkel / 2 + i * lWinkel));
-				gl.glTexCoord2d(0.5 + x / 2, 0.5 - y / 2);
+				double x = Math.sin(lWinkel / 2 + i * lWinkel);
+				double y = -Math.cos(lWinkel / 2 + i * lWinkel);
+				if(texturePresent)
+					gl.glTexCoord2d(0.5 + x / 2, 0.5 - y / 2);
 				gl.glVertex3d(x * aRad1, y * aRad1, aTiefe / 2);
 			}
 			gl.glEnd();
 		}
-		if (aRad2 > 0) {
+		if (aRad2 != 0) {
 			gl.glBegin(GL2.GL_TRIANGLE_FAN);
 			gl.glNormal3d(0, 0, -1);
-			gl.glTexCoord2d(0.5, 0.5);
+			if(texturePresent)
+				gl.glTexCoord2d(0.5, 0.5);
 			gl.glVertex3d(0.0, 0.0, -aTiefe / 2);
 			for (int i = aEckenzahl; i >= 0; i--) {
-				double x = Math.sin(Math.toRadians(lWinkel / 2 + i * lWinkel));
-				double y = -Math.cos(Math.toRadians(lWinkel / 2 + i * lWinkel));
-				gl.glTexCoord2d(0.5 + x / 2, 0.5 + y / 2);
+				double x = Math.sin(lWinkel / 2 + i * lWinkel);
+				double y = -Math.cos(lWinkel / 2 + i * lWinkel);
+				if(texturePresent)
+					gl.glTexCoord2d(0.5 + x / 2, 0.5 + y / 2);
 				gl.glVertex3d(x * aRad2, y * aRad2, -aTiefe / 2);
 			}
 			gl.glEnd();
@@ -193,18 +204,30 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 		gl.glGenBuffers(1, t, 0);
 		bufferName = t[0];
 
-		firstOffsets = new int[aMantelqualitaet+2];
-		countOffsets = new int[aMantelqualitaet+2];
-		for(int i=0; i<aMantelqualitaet; ++i) {
-			firstOffsets[i] = 32 * (aEckenzahl + 1) * i;
-			countOffsets[i] = 32 * (aEckenzahl + 1);
-		}
-		firstOffsets[aMantelqualitaet] = aMantelqualitaet * 32 * (aEckenzahl + 1);
-		countOffsets[aMantelqualitaet] = 8 * (aEckenzahl + 2);
-		firstOffsets[aMantelqualitaet + 1] = firstOffsets[aMantelqualitaet] + countOffsets[aMantelqualitaet]; 
-		countOffsets[aMantelqualitaet + 1] = 8 * (aEckenzahl + 2);
+		// build offset arrays to address different stages during
+		// drawing process of the prismoid
+		numberOfRadsNotEqualToZero = (aRad1!=0?1:0) + (aRad2!=0?1:0);
+		firstOffsets = new int[aMantelqualitaet+numberOfRadsNotEqualToZero];
+		countOffsets = new int[aMantelqualitaet+numberOfRadsNotEqualToZero];
+
 		
-		int vertexBufferSize = 16 * conf.xDivision * (conf.yDivision + 1) * Buffers.SIZEOF_FLOAT;
+		for (int i = 0; i < aMantelqualitaet; ++i) {
+			firstOffsets[i] = (aMantelglaettung ? 2 : 4) * (aEckenzahl + 1) * i;
+			countOffsets[i] = (aMantelglaettung ? 2 : 4) * (aEckenzahl + 1);
+		}
+		int t2 = 0;
+		if(aRad1!=0) {
+			firstOffsets[aMantelqualitaet] = firstOffsets[aMantelqualitaet-1] + countOffsets[aMantelqualitaet-1];
+			countOffsets[aMantelqualitaet] = aEckenzahl + 2;
+			t2++;
+		}
+		if (aRad2 != 0) {
+			firstOffsets[aMantelqualitaet + t2] = firstOffsets[aMantelqualitaet + t2 - 1]
+					+ countOffsets[aMantelqualitaet + t2 - 1];
+			countOffsets[aMantelqualitaet + t2] = aEckenzahl + 2;
+		}
+		
+		int vertexBufferSize =  16 * ((aMantelglaettung ? 1 : 2) * (aEckenzahl + 1) * aMantelqualitaet + aEckenzahl + 2) * Buffers.SIZEOF_FLOAT;
 		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, bufferName);
 		gl.glBufferData(GL.GL_ARRAY_BUFFER, vertexBufferSize, null,
 				GL2.GL_STATIC_DRAW);
@@ -212,17 +235,21 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 				.asFloatBuffer();
 
 		// ready for drawing (to buffer)
-		double lWinkel = 360.0 / aEckenzahl;
+		double lWinkel = 2 * Math.PI / aEckenzahl;
 		double lNorm = 0;
 		double lMantelschritt = aTiefe / aMantelqualitaet;
+
 		for (int j = 0; j < aMantelqualitaet; j++) {
-			double x = Math.sin(Math.toRadians(lWinkel / 2));
-			double y = -Math.cos(Math.toRadians(lWinkel / 2));
+			double x = Math.sin(lWinkel / 2);
+			double y = -Math.cos(lWinkel / 2);
+
 			for (int i = 0; i <= aEckenzahl; i++) {
-				double x2 = Math.sin(Math.toRadians(lWinkel / 2 + ((i + 1) * lWinkel)));
-				double y2 = -Math.cos(Math.toRadians(lWinkel / 2 + ((i + 1) * lWinkel)));
+				double x2 = Math.sin(lWinkel / 2 + ((i + 1) * lWinkel));
+				double y2 = -Math.cos(lWinkel / 2 + ((i + 1) * lWinkel));
+
 				double rad1 = aRad1 + j * (aRad2 - aRad1) / aMantelqualitaet;
 				double rad2 = aRad1 + (j + 1) * (aRad2 - aRad1) / aMantelqualitaet;
+
 				if (!aMantelglaettung) {
 					lNorm = (x + x2) * (x+x2) + (y + y2) * (y + y2);
 					fb.put((float)((x + x2) / lNorm));
@@ -233,14 +260,15 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 					fb.put((float)y);
 					fb.put(0);
 				}
-				fb.put((float)(i * lWinkel / 360));
+
+
+				fb.put((float)(i * lWinkel / (2*Math.PI)));
 				fb.put((float)(j / aMantelqualitaet));
 				fb.put((float)(x * rad1));
 				fb.put((float)(y * rad1));
-				fb.put((float)(aTiefe / 2 - j * lMantelschritt));
+				fb.put((float)(aTiefe / 2 - j * lMantelschritt));  // 8
 
 				if (!aMantelglaettung) {
-					lNorm = (x + x2) * (x+x2) + (y + y2) * (y + y2);
 					fb.put((float)((x + x2) / lNorm));
 					fb.put((float)((y + y2) / lNorm));
 					fb.put(0);
@@ -249,77 +277,80 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 					fb.put((float)y);
 					fb.put(0);
 				}
-
-				fb.put((float)(i * lWinkel / 360));
+				fb.put((float)(i * lWinkel / (2*Math.PI)));
 				fb.put((float)((j + 1) / aMantelqualitaet));
 				fb.put((float)(x * rad2));
 				fb.put((float)(y * rad2));
-				fb.put((float)(aTiefe / 2 - (j + 1) * lMantelschritt));
+				fb.put((float)(aTiefe / 2 - (j + 1) * lMantelschritt));  // 16
 
 				if (!aMantelglaettung) {
 					fb.put((float)((x + x2) / lNorm));
 					fb.put((float)((y + y2) / lNorm));
 					fb.put(0);
-					fb.put((float)((i * lWinkel + lWinkel) / 360));
+					fb.put((float)((i * lWinkel + lWinkel) / (2*Math.PI)));
 					fb.put((float)(j / aMantelqualitaet));
 					fb.put((float)(x2 * rad1));
 					fb.put((float)(y2 * rad1));
-					fb.put((float)(aTiefe / 2 - j * lMantelschritt));
+					fb.put((float)(aTiefe / 2 - j * lMantelschritt));  // 24
 					fb.put((float)((x + x2) / lNorm));
 					fb.put((float)((y + y2) / lNorm));
 					fb.put(0);
-					fb.put((float)((i * lWinkel + lWinkel) / 360));
+					fb.put((float)((i * lWinkel + lWinkel) / (2*Math.PI)));
 					fb.put((float)((j + 1) / aMantelqualitaet));
 					fb.put((float)(x2 * rad2));
 					fb.put((float)(y2 * rad2));
-					fb.put((float)(aTiefe / 2 - (j + 1) * lMantelschritt));
+					fb.put((float)(aTiefe / 2 - (j + 1) * lMantelschritt));  // 32
 				}
-
 				x = x2;
 				y = y2;
 			}
 		}
 
-		fb.put(0);
-		fb.put(0);
-		fb.put(1);
-		fb.put(0.5f);
-		fb.put(0.5f);
-		fb.put(0);
-		fb.put(0);
-		fb.put((float)(aTiefe / 2));
-		for (int i = 0; i <= aEckenzahl; i++) {
-			double x = Math.sin(Math.toRadians(lWinkel / 2 + i * lWinkel));
-			double y = -Math.cos(Math.toRadians(lWinkel / 2 + i * lWinkel));
+		if (aRad1 != 0) {
 			fb.put(0);
 			fb.put(0);
 			fb.put(1);
-			fb.put((float)(0.5 + x / 2));
-			fb.put((float)(0.5 - y / 2));
-			fb.put((float)(x * aRad1));
-			fb.put((float)(y * aRad1));
-			fb.put((float)(aTiefe / 2));
-		}
+			fb.put(0.5f);
+			fb.put(0.5f);
+			
+			fb.put(0);
+			fb.put(0);
+			fb.put((float)(aTiefe / 2)); // 8
 
-		fb.put(0);
-		fb.put(0);
-		fb.put(-1);
-		fb.put(0.5f);
-		fb.put(0.5f);
-		fb.put(0);
-		fb.put(0);
-		fb.put((float)(-aTiefe / 2));
-		for (int i = aEckenzahl; i >= 0; i--) {
-			double x = Math.sin(Math.toRadians(lWinkel / 2 + i * lWinkel));
-			double y = -Math.cos(Math.toRadians(lWinkel / 2 + i * lWinkel));
+			for (int i = 0; i <= aEckenzahl; i++) {
+				double x = Math.sin(lWinkel / 2 + i * lWinkel);
+				double y = -Math.cos(lWinkel / 2 + i * lWinkel);
+				fb.put(0);
+				fb.put(0);
+				fb.put(1);
+				fb.put((float)(0.5 + x / 2));
+				fb.put((float)(0.5 - y / 2));
+				fb.put((float)(x * aRad1));
+				fb.put((float)(y * aRad1));
+				fb.put((float)(aTiefe / 2)); // 8
+			}
+		}
+		if (aRad2 != 0) {
 			fb.put(0);
 			fb.put(0);
-			fb.put(1);
-			fb.put((float)(0.5 + x / 2));
-			fb.put((float)(0.5 + y / 2));
-			fb.put((float)(x * aRad2));
-			fb.put((float)(y * aRad2));
-			fb.put((float)(-aTiefe / 2));
+			fb.put(-1);
+			fb.put(0.5f);
+			fb.put(0.5f);
+			fb.put(0);
+			fb.put(0);
+			fb.put((float)(-aTiefe / 2)); // 8
+			for (int i = aEckenzahl; i >= 0; i--) {
+				double x = Math.sin(lWinkel / 2 + i * lWinkel);
+				double y = -Math.cos(lWinkel / 2 + i * lWinkel);
+				fb.put(0);
+				fb.put(0);
+				fb.put(-1);
+				fb.put((float)(0.5 + x / 2));
+				fb.put((float)(0.5 + y / 2));
+				fb.put((float)(x * aRad2));
+				fb.put((float)(y * aRad2));
+				fb.put((float)(-aTiefe / 2));  // 8
+			}
 		}
 		gl.glUnmapBuffer(GL.GL_ARRAY_BUFFER);
 		needsRedraw = false;

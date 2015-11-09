@@ -8,10 +8,6 @@
 		</delete>
 	</target>
 
-	<taget name="obfuscate">
-
-	</taget>
-
 	<target name="compile" depends="clean">
 		<mkdir dir="build/classes" />
 		<javac srcdir="src/bGLOOP" destdir="build/classes" includeantruntime="false">

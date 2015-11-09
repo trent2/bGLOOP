@@ -1,6 +1,7 @@
 package bGLOOP;
 
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.glu.GLU;
 
 /**
  * Ein Kegelstumpf ist ein Kegel, dessen Spitze abgeschitten wurde. Die
@@ -75,17 +76,18 @@ public class GLKegelstumpf extends GLPrismoid {
 			aEckenzahl = 12;
 		if (aEckenzahl > 40)
 			aEckenzahl = 40;
+		needsRedraw = true;
 	}
 
 	@Override
-	void doRenderGL(GL2 gl) {
+	void render(GL2 gl, GLU glu) {
 		if (aEckenzahl == 0)
 			berechneQualitaet();
-		super.doRenderGL(gl);
+		super.render(gl, glu);
 	}
 
 	@Override
-	public void setzeQualitaet(int pQ) {
+	public synchronized void setzeQualitaet(int pQ) {
 		aEckenzahl = pQ;
 		needsRedraw = true;
 		scheduleRender();

@@ -52,6 +52,8 @@ public class GLKugel extends GLTransformableObject {
 	 */
 	public GLKugel(double pMX, double pMY, double pMZ, double pRadius, GLTextur pTextur) {
 		super(pTextur);
+		if(pRadius<0)
+			throw new IllegalArgumentException("Der Radius darf nicht negativ sein!");
 		verschiebe(pMX, pMY, pMZ);
 		aRad = pRadius;
 	}
@@ -68,22 +70,22 @@ public class GLKugel extends GLTransformableObject {
 	void generateDisplayList(GL2 gl) {
 		double lX, lZ;
 		boolean texturePresent = (aTex != null) && aTex.isReady();
-		float qx = (float) (180.0 / conf.xDivision);
-		float qy = (float) (360.0 / conf.yDivision);
+		float qx = (float) (Math.PI / conf.xDivision);
+		float qy = (float) (2 * Math.PI / conf.yDivision);
 
 		gl.glNewList(bufferName, GL2.GL_COMPILE);
 		for (int i = 0; i < conf.xDivision; ++i) { // conf.xDivision; i++) {
-			double ring1Y = Math.cos(Math.toRadians(i * qx));
-			double ring2Y = Math.cos(Math.toRadians((i + 1) * qx));
+			double ring1Y = Math.cos(i * qx);
+			double ring2Y = Math.cos((i + 1) * qx);
 
-			double ring1X = Math.sin(Math.toRadians(i * qx));
-			double ring2X = Math.sin(Math.toRadians((i + 1) * qx));
+			double ring1X = Math.sin(i * qx);
+			double ring2X = Math.sin((i + 1) * qx);
 
 			// need to go around one whole turn
 			gl.glBegin(GL2.GL_QUAD_STRIP);
 			for (int j = 0; j <= conf.yDivision; j++) {
-				lX = Math.cos(Math.toRadians(j * qy));
-				lZ = Math.sin(Math.toRadians(j * qy));
+				lX = Math.cos(j * qy);
+				lZ = Math.sin(j * qy);
 
 				// first vertex of the quad is the third of the previous
 				gl.glNormal3d(lX * ring1X, lZ * ring1X, ring1Y);
@@ -151,18 +153,19 @@ public class GLKugel extends GLTransformableObject {
 
 		// ready for drawing (to buffer)
 		float lX, lZ;
-		float qx = (float)(180.0 / conf.xDivision);
-		float qy = (float)(360.0 / conf.yDivision);		for (int i = 0; i < conf.xDivision; ++i) { // conf.xDivision; i++) {
-			float ring1Y = (float)Math.cos(Math.toRadians(i * qx));
-			float ring2Y = (float)Math.cos(Math.toRadians((i + 1) * qx));
+		float qx = (float)(Math.PI / conf.xDivision);
+		float qy = (float)(2*Math.PI / conf.yDivision);
+		for (int i = 0; i < conf.xDivision; ++i) { // conf.xDivision; i++) {
+			float ring1Y = (float)Math.cos(i * qx);
+			float ring2Y = (float)Math.cos((i + 1) * qx);
 
-			float ring1X = (float)Math.sin(Math.toRadians(i * qx));
-			float ring2X = (float)Math.sin(Math.toRadians((i + 1) * qx));
+			float ring1X = (float)Math.sin(i * qx);
+			float ring2X = (float)Math.sin((i + 1) * qx);
 
 			// need to go around one whole turn
 			for (int j = 0; j <= conf.yDivision; j++) {
-				lX = (float) Math.cos(Math.toRadians(j * qy));
-				lZ = (float) Math.sin(Math.toRadians(j * qy));
+				lX = (float) Math.cos(j * qy);
+				lZ = (float) Math.sin(j * qy);
 				// vertex #1
 				// normals
 				fb.put(lX * ring1X);
