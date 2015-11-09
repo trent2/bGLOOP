@@ -1,9 +1,13 @@
 package bGLOOP;
 
 import com.jogamp.opengl.math.VectorUtil;
-
 import bGLOOP.windowimpl.MouseListener.MouseHandlerLogic;
 
+/** Die Schwenkkamera ist gegenüber der {@link GLKamera} durch Maus-Dragging
+ * um ihren Blickpunkt rotierbar. Außerdem ermöglicht sie Zoomen per Mausrad.
+ * 
+ * @author R. Spillner
+ */
 public class GLSchwenkkamera extends GLKamera {
 	/**
 	 * Erstellt eine schwenkbare Kamera mit zusätzlichen

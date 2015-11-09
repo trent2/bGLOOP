@@ -2,13 +2,11 @@ package bGLOOP;
 
 import bGLOOP.GLObjekt.Darstellungsmodus;
 
-/** <p>Ein GLLichtobjekt ist im Prinzip ein normales bGLOOP-Objekt, z.B. eine 
- * Kugel, ein {@link GLZylinder Zylinder}, ein {@link GLKegel Kegel}, ein
- * {@link GLKegelstumpf Kegelstumpf} etc. Allerdings emittiert es
- * Licht &mdash; es leuchtet.</p><p>
- * Die Klasse kann dazu verwendet werden, um etwa Kerzenflammen oder Lampen
- * darzustellen.</p><p>
- * Das an den {@link #GLLichtobjekt(GLTransformableObject) Konstruktor} übergebene
+/** <p>Ein GLLichtobjekt ein normales bGLOOP-Objekt, das leuchtet. Dies kann
+ * im einzelnen z.B. eine Kugel, ein {@link GLZylinder Zylinder}, ein {@link GLKegel Kegel},
+ * ein {@link GLKegelstumpf Kegelstumpf} usw. sein. Die Klasse kann dazu verwendet werden, um
+ * etwa Kerzenflammen oder Lampen darzustellen.</p>
+ * <p>Das an den {@link #GLLichtobjekt(GLTransformableObject) Konstruktor} übergebene
  * Objekt sollte nicht mehr verwendet werden, d.h. es sollten keine Methoden auf
  * ihm ausgeführt werden. Dies sollte nun auf dem Lichtobjekt passieren.</p><p>
  * <em>Beispiel:</em>

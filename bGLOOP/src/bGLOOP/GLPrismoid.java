@@ -8,6 +8,16 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 
+/** <p>Ein Prismoid ist eine Art polygonaler Kegelstumpf. Es besteht aus zwei
+ * <em>regelmäßigen</em> n-Ecks mit unteschiedlichem Radius, deren Ecken respektive
+ * miteinander verbunden sind. Die n-Ecks liegen so zueinander im Raum, dass die
+ * Verbindungslinie durch die beiden Mittelpunkte senkrecht zu beiden n-Ecks steht
+ * (also sind die beiden n-Ecks insbesondere parallel zueinander).</p>
+ * <p>In bGLOOP werden Prismoiden vor allem als Basisklasse für
+ * {@link GLKegelstumpf Kegelstümpfe} und {@link GLKegel Kegel} verwendet, aber es
+ * können auch GLPrismoid-Objekte instanziiert werden.</p>
+ * @author R. Spillner
+ */
 public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable {
 	int aEckenzahl;
 	double aRad1;
@@ -16,22 +26,40 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 	boolean aMantelglaettung;
 	private FloatBuffer fb;
 	private int[] firstOffsets, countOffsets;
-;
 	int aMantelqualitaet;
-	// TODO: remove stupid Manteglättung, Mantelqualität
 
-	public GLPrismoid(double pX, double pY, double pZ, double pRadius1, double pRadius2, int pEckenzahl,
+	/** Erzeugt ein Prismoidobjekt mit Mittelpunkt <code>M(pMX, pMY, pMZ)</code>,
+	 * Radien <code>pRadius1</code> und <code>pRadius2</code> und Höhe
+	 * <code>pHoehe</code>. Die 
+	 * @param pMX x-Koordinate des Mittelpunkts
+	 * @param pMY y-Koordinate des Mittelpunkts
+	 * @param pMZ z-Koordinate des Mittelpunkts
+	 * @param pRadius1 Radius der Bodenfläche
+	 * @param pRadius2 Radius der Deckelfläche
+	 * @param pEckenzahl Anzahl n der regelmäßigen n-Ecks der Boden- und Deckelfläche
+	 * @param pHoehe Abstand zwischen Boden- und Deckelfläche
+	 */
+	public GLPrismoid(double pMX, double pMY, double pMZ, double pRadius1, double pRadius2, int pEckenzahl,
 			double pHoehe) {
-		this(pX, pY, pZ, pRadius1, pRadius2, pEckenzahl, pHoehe, null);
+		this(pMX, pMY, pMZ, pRadius1, pRadius2, pEckenzahl, pHoehe, null);
 	}
-
-	public GLPrismoid(double pX, double pY, double pZ, double pRadius1, double pRadius2, int pEckenzahl, double pHoehe,
+	/** Erzeugt ein Prismoidobjekt mit Textur.
+	 * @param pMX x-Koordinate des Mittelpunkts
+	 * @param pMY y-Koordinate des Mittelpunkts
+	 * @param pMZ z-Koordinate des Mittelpunkts
+	 * @param pRadius1 Radius der Bodenfläche
+	 * @param pRadius2 Radius der Deckelfläche
+	 * @param pEckenzahl Anzahl n der regelmäßigen n-Ecks der Boden- und Deckelfläche
+	 * @param pHoehe Abstand zwischen Boden- und Deckelfläche
+	 * @param pTextur Textur-Objekt des Prismoids
+	 */
+	public GLPrismoid(double pMX, double pMY, double pMZ, double pRadius1, double pRadius2, int pEckenzahl, double pHoehe,
 			GLTextur pTextur) {
 		super(pTextur);
 		conf.objectRenderMode = Rendermodus.RENDER_GL;
 		setzeDarstellungsModus(conf.displayMode);
 
-		verschiebe(pX, pY, pZ);
+		verschiebe(pMX, pMY, pMZ);
 
 		aEckenzahl = pEckenzahl;
 		aRad1 = pRadius1;

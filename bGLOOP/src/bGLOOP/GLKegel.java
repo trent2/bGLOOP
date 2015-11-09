@@ -36,18 +36,12 @@ public class GLKegel extends GLKegelstumpf {
 	/**
 	 * Erzeugt einen Kegel mit Textur.
 	 * 
-	 * @param pMX
-	 *            x-Koordinate des Mittelpunkts
-	 * @param pMY
-	 *            y-Koordinate des Mittelpunkts
-	 * @param pMZ
-	 *            z-Koordinate des Mittelpunkts
-	 * @param pRadius
-	 *            Radius der Bodenfläche
-	 * @param pHoehe
-	 *            Höhe des Kegels
-	 * @param pTextur
-	 *            Textur-Objekt des Kegels.
+	 * @param pMX x-Koordinate des Mittelpunkts
+	 * @param pMY y-Koordinate des Mittelpunkts
+	 * @param pMZ z-Koordinate des Mittelpunkts
+	 * @param pRadius Radius der Bodenfläche
+	 * @param pHoehe Höhe des Kegels
+	 * @param pTextur Textur-Objekt des Kegels
 	 */
 	public GLKegel(double pMX, double pMY, double pMZ, double pRadius, double pHoehe, GLTextur pTextur) {
 		super(pMX, pMY, pMZ, pRadius, 0, pHoehe, pTextur);

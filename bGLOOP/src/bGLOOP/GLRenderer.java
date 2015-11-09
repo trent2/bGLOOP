@@ -12,6 +12,8 @@ import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.Animator;
+
+import bGLOOP.GLObjekt.Rendermodus;
 import bGLOOP.GLTextur.GLTextureImpl;
 
 class GLRenderer implements GLEventListener {
@@ -110,7 +112,12 @@ class GLRenderer implements GLEventListener {
 		gl.glClearDepth(10000.0f); // clear z-buffer to the farthest
 		gl.glEnable(GL2.GL_DEPTH_TEST); // enables depth testing
 		gl.glDepthFunc(GL2.GL_LEQUAL); // the type of depth test to do
-		gl.glBindBuffer( GL.GL_ARRAY_BUFFER, 0);
+		if(gl.isFunctionAvailable("glBindBuffer"))
+			gl.glBindBuffer( GL.GL_ARRAY_BUFFER, 0);
+		else
+			if(wconf.globalObjectRenderMode == Rendermodus.RENDER_VBOGL)
+				wconf.globalObjectRenderMode = Rendermodus.RENDER_GLU; 
+
 		gl.glEnable(GL2.GL_CULL_FACE);
 		gl.glCullFace(GL2.GL_BACK);
 		// Do the best perspective correction
@@ -205,7 +212,10 @@ class GLRenderer implements GLEventListener {
 				tImp.getTexture().enable(gl);
 				tImp.getTexture().bind(gl);
 			}
-			sky.render(gl, glu);			
+			if (sky.aVisible)
+				synchronized (sky) {
+					sky.render(gl, glu);
+				}
 		}
 
 		// render objects without texture
