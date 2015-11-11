@@ -21,6 +21,8 @@ public abstract class Window {
 
 	public abstract void setFullscreen(boolean pFullscreen);
 
+	public abstract void toggleFullscreen();
+
 	public abstract void startDisplay();
 
 	public Animator getAnimator() {

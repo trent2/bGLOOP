@@ -21,6 +21,7 @@ public class GLHimmel extends GLObjekt {
 		super(pTextur);
 		conf.objectRenderMode = Rendermodus.RENDER_GL;
 		conf.displayMode = Darstellungsmodus.FUELLEN;
+		aVisible = true;
 	}
 
 	@Override

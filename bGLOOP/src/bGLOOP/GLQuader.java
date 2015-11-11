@@ -59,6 +59,7 @@ public class GLQuader extends GLTransformableObject {
 			throw new IllegalArgumentException("Die Seitenlängen dürfen nicht negativ sein!");
 		skaliere(pLX, pLY, pLZ);
 		verschiebe(pMX, pMY, pMZ);
+		aVisible = true;
 	}
 
 	@Override

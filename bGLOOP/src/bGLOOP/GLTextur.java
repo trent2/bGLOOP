@@ -39,13 +39,23 @@ public class GLTextur {
 					aTexture.setTexParameteri(gl, GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT);
 					aTexture.setTexParameteri(gl, GL2.GL_TEXTURE_WRAP_T, GL2.GL_REPEAT);
 					aReady = true;
-				} catch (GLException | IOException e) {
+				} catch (IOException e) {
 					cannotBeLoaded = true;
 					aReady = false;
 					System.err.println("Die Datei " + aTexFile.getName() + " konnte nicht "
 							+ "korrekt geladen werden. Prüfen Sie die weiteren " + "Fehlermeldungen.");
 					e.printStackTrace();
+				} catch (GLException gle) {
+					gle.printStackTrace();
 				}
+		}
+
+		void loadAndEnable(GL2 gl) {
+			load(gl);
+			if(aReady) {
+				aTexture.enable(gl);
+				aTexture.bind(gl);
+			}
 		}
 
 		Texture getTexture() {
@@ -55,6 +65,10 @@ public class GLTextur {
 		boolean isReady() {
 			return aReady;
 		}
+
+		void disable(GL2 gl) {
+			aTexture.disable(gl);
+		}
 	}
 
 	/** Erstellt ein Textur-Objekt. Der Dateiname wird ausgehend von dem Pfad
@@ -63,12 +77,17 @@ public class GLTextur {
 	 * @param pTexturDateiname Dateiname der Texturdatei.
 	 */
 	public GLTextur(String pTexturDateiname) {
+			this(new File(pTexturDateiname));
+	}
+
+	GLTextur(File pFile) {
 		File f = null;
 		try {
-			f = new File(pTexturDateiname).getCanonicalFile();
+			f = pFile.getCanonicalFile();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 		if (f != null && (aTexturImpl = textures.get(f)) == null)
 			textures.put(f, aTexturImpl = new GLTextureImpl(f));
 	}
@@ -86,5 +105,13 @@ public class GLTextur {
 	 */
 	void load(GL2 gl) {
 		aTexturImpl.load(gl);
+	}
+
+	void loadAndEnable(GL2 gl) {
+		aTexturImpl.loadAndEnable(gl);
+	}
+
+	void disable(GL2 gl) {
+		aTexturImpl.disable(gl);
 	}
 }

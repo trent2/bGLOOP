@@ -35,6 +35,10 @@ public class GLKamera {
 		this(false, false);
 	}
 
+	public GLKamera(boolean pVollbild) {
+		this(pVollbild, false);
+	}
+
 	/**
 	 * Erstellt eine bGLOOP-Kamera mit zusätzlichen Fenster-Parametern. Das
 	 * Fenster kann dabei im Vollbildmodus und/oder mit/ohne Fenstermanager-

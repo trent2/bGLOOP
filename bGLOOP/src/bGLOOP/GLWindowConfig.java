@@ -37,6 +37,7 @@ class GLWindowConfig {
 	int xDivision, yDivision;
 	double axesLength;
 	double mouseWheelScale;
+	double meshMaxScale;
 	float axesWidth;
 	float wireframeLineWidth;
 	Darstellungsmodus globalDrawMode = Darstellungsmodus.FUELLEN;
@@ -79,6 +80,7 @@ class GLWindowConfig {
 		clickTimeRange = Long.parseLong(bgloopSetting.getProperty("MOUSE_CLICK_TIME_RANGE"));
 		moveTimeRange = Long.parseLong(bgloopSetting.getProperty("MOUSE_MOVE_TIME_RANGE"));
 		mouseWheelScale = Double.parseDouble(bgloopSetting.getProperty("DEFAULT_MOUSE_WHEEL_SCALE"));
+		meshMaxScale = Double.parseDouble(bgloopSetting.getProperty("DEFAULT_MESH_MAX_SCALE"));
 
 		axesWidth = Float.parseFloat(bgloopSetting.getProperty("DEFAULT_AXES_WIDTH"));
 		wireframeLineWidth = Float.parseFloat(bgloopSetting.getProperty("DEFAULT_LINE_WIDTH"));

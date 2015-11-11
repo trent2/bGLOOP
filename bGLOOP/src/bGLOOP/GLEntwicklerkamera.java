@@ -1,6 +1,7 @@
 package bGLOOP;
 
 import com.jogamp.newt.event.KeyEvent;
+import com.jogamp.opengl.math.VectorUtil;
 
 import bGLOOP.windowimpl.listener.KeyboardListenerFacade;
 
@@ -38,6 +39,10 @@ public class GLEntwicklerkamera extends GLSchwenkkamera {
 		addKeyboardListener();
 	}
 
+	public GLEntwicklerkamera(boolean pVollbild) {
+		this(pVollbild, false);
+	}
+
 	/**
 	 * Erstellt eine bGLOOP-Entwicklerkamera. Die Kamera öffnet ein Fenster mit
 	 * den Abmessungen aus der in der bGLOOP-Konfigurationsdatei eingetragenen
@@ -60,15 +65,20 @@ public class GLEntwicklerkamera extends GLSchwenkkamera {
 
 	private void addKeyboardListener() {
 		renderer.getWindow().addKeyboardListener(new KeyboardListenerFacade() {
+			private float[] aLeft = new float[3];
+
 			@Override
 			public void handleKeyPressed(char key, int keycode) {
 				switch (key) {
-				case 'a':
+				case 'a':  // show axis
 					zeigeAchsen(!getWconf().aDisplayAxes);
 					break; // "zeigeAchsen" does a scheduleRender()
-				case 'g':
+				case 'g':  // wireframe
 					getWconf().aWireframe = !getWconf().aWireframe;
 					getRenderer().scheduleRender();
+					break;
+				case 'f':  // fullscreen
+					getRenderer().getWindow().toggleFullscreen();
 					break;
 				case 's':
 					aPos[0] = 0; aPos[1] = 0; aPos[2] = 500;
@@ -78,17 +88,40 @@ public class GLEntwicklerkamera extends GLSchwenkkamera {
 					break;
 				}
 				switch (keycode) {
-				case KeyEvent.VK_UP:
+				case KeyEvent.VK_DOWN:
 					aPos[0] += aUp[0]*10; aPos[1] += aUp[1]*10; aPos[2] += aUp[2]*10;
 					aLookAt[0] += aUp[0]*10; aLookAt[1] += aUp[1]*10; aLookAt[2] += aUp[2]*10;
 					getRenderer().scheduleRender();
 					break;
-				case KeyEvent.VK_DOWN:
+				case KeyEvent.VK_UP:
 					aPos[0] -= aUp[0]*10; aPos[1] -= aUp[1]*10; aPos[2] -= aUp[2]*10;
 					aLookAt[0] -= aUp[0]*10; aLookAt[1] -= aUp[1]*10; aLookAt[2] -= aUp[2]*10;
 					getRenderer().scheduleRender();
 					break;
+				case KeyEvent.VK_LEFT:
+					computeVectorLeft();
+					aPos[0] -= aLeft[0]*10; aPos[1] -= aLeft[1]*10; aPos[2] -= aLeft[2]*10;
+					aLookAt[0] -= aLeft[0]*10; aLookAt[1] -= aLeft[1]*10; aLookAt[2] -= aLeft[2]*10;
+					getRenderer().scheduleRender();
+					break;
+				case KeyEvent.VK_RIGHT:
+					computeVectorLeft();
+					aPos[0] += aLeft[0]*10; aPos[1] += aLeft[1]*10; aPos[2] += aLeft[2]*10;
+					aLookAt[0] += aLeft[0]*10; aLookAt[1] += aLeft[1]*10; aLookAt[2] += aLeft[2]*10;
+					getRenderer().scheduleRender();
+					break;
 				}
+			}
+
+			private void computeVectorLeft() {
+				float[] dir = new float[3];
+				float[] pos = { (float) aPos[0], (float) aPos[1], (float) aPos[2] };
+				float[] lookAt = { (float) aLookAt[0], (float) aLookAt[1], (float) aLookAt[2] };
+				float[] up =  { (float) aUp[0], (float) aUp[1], (float) aUp[2] };
+
+				VectorUtil.subVec3(dir, lookAt, pos);
+				VectorUtil.crossVec3(aLeft, up, dir);
+				VectorUtil.normalizeVec3(aLeft);
 			}
 
 			@Override

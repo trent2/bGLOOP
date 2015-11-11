@@ -7,6 +7,9 @@ import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
+import static java.lang.Math.PI;
+import static java.lang.Math.sin;
+import static java.lang.Math.cos;
 
 /** <p>Ein Prismoid ist eine Art polygonaler Kegelstumpf. Es besteht aus zwei
  * <em>regelmäßigen</em> n-Ecks mit unteschiedlichem Radius, deren Ecken respektive
@@ -71,6 +74,7 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 
 		aMantelglaettung = false;
 		aMantelqualitaet = 1;
+		aVisible = true;
 	}
 
 	@Override
@@ -106,7 +110,7 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 
 	@Override
 	void generateDisplayList(GL2 gl) {
-		double lWinkel = 2 * Math.PI / aEckenzahl;
+		double lWinkel = 2 * PI / aEckenzahl;
 
 		double lNorm = 0;
 		double lMantelschritt = aTiefe / aMantelqualitaet;
@@ -116,12 +120,12 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 		for (int j = 0; j < aMantelqualitaet; j++) {
 			gl.glBegin(GL2.GL_QUAD_STRIP);
 
-			double x = Math.sin(lWinkel / 2);
-			double y = -Math.cos(lWinkel / 2);
+			double x = sin(lWinkel / 2);
+			double y = -cos(lWinkel / 2);
 
 			for (int i = 0; i <= aEckenzahl; i++) {
-				double x2 = Math.sin(lWinkel / 2 + ((i + 1) * lWinkel));
-				double y2 = -Math.cos(lWinkel / 2 + ((i + 1) * lWinkel));
+				double x2 = sin(lWinkel / 2 + ((i + 1) * lWinkel));
+				double y2 = -cos(lWinkel / 2 + ((i + 1) * lWinkel));
 
 				double rad1 = aRad1 + j * (aRad2 - aRad1) / aMantelqualitaet;
 				double rad2 = aRad1 + (j + 1) * (aRad2 - aRad1) / aMantelqualitaet;
@@ -133,19 +137,19 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 					gl.glNormal3d(x, y, 0);
 				}
 				if(texturePresent)
-					gl.glTexCoord2d(i * lWinkel / (2*Math.PI), j / aMantelqualitaet);
+					gl.glTexCoord2d(i * lWinkel / (2*PI), j / aMantelqualitaet);
 				gl.glVertex3d(x * rad1, y * rad1, aTiefe / 2 - j * lMantelschritt);
 				if(texturePresent)
-					gl.glTexCoord2d(i * lWinkel / (2*Math.PI), (j + 1) / aMantelqualitaet);
+					gl.glTexCoord2d(i * lWinkel / (2*PI), (j + 1) / aMantelqualitaet);
 				gl.glVertex3d(x * rad2, y * rad2, aTiefe / 2 - (j + 1) * lMantelschritt);
 
 				if (!aMantelglaettung) {
 					gl.glNormal3d((x + x2) / lNorm, (y + y2) / lNorm, 0);
 					if(texturePresent)
-						gl.glTexCoord2d((i * lWinkel + lWinkel) / (2*Math.PI), j / aMantelqualitaet);
+						gl.glTexCoord2d((i * lWinkel + lWinkel) / (2*PI), j / aMantelqualitaet);
 					gl.glVertex3d(x2 * rad1, y2 * rad1, aTiefe / 2 - j * lMantelschritt);
 					if(texturePresent)
-						gl.glTexCoord2d((i * lWinkel + lWinkel) / (2*Math.PI), (j + 1) / aMantelqualitaet);
+						gl.glTexCoord2d((i * lWinkel + lWinkel) / (2*PI), (j + 1) / aMantelqualitaet);
 					gl.glVertex3d(x2 * rad2, y2 * rad2, aTiefe / 2 - (j + 1) * lMantelschritt);
 				}
 
@@ -162,8 +166,8 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 				gl.glTexCoord2d(0.5, 0.5);
 			gl.glVertex3d(0, 0, aTiefe / 2);
 			for (int i = 0; i <= aEckenzahl; i++) {
-				double x = Math.sin(lWinkel / 2 + i * lWinkel);
-				double y = -Math.cos(lWinkel / 2 + i * lWinkel);
+				double x = sin(lWinkel / 2 + i * lWinkel);
+				double y = -cos(lWinkel / 2 + i * lWinkel);
 				if(texturePresent)
 					gl.glTexCoord2d(0.5 + x / 2, 0.5 - y / 2);
 				gl.glVertex3d(x * aRad1, y * aRad1, aTiefe / 2);
@@ -177,8 +181,8 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 				gl.glTexCoord2d(0.5, 0.5);
 			gl.glVertex3d(0.0, 0.0, -aTiefe / 2);
 			for (int i = aEckenzahl; i >= 0; i--) {
-				double x = Math.sin(lWinkel / 2 + i * lWinkel);
-				double y = -Math.cos(lWinkel / 2 + i * lWinkel);
+				double x = sin(lWinkel / 2 + i * lWinkel);
+				double y = -cos(lWinkel / 2 + i * lWinkel);
 				if(texturePresent)
 					gl.glTexCoord2d(0.5 + x / 2, 0.5 + y / 2);
 				gl.glVertex3d(x * aRad2, y * aRad2, -aTiefe / 2);
@@ -235,17 +239,17 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 				.asFloatBuffer();
 
 		// ready for drawing (to buffer)
-		double lWinkel = 2 * Math.PI / aEckenzahl;
+		double lWinkel = 2 * PI / aEckenzahl;
 		double lNorm = 0;
 		double lMantelschritt = aTiefe / aMantelqualitaet;
 
 		for (int j = 0; j < aMantelqualitaet; j++) {
-			double x = Math.sin(lWinkel / 2);
-			double y = -Math.cos(lWinkel / 2);
+			double x = sin(lWinkel / 2);
+			double y = -cos(lWinkel / 2);
 
 			for (int i = 0; i <= aEckenzahl; i++) {
-				double x2 = Math.sin(lWinkel / 2 + ((i + 1) * lWinkel));
-				double y2 = -Math.cos(lWinkel / 2 + ((i + 1) * lWinkel));
+				double x2 = sin(lWinkel / 2 + ((i + 1) * lWinkel));
+				double y2 = -cos(lWinkel / 2 + ((i + 1) * lWinkel));
 
 				double rad1 = aRad1 + j * (aRad2 - aRad1) / aMantelqualitaet;
 				double rad2 = aRad1 + (j + 1) * (aRad2 - aRad1) / aMantelqualitaet;
@@ -262,7 +266,7 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 				}
 
 
-				fb.put((float)(i * lWinkel / (2*Math.PI)));
+				fb.put((float)(i * lWinkel / (2*PI)));
 				fb.put((float)(j / aMantelqualitaet));
 				fb.put((float)(x * rad1));
 				fb.put((float)(y * rad1));
@@ -277,7 +281,7 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 					fb.put((float)y);
 					fb.put(0);
 				}
-				fb.put((float)(i * lWinkel / (2*Math.PI)));
+				fb.put((float)(i * lWinkel / (2*PI)));
 				fb.put((float)((j + 1) / aMantelqualitaet));
 				fb.put((float)(x * rad2));
 				fb.put((float)(y * rad2));
@@ -287,7 +291,7 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 					fb.put((float)((x + x2) / lNorm));
 					fb.put((float)((y + y2) / lNorm));
 					fb.put(0);
-					fb.put((float)((i * lWinkel + lWinkel) / (2*Math.PI)));
+					fb.put((float)((i * lWinkel + lWinkel) / (2*PI)));
 					fb.put((float)(j / aMantelqualitaet));
 					fb.put((float)(x2 * rad1));
 					fb.put((float)(y2 * rad1));
@@ -295,7 +299,7 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 					fb.put((float)((x + x2) / lNorm));
 					fb.put((float)((y + y2) / lNorm));
 					fb.put(0);
-					fb.put((float)((i * lWinkel + lWinkel) / (2*Math.PI)));
+					fb.put((float)((i * lWinkel + lWinkel) / (2*PI)));
 					fb.put((float)((j + 1) / aMantelqualitaet));
 					fb.put((float)(x2 * rad2));
 					fb.put((float)(y2 * rad2));
@@ -318,8 +322,8 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 			fb.put((float)(aTiefe / 2)); // 8
 
 			for (int i = 0; i <= aEckenzahl; i++) {
-				double x = Math.sin(lWinkel / 2 + i * lWinkel);
-				double y = -Math.cos(lWinkel / 2 + i * lWinkel);
+				double x = sin(lWinkel / 2 + i * lWinkel);
+				double y = -cos(lWinkel / 2 + i * lWinkel);
 				fb.put(0);
 				fb.put(0);
 				fb.put(1);
@@ -340,8 +344,8 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 			fb.put(0);
 			fb.put((float)(-aTiefe / 2)); // 8
 			for (int i = aEckenzahl; i >= 0; i--) {
-				double x = Math.sin(lWinkel / 2 + i * lWinkel);
-				double y = -Math.cos(lWinkel / 2 + i * lWinkel);
+				double x = sin(lWinkel / 2 + i * lWinkel);
+				double y = -cos(lWinkel / 2 + i * lWinkel);
 				fb.put(0);
 				fb.put(0);
 				fb.put(-1);

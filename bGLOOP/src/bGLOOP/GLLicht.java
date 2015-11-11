@@ -30,7 +30,7 @@ public class GLLicht extends GLDisplayItem {
 		id = lightCount++;
 		associatedCam = GLKamera.aktiveKamera();
 		(associatedRenderer = associatedCam.getRenderer()).getNoTextureItemList().add(this);
-
+		aVisible = true;
 	}
 
 	/** Eine Lichtquelle an der Position <code>L(-10000, 10000, 10000)</code>.

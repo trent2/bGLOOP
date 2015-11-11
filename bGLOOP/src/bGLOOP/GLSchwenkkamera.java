@@ -10,6 +10,10 @@ import bGLOOP.windowimpl.listener.MouseListenerFacade;
  * @author R. Spillner
  */
 public class GLSchwenkkamera extends GLKamera {
+	public GLSchwenkkamera(boolean pVollbild) {
+		this(pVollbild, pVollbild);
+	}
+
 	/**
 	 * Erstellt eine schwenkbare Kamera mit zusätzlichen
 	 * Fenster-Parametern. Das Fenster kann dabei im Vollbildmodus und/oder
@@ -24,9 +28,11 @@ public class GLSchwenkkamera extends GLKamera {
 	 *            <code>false</code>, dann nicht.
 	 */
 	public GLSchwenkkamera(boolean pVollbild, boolean pKeineDekoration) {
-		super(pVollbild, pKeineDekoration);
+		super(pVollbild, false);
 		addMouseListener();
 	}
+
+	
 
 	/** Erstellt eine schwenkbare Kamera mit vorgegebener Breite und Höhe.
 	 * Das Fenster wird nicht im Vollbild-Modus geöffnet.

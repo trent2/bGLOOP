@@ -20,7 +20,7 @@ LIGHTING = on
 # This should be supported by all OpenGL implementations >= 2.0, so be
 # sure your graphic card supports this.
 #
-DEFAULT_OBJECT_RENDER_MODE = VBO
+DEFAULT_OBJECT_RENDER_MODE = GL
 
 # valid values are "POINT", "LINE", "FILL"
 DEFAULT_RENDER_DRAW_MODE = FILL
@@ -41,6 +41,10 @@ DEFAULT_LINE_WIDTH = 1
 
 # by how many pixels will the camera zoom
 DEFAULT_MOUSE_WHEEL_SCALE = 10
+
+# scale each mesh in its largest diameter (in x, y or z direction)
+# to a maximum width of DEFAULT_MESH_MAX_SCALE points
+DEFAULT_MESH_MAX_SCALE=100
 
 # time in milliseconds where GLMaus'
 # linksklick(), rechtsklick(), and doppelclick() methods

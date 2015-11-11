@@ -9,7 +9,7 @@ package bGLOOP;
  * glo.setzeMaterial(GOLD2)
  * </pre>
  * 
- * @author R.Spillner
+ * @author R. Spillner
  */
 public enum GLMaterial {
 	GOLD(new float[][] { { 0.25f, 0.22f, 0.06f, 1.0f }, { 0.35f, 0.31f, 0.09f, 1.0f }, { 0.8f, 0.72f, 0.21f, 1.0f },

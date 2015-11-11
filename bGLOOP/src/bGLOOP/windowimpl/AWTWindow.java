@@ -68,7 +68,12 @@ final public class AWTWindow extends Window {
 		if (pFullscreen)
 			frame.setExtendedState(Frame.MAXIMIZED_BOTH);
 		else
-			frame.setExtendedState(Frame.NORMAL);
+			frame.setExtendedState(frame.getExtendedState() & (~Frame.MAXIMIZED_BOTH));
+	}
+
+	@Override
+	public void toggleFullscreen() {
+		frame.setExtendedState(frame.getExtendedState() ^ Frame.MAXIMIZED_BOTH);
 	}
 
 	@Override

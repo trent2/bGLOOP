@@ -50,8 +50,8 @@ public class GLTorus extends GLTransformableObject {
 	 * @param pRadiusA äußerer Radius des Torus
 	 * @param pRadiusQ Radius des Schnittkreises des Torus
 	 * </div><div style="clear:right"></div>
-	 * @param pTextur Textur-Objekt für die Oberfläche der Kugel
-	 * @see #GLKugel(double, double, double, double)
+	 * @param pTextur Textur-Objekt für die Oberfläche des Torus
+	 * @see #GLTorus(double, double, double, double, double)
 	 */
 	public GLTorus(double pMX, double pMY, double pMZ, double pRadiusA, double pRadiusQ, GLTextur pTextur) {
 		super(pTextur);
@@ -63,6 +63,7 @@ public class GLTorus extends GLTransformableObject {
 			throw new IllegalArgumentException("Die Radien dürfen nicht negativ sein.");
 		aRadA = pRadiusA;
 		aRadQ = pRadiusQ;
+		aVisible = true;
 	}
 
 	@Override

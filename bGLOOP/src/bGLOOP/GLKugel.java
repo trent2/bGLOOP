@@ -7,6 +7,9 @@ import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
+import static java.lang.Math.PI;
+import static java.lang.Math.sin;
+import static java.lang.Math.cos;
 
 /**
  * Ein Kugelmodell.<br>
@@ -56,6 +59,7 @@ public class GLKugel extends GLTransformableObject {
 			throw new IllegalArgumentException("Der Radius darf nicht negativ sein!");
 		verschiebe(pMX, pMY, pMZ);
 		aRad = pRadius;
+		aVisible = true;
 	}
 
 	@Override
@@ -70,22 +74,22 @@ public class GLKugel extends GLTransformableObject {
 	void generateDisplayList(GL2 gl) {
 		double lX, lZ;
 		boolean texturePresent = (aTex != null) && aTex.isReady();
-		float qx = (float) (Math.PI / conf.xDivision);
-		float qy = (float) (2 * Math.PI / conf.yDivision);
+		float qx = (float) (PI / conf.xDivision);
+		float qy = (float) (2 * PI / conf.yDivision);
 
 		gl.glNewList(bufferName, GL2.GL_COMPILE);
 		for (int i = 0; i < conf.xDivision; ++i) { // conf.xDivision; i++) {
-			double ring1Y = Math.cos(i * qx);
-			double ring2Y = Math.cos((i + 1) * qx);
+			double ring1Y = cos(i * qx);
+			double ring2Y = cos((i + 1) * qx);
 
-			double ring1X = Math.sin(i * qx);
-			double ring2X = Math.sin((i + 1) * qx);
+			double ring1X = sin(i * qx);
+			double ring2X = sin((i + 1) * qx);
 
 			// need to go around one whole turn
 			gl.glBegin(GL2.GL_QUAD_STRIP);
 			for (int j = 0; j <= conf.yDivision; j++) {
-				lX = Math.cos(j * qy);
-				lZ = Math.sin(j * qy);
+				lX = cos(j * qy);
+				lZ = sin(j * qy);
 
 				// first vertex of the quad is the third of the previous
 				gl.glNormal3d(lX * ring1X, lZ * ring1X, ring1Y);
@@ -153,19 +157,19 @@ public class GLKugel extends GLTransformableObject {
 
 		// ready for drawing (to buffer)
 		float lX, lZ;
-		float qx = (float)(Math.PI / conf.xDivision);
-		float qy = (float)(2*Math.PI / conf.yDivision);
+		float qx = (float)(PI / conf.xDivision);
+		float qy = (float)(2*PI / conf.yDivision);
 		for (int i = 0; i < conf.xDivision; ++i) { // conf.xDivision; i++) {
-			float ring1Y = (float)Math.cos(i * qx);
-			float ring2Y = (float)Math.cos((i + 1) * qx);
+			float ring1Y = (float)cos(i * qx);
+			float ring2Y = (float)cos((i + 1) * qx);
 
-			float ring1X = (float)Math.sin(i * qx);
-			float ring2X = (float)Math.sin((i + 1) * qx);
+			float ring1X = (float)sin(i * qx);
+			float ring2X = (float)sin((i + 1) * qx);
 
 			// need to go around one whole turn
 			for (int j = 0; j <= conf.yDivision; j++) {
-				lX = (float) Math.cos(j * qy);
-				lZ = (float) Math.sin(j * qy);
+				lX = (float) cos(j * qy);
+				lZ = (float) sin(j * qy);
 				// vertex #1
 				// normals
 				fb.put(lX * ring1X);

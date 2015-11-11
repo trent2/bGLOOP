@@ -1,5 +1,6 @@
 package bGLOOP.windowimpl;
 
+import com.jogamp.common.util.RunnableTask;
 import com.jogamp.nativewindow.WindowClosingProtocol.WindowClosingMode;
 import com.jogamp.newt.event.WindowAdapter;
 import com.jogamp.newt.event.WindowEvent;
@@ -59,6 +60,16 @@ final public class NEWTWindow extends Window {
 	@Override
 	public void setFullscreen(boolean pFullscreen) {
 		glWin.setFullscreen(pFullscreen);
+	}
+
+	@Override
+	public void toggleFullscreen() {
+		RunnableTask.invokeOnNewThread(null, "fullscreen_toogle", false, new Runnable() {
+			@Override
+			public void run() {
+				glWin.setFullscreen((glWin.getStateMask() & GLWindow.STATE_MASK_FULLSCREEN) == 0);
+			}
+		});
 	}
 
 	@Override

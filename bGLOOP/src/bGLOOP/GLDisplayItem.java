@@ -8,7 +8,7 @@ abstract class GLDisplayItem {
 
 	GLKamera associatedCam;
 
-	boolean aVisible = true;
+	boolean aVisible = false;
 
 	abstract void render(GL2 gl, GLU glu);
 }
