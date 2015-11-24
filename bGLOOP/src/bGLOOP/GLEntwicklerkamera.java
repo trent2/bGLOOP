@@ -68,7 +68,7 @@ public class GLEntwicklerkamera extends GLSchwenkkamera {
 			private float[] aLeft = new float[3];
 
 			@Override
-			public void handleKeyPressed(char key, int keycode) {
+			public void handleKeyPressed(char key, int keycode, int modifiers) {
 				switch (key) {
 				case 'a':  // show axis
 					zeigeAchsen(!getWconf().aDisplayAxes);
@@ -88,29 +88,32 @@ public class GLEntwicklerkamera extends GLSchwenkkamera {
 					break;
 				}
 				switch (keycode) {
-				case KeyEvent.VK_DOWN:
+				case KeyEvent.VK_UP:
 					aPos[0] += aUp[0]*10; aPos[1] += aUp[1]*10; aPos[2] += aUp[2]*10;
 					aLookAt[0] += aUp[0]*10; aLookAt[1] += aUp[1]*10; aLookAt[2] += aUp[2]*10;
 					getRenderer().scheduleRender();
 					break;
-				case KeyEvent.VK_UP:
+				case KeyEvent.VK_DOWN:
 					aPos[0] -= aUp[0]*10; aPos[1] -= aUp[1]*10; aPos[2] -= aUp[2]*10;
 					aLookAt[0] -= aUp[0]*10; aLookAt[1] -= aUp[1]*10; aLookAt[2] -= aUp[2]*10;
 					getRenderer().scheduleRender();
 					break;
-				case KeyEvent.VK_LEFT:
+				case KeyEvent.VK_RIGHT:
 					computeVectorLeft();
 					aPos[0] -= aLeft[0]*10; aPos[1] -= aLeft[1]*10; aPos[2] -= aLeft[2]*10;
 					aLookAt[0] -= aLeft[0]*10; aLookAt[1] -= aLeft[1]*10; aLookAt[2] -= aLeft[2]*10;
 					getRenderer().scheduleRender();
 					break;
-				case KeyEvent.VK_RIGHT:
+				case KeyEvent.VK_LEFT:
 					computeVectorLeft();
 					aPos[0] += aLeft[0]*10; aPos[1] += aLeft[1]*10; aPos[2] += aLeft[2]*10;
 					aLookAt[0] += aLeft[0]*10; aLookAt[1] += aLeft[1]*10; aLookAt[2] += aLeft[2]*10;
 					getRenderer().scheduleRender();
 					break;
 				}
+
+				if((int)key == 17)  // ctrl-q --> quit
+					renderer.getWindow().getAutoDrawable().destroy();
 			}
 
 			private void computeVectorLeft() {

@@ -7,6 +7,8 @@ import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.glu.GLUquadric;
+
 import static java.lang.Math.PI;
 import static java.lang.Math.sin;
 import static java.lang.Math.cos;
@@ -30,6 +32,7 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 	private FloatBuffer fb;
 	private int[] firstOffsets, countOffsets;
 	int aMantelqualitaet;
+	GLUquadric qbot, qtop;
 
 	/** Erzeugt ein Prismoidobjekt mit Mittelpunkt <code>M(pMX, pMY, pMZ)</code>,
 	 * Radien <code>pRadius1</code> und <code>pRadius2</code> und Höhe
@@ -59,9 +62,6 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 	public GLPrismoid(double pMX, double pMY, double pMZ, double pRadius1, double pRadius2, int pEckenzahl, double pHoehe,
 			GLTextur pTextur) {
 		super(pTextur);
-		if(conf.objectRenderMode == Rendermodus.RENDER_GLU)
-			conf.objectRenderMode = Rendermodus.RENDER_GL;
-		setzeDarstellungsModus(conf.displayMode);
 
 		verschiebe(pMX, pMY, pMZ);
 
@@ -104,12 +104,24 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 	}
 
 	@Override
-	void doRenderGLU(GL2 gl, GLU glu) {
-		throw new AssertionError("Diese Methode dürfte nie aufgerufen worden sein.");
+	void generateDisplayList_GLU(GL2 gl, GLU glu) {
+		// gl.glColor3f(1, 1, 1);
+		gl.glNewList(bufferName, GL2.GL_COMPILE);
+		gl.glDisable(GL2.GL_CULL_FACE);
+		glu.gluQuadricNormals(quadric, GLU.GLU_SMOOTH);
+		gl.glTranslated(0, 0, aTiefe / 2);
+		glu.gluDisk(quadric, 0, aRad1, aEckenzahl, aMantelqualitaet);
+		gl.glTranslated(0, 0, -aTiefe / 2);
+		glu.gluDisk(quadric, 0, aRad2, aEckenzahl, aMantelqualitaet);
+		gl.glEnable(GL2.GL_CULL_FACE);
+		gl.glTranslated(0, 0, -aTiefe / 2);
+		glu.gluCylinder(quadric, aRad2, aRad1, aTiefe, aEckenzahl, aMantelqualitaet);
+		// glu.gluDeleteQuadric(quadric);
+		gl.glEndList();
 	}
 
 	@Override
-	void generateDisplayList(GL2 gl) {
+	void generateDisplayList_GL(GL2 gl) {
 		double lWinkel = 2 * PI / aEckenzahl;
 
 		double lNorm = 0;

@@ -90,12 +90,12 @@ public class GLQuader extends GLTransformableObject {
 	}
 
 	@Override
-	void doRenderGLU(GL2 gl, GLU glu) {
+	void generateDisplayList_GLU(GL2 gl, GLU glu) {
 		doRenderGL(gl);
 	}
 
 	@Override		
-	void generateDisplayList(GL2 gl) {
+	void generateDisplayList_GL(GL2 gl) {
 		gl.glNewList(bufferName, GL2.GL_COMPILE);
 		gl.glBegin(GL2.GL_QUAD_STRIP);
 		gl.glNormal3d(-0.5, 0.5, 0.5);

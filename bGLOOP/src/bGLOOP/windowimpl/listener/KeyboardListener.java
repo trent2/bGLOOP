@@ -20,7 +20,7 @@ public class KeyboardListener implements KeyListener {
 
 	@Override
 	public void keyPressed(KeyEvent e) {
-		kpl.handleKeyPressed(e.getKeyChar(), e.getKeyCode());
+		kpl.handleKeyPressed(e.getKeyChar(), e.getKeyCode(), e.getModifiers());
 	}
 
 	@Override

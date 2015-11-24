@@ -55,9 +55,9 @@ public class GLTorus extends GLTransformableObject {
 	 */
 	public GLTorus(double pMX, double pMY, double pMZ, double pRadiusA, double pRadiusQ, GLTextur pTextur) {
 		super(pTextur);
-		if(conf.objectRenderMode == Rendermodus.RENDER_GLU)
-			conf.objectRenderMode = Rendermodus.RENDER_GL;
-		setzeDarstellungsModus(conf.displayMode);
+//		if(conf.objectRenderMode == Rendermodus.RENDER_GLU)
+//			conf.objectRenderMode = Rendermodus.RENDER_GL;
+//		setzeDarstellungsModus(conf.displayMode);
 		verschiebe(pMX, pMY, pMZ);
 		if(pRadiusA<0 || pRadiusQ<0)
 			throw new IllegalArgumentException("Die Radien dürfen nicht negativ sein.");
@@ -67,11 +67,12 @@ public class GLTorus extends GLTransformableObject {
 	}
 
 	@Override
-	void doRenderGLU(GL2 gl, GLU glu) {
-		throw new AssertionError("Diese Methode dürfte nie aufgerufen worden sein.");
+	void generateDisplayList_GLU(GL2 gl, GLU glu) {
+		doRenderGL(gl);
 	}
+
 	@Override
-	void generateDisplayList(GL2 gl) {
+	void generateDisplayList_GL(GL2 gl) {
 		double lxy, lz;
 		boolean texturePresent = (aTex != null) && aTex.isReady();
 

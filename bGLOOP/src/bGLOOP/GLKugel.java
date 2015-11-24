@@ -63,15 +63,17 @@ public class GLKugel extends GLTransformableObject {
 	}
 
 	@Override
-	void doRenderGLU(GL2 gl, GLU glu) {
+	void generateDisplayList_GLU(GL2 gl, GLU glu) {
 		// gl.glColor3f(1, 1, 1);
+		gl.glNewList(bufferName, GL2.GL_COMPILE);
 		glu.gluQuadricNormals(quadric, GLU.GLU_SMOOTH);
 		glu.gluSphere(quadric, aRad, conf.xDivision, conf.yDivision);
 		// glu.gluDeleteQuadric(quadric);
+		gl.glEndList();
 	}
 
 	@Override
-	void generateDisplayList(GL2 gl) {
+	void generateDisplayList_GL(GL2 gl) {
 		double lX, lZ;
 		boolean texturePresent = (aTex != null) && aTex.isReady();
 		float qx = (float) (PI / conf.xDivision);

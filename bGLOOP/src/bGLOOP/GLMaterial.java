@@ -100,7 +100,7 @@ public enum GLMaterial {
 		return aMat[2];
 	}
 
-	float getShinyness() {
+	float getShininess() {
 		return aMat[3][0];
 	}
 }

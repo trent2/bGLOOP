@@ -114,4 +114,9 @@ public class GLTextur {
 	void disable(GL2 gl) {
 		aTexturImpl.disable(gl);
 	}
+
+	@Override
+	public boolean equals(Object t) {
+		return (t != null) && aTexturImpl == ((GLTextur)t).aTexturImpl;
+	}
 }

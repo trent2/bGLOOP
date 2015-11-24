@@ -1,6 +1,7 @@
 package bGLOOP;
 
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.glu.GLU;
 
 import bGLOOP.linalg.Matrix4;
 
@@ -117,16 +118,31 @@ abstract class GLTransformableObject extends GLObjekt implements IGLTransformier
 
 	@Override
 	void doRenderGL(GL2 gl) {
+		renderDelegate(gl, true, null);
+	}
+
+	@Override
+	void doRenderGLU(GL2 gl, GLU glu) {
+		renderDelegate(gl, false, glu);
+	}
+
+	abstract void generateDisplayList_GL(GL2 gl);
+
+	abstract void generateDisplayList_GLU(GL2 gl, GLU glu);
+
+	private void renderDelegate(GL2 gl, boolean doGL, GLU glu) {
 		if(needsRedraw) {
 			if(bufferName != -1)
 				gl.glDeleteLists(bufferName, 1);
 
 			bufferName = gl.glGenLists(1);
-			generateDisplayList(gl);
+			if(doGL)
+				generateDisplayList_GL(gl);
+			else
+				generateDisplayList_GLU(gl, glu);
 			needsRedraw = false;
 		}
 		gl.glCallList(bufferName);
+		
 	}
-
-	abstract void generateDisplayList(GL2 gl);
 }

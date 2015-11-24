@@ -28,7 +28,7 @@ public class GLTastatur {
 	public GLTastatur() {
 		GLKamera.aktiveKamera().getRenderer().getWindow().addKeyboardListener(new KeyboardListenerFacade() {
 			@Override
-			public void handleKeyPressed(char key, int keycode) {
+			public void handleKeyPressed(char key, int keycode, int modifiers) {
 				// keycodes for NEWT KeyEvent and AWT KeyEvent are
 				// identical (whew)
 				switch(keycode) {

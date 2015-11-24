@@ -238,6 +238,7 @@ class GLRenderer implements GLEventListener {
 		if(tImp != null && tImp.isReady())
 			tImp.getTexture().disable(gl);
 
+		gl.glDisable(GL2.GL_TEXTURE_2D);
 		// render objects with texture
 		for (GLDisplayItem di : noTextureItemList)
 			if (di.aVisible)

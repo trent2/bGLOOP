@@ -10,6 +10,8 @@ DOUBLE_BUFFERING = on
 # enable lighting of scenerey
 LIGHTING = on
 
+# set rendering style (there are up to three ways to
+# draw an GLObjekt)
 # can be "GLU", "GL", or "VBO"
 #
 # using GLU makes flickering lines in GLU_LINE mode on my linux machine,

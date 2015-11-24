@@ -124,7 +124,7 @@ public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
 		System.arraycopy(pMaterial.getAmbient(), 0, aAmbient, 0, 4);
 		System.arraycopy(pMaterial.getDiffuse(), 0, aDiffuse, 0, 4);
 		System.arraycopy(pMaterial.getSpecular(), 0, aSpecular, 0, 4);
-		aGlanz = pMaterial.getShinyness();
+		aGlanz = pMaterial.getShininess();
 		scheduleRender();
 	}
 
@@ -188,7 +188,7 @@ public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
 
 	@Override
 	synchronized void render(GL2 gl, GLU glu) {
-		loadMaterial(gl);
+		loadMaterial(gl, aAmbient, aDiffuse, aSpecular, aEmission, aGlanz);
 
 		gl.glPushMatrix();
 		gl.glMultMatrixf(transformationMatrix.getMatrix(), 0);
@@ -221,12 +221,12 @@ public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
 		return conf;
 	}
 
-	private void loadMaterial(GL2 gl) {
-		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, this.aAmbient, 0);
-		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, aDiffuse, 0);
-		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, aSpecular, 0);
-		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_EMISSION, aEmission, 0);
-		gl.glMaterialf(GL2.GL_FRONT, GL2.GL_SHININESS, aGlanz);
+	void loadMaterial(GL2 gl, float[] amb, float[] diff, float[] spec, float[] emiss, float glanz) {
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, amb, 0);
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, diff, 0);
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, spec, 0);
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_EMISSION, emiss, 0);
+		gl.glMaterialf(GL2.GL_FRONT, GL2.GL_SHININESS, glanz);
 	}
 
 	void scheduleRender() {
