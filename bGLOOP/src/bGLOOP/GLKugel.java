@@ -1,5 +1,9 @@
 package bGLOOP;
 
+import static java.lang.Math.PI;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+
 import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 
@@ -7,9 +11,6 @@ import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
-import static java.lang.Math.PI;
-import static java.lang.Math.sin;
-import static java.lang.Math.cos;
 
 /**
  * Ein Kugelmodell.<br>
@@ -67,6 +68,7 @@ public class GLKugel extends GLTransformableObject {
 		// gl.glColor3f(1, 1, 1);
 		gl.glNewList(bufferName, GL2.GL_COMPILE);
 		glu.gluQuadricNormals(quadric, GLU.GLU_SMOOTH);
+		glu.gluQuadricTexture(quadric, true);
 		glu.gluSphere(quadric, aRad, conf.xDivision, conf.yDivision);
 		// glu.gluDeleteQuadric(quadric);
 		gl.glEndList();
