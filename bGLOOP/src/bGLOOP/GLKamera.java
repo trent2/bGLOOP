@@ -4,10 +4,9 @@ import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.math.VectorUtil;
 
-/**
- * Klasse, die eine virtuelle Kamera beschreibt, die die 3D-Szene betrachtet.
+/** Klasse, die eine virtuelle Kamera beschreibt, die die 3D-Szene betrachtet.
  * Sie bietet eine Reihe von Diensten zur Manipultion der Kamera (wie etwas
- * drehen und verschieben). Eine Kamera öffnet automatisch ein Fenster, in dem
+ * Drehen und Verschieben). Eine Kamera öffnet automatisch ein Fenster, in dem
  * dargestellt wird, was die Kamera sieht.
  * 
  * @author R. Spillner
@@ -54,7 +53,7 @@ public class GLKamera {
 	 */
 	public GLKamera(boolean pVollbild, boolean pKeineDekoration) {
 		this(GLWindowConfig.defaultWindowConfig.globalDefaultWidth,
-				GLWindowConfig.defaultWindowConfig.golbalDefaultHeight, pVollbild, pKeineDekoration);
+				GLWindowConfig.defaultWindowConfig.globalDefaultHeight, pVollbild, pKeineDekoration);
 	}
 
 	/**
@@ -77,8 +76,7 @@ public class GLKamera {
 		renderer = new GLRenderer(wconf, width, height, this, pVollbild, pKeineDekoration);
 	}
 
-	/**
-	 * Rückgabe der aktiven Kamera. Die aktive Kamera ist die zuletzt erstellte
+	/** Rückgabe der aktiven Kamera. Die aktive Kamera ist die zuletzt erstellte
 	 * bzw. mit {@link #setzeAktiveKamera(GLKamera)} aktiviert Kamera.
 	 * 
 	 * @return die aktive Kamera
@@ -87,8 +85,7 @@ public class GLKamera {
 		return activeCamera;
 	}
 
-	/**
-	 * Setzt die momentan aktive Kamera.
+	/** Setzt die momentan aktive Kamera.
 	 * 
 	 * @param activeCamera
 	 *            Kameraobjekt, das als aktive Kamera gesetzt werden soll.
@@ -105,31 +102,24 @@ public class GLKamera {
 		return wconf;
 	}
 
-	/**
-	 * Aktiviert die Beleuchtung der Szene. Ist dies deaktiviert, werden alle
+	/** Aktiviert die Beleuchtung der Szene. Ist dies deaktiviert, werden alle
 	 * Objekte in einem gleichmäßigen Licht dargestellt, alle vorhandenen
 	 * Lichtquellen werden also ignoriert.
 	 * 
-	 * @param pBeleuchtungAn
-	 *            Wenn <code>true</code>, dann wird die Beleuchtung
-	 *            angeschaltet, wenn <code>false</code>, dann wird sie
-	 *            deaktiviert.
+	 * @param pBeleuchtungAn Wenn <code>true</code>, dann wird die Beleuchtung
+	 *       angeschaltet, wenn <code>false</code>, dann wird sie deaktiviert.
 	 */
 	synchronized public void beleuchtungAktivieren(boolean pBeleuchtungAn) {
 		wconf.globalLighting = pBeleuchtungAn;
 		renderer.scheduleRender();
 	}
 
-	/**
-	 * Setzt den Blickpunkt der Kamera. Der Blickpunkt ist der Punkt, der in der
+	/** Setzt den Blickpunkt der Kamera. Der Blickpunkt ist der Punkt, der in der
 	 * Mitte des Kamerafensters liegt, auf den die Kamera also zentriert blickt.
 	 * 
-	 * @param pX
-	 *            x-Koordinate des Blickpunkts
-	 * @param pY
-	 *            y-Koordinate des Blickpunkts
-	 * @param pZ
-	 *            z-Koordinate des Blickpunkts
+	 * @param pX x-Koordinate des Blickpunkts
+	 * @param pY y-Koordinate des Blickpunkts
+	 * @param pZ z-Koordinate des Blickpunkts
 	 */
 	synchronized public void setzeBlickpunkt(double pX, double pY, double pZ) {
 		aLookAt[0] = pX;
@@ -138,15 +128,11 @@ public class GLKamera {
 		renderer.scheduleRender();
 	}
 
-	/**
-	 * Setzt die Position der Kamera.
+	/** Setzt die Position der Kamera.
 	 * 
-	 * @param pX
-	 *            x-Koordinate der Position
-	 * @param pY
-	 *            y-Koordinate der Position
-	 * @param pZ
-	 *            z-Koordinate der Position
+	 * @param pX x-Koordinate der Position
+	 * @param pY y-Koordinate der Position
+	 * @param pZ z-Koordinate der Position
 	 */
 	synchronized public void setzePosition(double pX, double pY, double pZ) {
 		aPos[0] = pX;
@@ -155,7 +141,10 @@ public class GLKamera {
 		renderer.scheduleRender();
 	}
 
-	synchronized public void rotiereUmX(double pWinkel) {
+	/** Dreht die Kamera um den angegebenen Winkel um die x-Achse im Koordinatensystem.
+	 * @param pWinkel Drehwinkel in Grad
+	 */
+	synchronized public void dreheUmXAchse(double pWinkel) {
 		double s, c, t;
 		s = Math.sin(Math.toRadians(pWinkel));
 		c = Math.cos(Math.toRadians(pWinkel));
@@ -172,7 +161,10 @@ public class GLKamera {
 		renderer.scheduleRender();
 	}
 
-	synchronized public void rotiereUmY(double pWinkel) {
+	/** Dreht die Kamera um den angegebenen Winkel um die y-Achse im Koordinatensystem.
+	 * @param pWinkel Drehwinkel in Grad
+	 */
+	synchronized public void dreheUmYAchse(double pWinkel) {
 		double s, c, t;
 		s = Math.sin(Math.toRadians(pWinkel));
 		c = Math.cos(Math.toRadians(pWinkel));
@@ -183,6 +175,27 @@ public class GLKamera {
 		aPos[2] = aPos[2] * c + t * s;
 
 		renderer.scheduleRender();
+	}
+
+	/** Dreht die Kamera um die angegebene Achse im Raum. Die Achse wird
+	 * durch eine Gerade in Parameterform beschrieben. Daher muss insbesondere
+	 * der Vektor <em>&lt;pRX, pRY, pRZ&gt;&ne;&lt;0, 0, 0&gt;</em> sein.
+	 * @throws IllegalArgumentException Diese Ausnahme wird geworfen, wenn der Richtungsvektor
+	 *   der Gerade der Nullvektor ist.
+	 * @param pWinkel Drehwinkel in Grad
+	 * @param pNX x-Koordinate des Ortsvektors der Geradendarstellung  
+	 * @param pNY y-Koordinate des Ortsvektors der Geradendarstellung
+	 * @param pNZ z-Koordinate des Ortsvektors der Geradendarstellung
+	 * @param pRX x-Koordinate des Richtungsvektors der Geradendarstellung
+	 * @param pRY y-Koordinate des Richtungsvektors der Geradendarstellung
+	 * @param pRZ z-Koordinate des Richtungsvektors der Geradendarstellung
+	 */
+	synchronized public void drehe(double pWinkel, double pNX, double pNY, double pNZ, double pRX, double pRY,
+			double pRZ) throws IllegalArgumentException {
+		if(pRX == 0 && pRY == 0 && pRZ == 0)
+			throw new IllegalArgumentException("Richtungsvektor darf nicht der Nullvektor sein");
+
+		
 	}
 
 	void renderPreObjects(GL2 gl, GLU glu) {
@@ -368,5 +381,61 @@ public class GLKamera {
 
 		gl.glDisable(GL2.GL_COLOR_MATERIAL);
 		gl.glLineWidth(wconf.wireframeLineWidth);
+	}
+
+	/** Gibt die x-Koordinate des Blickpunkts der Kamera zurück.
+	 * @return x-Koordinate des Blickpunkts
+	 */
+	public double gibBlickpunktX() {
+		return aLookAt[0];
+	}
+
+	/** Gibt die y-Koordinate des Blickpunkts der Kamera zurück.
+	 * @return y-Koordinate des Blickpunkts
+	 */
+	public double gibBlickpunktY() {
+		return aLookAt[1];
+	}
+
+	/** Gibt die z-Koordinate des Blickpunkts der Kamera zurück.
+	 * @return z-Koordinate des Blickpunkts
+	 */
+	public double gibBlickpunktZ() {
+		return aLookAt[2];
+	}
+
+	/** Liefert die Breite des Kamerafensters.
+	 * @return Breite des Kamerafensters
+	 */
+	public int gibBreite() {
+		return wconf.globalDefaultWidth;
+	}
+
+	/** Liefert die Höhe des Kamerafensters.
+	 * @return Höhe des Kamerafensters
+	 */
+	public int gibHoehe() {
+		return wconf.globalDefaultHeight;
+	}
+
+	/** Gibt die x-Position der Kamera.
+	 * @return x-Position der Kamera
+	 */
+	public double gibX() {
+		return aPos[0];
+	}
+
+	/** Gibt die y-Position der Kamera.
+	 * @return y-Position der Kamera
+	 */
+	public double gibY() {
+		return aPos[1];
+	}
+
+	/** Gibt die z-Position der Kamera.
+	 * @return z-Position der Kamera
+	 */
+	public double gibZ() {
+		return aPos[2];
 	}
 }

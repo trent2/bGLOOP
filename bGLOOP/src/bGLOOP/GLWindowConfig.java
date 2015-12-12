@@ -33,7 +33,7 @@ class GLWindowConfig {
 
 	// package default global constants
 	int globalDefaultWidth;
-	int golbalDefaultHeight;
+	int globalDefaultHeight;
 	int xDivision, yDivision;
 	double axesLength;
 	double mouseWheelScale;
@@ -87,7 +87,7 @@ class GLWindowConfig {
 
 		globalDefaultWidth = Integer.parseInt(bgloopSetting.getProperty("DEFAULT_WINDOW_WIDTH"));
 
-		golbalDefaultHeight = Integer.parseInt(bgloopSetting.getProperty("DEFAULT_WINDOW_HEIGHT"));
+		globalDefaultHeight = Integer.parseInt(bgloopSetting.getProperty("DEFAULT_WINDOW_HEIGHT"));
 
 		globalShadeModel = Integer.parseInt(bgloopSetting.getProperty("DEFAULT_SHADE_MODEL"), 16);
 

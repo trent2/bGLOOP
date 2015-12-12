@@ -51,7 +51,7 @@ public class GLSchwenkkamera extends GLKamera {
 	 */
 	public GLSchwenkkamera() {
 		this(GLWindowConfig.defaultWindowConfig.globalDefaultWidth,
-				GLWindowConfig.defaultWindowConfig.golbalDefaultHeight);
+				GLWindowConfig.defaultWindowConfig.globalDefaultHeight);
 	}
 
 	private void addMouseListener() {
