@@ -2,13 +2,21 @@ package bGLOOP;
 
 /**
  * Materialkonstanten für verschiedene Oberflächeneinfärbungen. <br>
- * Um ein {@link GLObjekt} <code>glo</code> mit einem Material zu versehen,
- * nutzt man die Methdode und schreibt
+ * Um ein {@link GLObjekt} <code>glo</code> mit dem Material <code>GOLD2</code>
+ * zu versehen, nutzt man die Methode {@link GLObjekt#setzeMaterial(GLMaterial) setzeMaterial}
+ * und schreibt
  * 
  * <pre>
- * glo.setzeMaterial(GOLD2)
+ * glo.setzeMaterial(GLMaterial.GOLD2)
  * </pre>
  * 
+ * bzw. nach Import der Materialkonstanten aus der Klasse <code>GLMaterial</code> 
+ * 
+ * <pre>
+ * <b>import static</b> bGLOOP.GLMaterial.*;
+ * ...
+ * glo.setzeMaterial(GOLD2)
+ * </pre>
  * @author R. Spillner
  */
 public enum GLMaterial {

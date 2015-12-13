@@ -10,7 +10,7 @@ import com.jogamp.opengl.glu.GLU;
 
 /**
  * Ein Torusmodell.<br>
- * <!-- <img alt="Abbildung Torus" src="./doc-files/Torus-1.png">  -->
+ * <img alt="Abbildung Torus" src="./doc-files/Torus-1.png">
  * 
  * @author R. Spillner
  */
@@ -23,8 +23,10 @@ public class GLTorus extends GLTransformableObject {
 	 * äußerem Radius <code>pRadiusA</code> und Querschnittsrradius <code>pRadiusQ</code>.
 	 * Dabei liegt der Torus in der xy-Ebene, das Loch in der Mitte ist parallel
 	 * zur z-Achse.
-	 * <!--<div style="float:right"><img alt="Abbildung Torus" src="./doc-files/Torus-1.png">
-	 * </div>-->
+	 * 
+	 * <div style="float:right"><img alt="Abbildung Torus" src="./doc-files/Torus-1.png">
+	 * </div>
+	 * 
 	 * <div><p>
 	 * <em>Abbildung:</em> Lage eines Torus mit Mittelpunkt <code>M(0,0,0)</code>
 	 * und Radius <code>2</code>.
@@ -49,7 +51,6 @@ public class GLTorus extends GLTransformableObject {
 	 * @param pMZ z-Koordinate des Mittelpunkts des Torus
 	 * @param pRadiusA äußerer Radius des Torus
 	 * @param pRadiusQ Radius des Schnittkreises des Torus
-	 * </div><div style="clear:right"></div>
 	 * @param pTextur Textur-Objekt für die Oberfläche des Torus
 	 * @see #GLTorus(double, double, double, double, double)
 	 */

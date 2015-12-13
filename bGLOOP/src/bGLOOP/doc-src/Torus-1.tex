@@ -1,0 +1,29 @@
+\documentclass[convert={density=1200,size=400x,outext=.png}]{standalone}
+\usepackage{pgfplots}
+\pgfplotsset{width=7cm,compat=1.11}
+\begin{document}
+\begin{tikzpicture}
+  \begin{axis}[ymin=-1,ymax=1,xmin=-1,xmax=1,zmin=-1,zmax=1,
+    axis y line=none,
+    axis z line=none,
+    axis x line=none]
+     \addplot3[
+         surf,
+         fill=red,
+         fill opacity=.8,
+         draw=red,
+         samples=20,
+         domain=0:2*pi,
+         y domain=0:2*pi,
+         z buffer=sort
+       ]
+       ( {(0.7+0.4*cos(deg(x)))*cos(deg(y))}, 
+         {0.4*sin(deg(x))},
+         {(0.7+0.4*cos(deg(x)))*sin(deg(y))}
+         );
+    \draw[opacity=.6,->] (-1.3,0,0)--(1.4,0,0) node[below]{$x$};
+    \draw[opacity=.6,->] (0,1.2,0)--(0,-1.8,0) node[right]{$z$};
+    \draw[opacity=.6,->] (0,0,-1.2)--(0,0,1.2) node[right]{$y$};
+  \end{axis}
+\end{tikzpicture}
+\end{document}

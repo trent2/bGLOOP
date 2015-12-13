@@ -19,7 +19,7 @@ public interface IGLSubdivisable {
 	/** Anzahl der polygonalen Unterteilungen des Modells.
 	 * 
 	 * @see #setzeQualitaet(int,int)
-	 * @param pUnterteilungen Anzahl der horizontalen und veritkalen
+	 * @param pUnterteilungen Anzahl der horizontalen und vertikalen
 	 * Scheiben in der Unterteilung
 	 */
 	public void setzeQualitaet(int pUnterteilungen);
