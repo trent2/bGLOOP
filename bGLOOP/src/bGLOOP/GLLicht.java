@@ -16,6 +16,7 @@ public class GLLicht extends GLDisplayItem {
 	private float[] lightAmbientValue = { 0.15f, 0.15f, 0.15f, 1.0f };
 	private float[] lightDiffuseValue = { 1.0f, 1.0f, 1.0f, 1.0f };
 	private float[] lightSpecularValue = { 1.0f, 1.0f, 1.0f, 1.0f };
+	private float[] attenuation = { 1, 0, 0 };
 	private float[] lightDiffusePosition;
 	private boolean isOn = true;
 
@@ -46,33 +47,36 @@ public class GLLicht extends GLDisplayItem {
 	 * @param pG Grünanteil
 	 * @param pB Blauanteil
 	 */
-	synchronized public void setzeAmbientBeleuchtung(double pR, double pG, double pB) {
+	public synchronized void setzeAmbientBeleuchtung(double pR, double pG, double pB) {
 		lightAmbientValue[0] = (float)pR;
 		lightAmbientValue[1] = (float)pG;
 		lightAmbientValue[2] = (float)pB;
 		associatedRenderer.scheduleRender();
 	}
 
-	public void setzeFarbe(double pR, double pG, double pB) {
+	/** Setzt den die Hauptfarbe der Lichtquelle. Die Parameterwerte
+	 * müssen zwischen 0 und 1 liegen.
+	 * 
+	 * @param pR Rotanteil
+	 * @param pG Grünanteil
+	 * @param pB Blauanteil
+	 */
+	public synchronized void setzeFarbe(double pR, double pG, double pB) {
 		lightDiffuseValue[0] = (float)pR;
 		lightDiffuseValue[1] = (float)pG;
 		lightDiffuseValue[2] = (float)pB;
 		associatedRenderer.scheduleRender();
 	}
 
-	void setzeFarbe(double[] pCol) {
-		setzeFarbe(pCol[0], pCol[1], pCol[2]);
-	}
-
 	/**
 	 * Aktiviert oder deaktiviert die Lichtquelle.
 	 * 
-	 * @param an
+	 * @param pAn
 	 *            Wenn <code>true</code>, dann wird die Lichtquelle aktiviert,
 	 *            wenn <code>false</code>, dann wird sie deaktiviert.
 	 */
-	public synchronized void lichtAn(boolean an) {
-		isOn = an;
+	public synchronized void lichtAn(boolean pAn) {
+		isOn = pAn;
 		associatedRenderer.scheduleRender();
 	}
 
@@ -83,6 +87,9 @@ public class GLLicht extends GLDisplayItem {
 			gl.glLightfv(LIGHT_NUMS[id], GL2.GL_DIFFUSE, lightDiffuseValue, 0);
 			gl.glLightfv(LIGHT_NUMS[id], GL2.GL_SPECULAR, lightSpecularValue, 0);
 			gl.glLightfv(LIGHT_NUMS[id], GL2.GL_POSITION, lightDiffusePosition, 0);
+			gl.glLightf(LIGHT_NUMS[id], GL2.GL_CONSTANT_ATTENUATION, attenuation[0]);
+			gl.glLightf(LIGHT_NUMS[id], GL2.GL_LINEAR_ATTENUATION, attenuation[1]);
+			gl.glLightf(LIGHT_NUMS[id], GL2.GL_QUADRATIC_ATTENUATION, attenuation[2]);
 			gl.glEnable(LIGHT_NUMS[id]);
 		} else
 			gl.glDisable(LIGHT_NUMS[id]);
@@ -104,10 +111,29 @@ public class GLLicht extends GLDisplayItem {
 	 * @param pX x-Koordinate der Position
 	 * @param pY y-Koordinate der Position
 	 * @param pZ z-Koordinate der Position
-	 */	public synchronized void verschiebe(double pX, double pY, double pZ) {
+	 */
+	public synchronized void verschiebe(double pX, double pY, double pZ) {
 		lightDiffusePosition[0] += (float)pX;
 		lightDiffusePosition[1] += (float)pY;
 		lightDiffusePosition[2] += (float)pZ;
+		associatedRenderer.scheduleRender();
+	}
+
+	/** Legt fest, wie das emittierte Licht abgeschwächt mit zunehmender
+	 * Entfernung von der Lichtquelle abgeschwächt wird. Dabei werden
+	 * eine konstante, eine lineare und eine quadratische Komponente unterschieden.
+	 * @param pKonstant konstanter Faktor. Der Einfluss dieses Parameters ist
+	 * unabhängig von der Entfernung und gibt somit eine globale (d.h. 
+	 * positionsunabhängige) Abschwächung des Lichts an.
+	 * @param pLinear linearer Faktor der Abschwächung abhängig von der
+	 * 	Entfernung eines Pixels von der Lichtquelle
+	 * @param pQuadratisch quadratischer Faktor der Abschwächung abhängig vom
+	 * 	Quadrat der Entfernung eines Pixels von der Lichtquelle.
+	 */
+	public synchronized void setzeAbschwaechung(double pKonstant, double pLinear, double pQuadratisch) {
+		attenuation[0] = (float)pKonstant;
+		attenuation[1] = (float)pLinear;
+		attenuation[2] = (float)pQuadratisch;
 		associatedRenderer.scheduleRender();
 	}
 }
