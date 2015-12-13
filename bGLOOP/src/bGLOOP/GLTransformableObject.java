@@ -51,11 +51,21 @@ abstract class GLTransformableObject extends GLObjekt implements IGLTransformier
 	}
 
 	@Override
+	@Deprecated public void dreheDich(double pWinkelX, double pWinkelY, double pWinkelZ, double pX, double pY, double pZ) {
+		drehe(pWinkelX, pWinkelY, pWinkelZ, pX, pY, pZ);
+	}
+
+	@Override
 	public void drehe(double pWinkelX, double pWinkelY, double pWinkelZ) {
 		float[] tr = transformationMatrix.getMatrix();
 		this.drehe(pWinkelX, pWinkelY, pWinkelZ, tr[12], tr[13], tr[14]);
 	}
 
+	@Override
+	@Deprecated public void dreheDich(double pWinkelX, double pWinkelY, double pWinkelZ) {
+		drehe(pWinkelX, pWinkelY, pWinkelZ);
+	}
+	
 	@Override
 	public synchronized void skaliere(double pFaktorX, double pFaktorY, double pFaktorZ) {
 		float[] tm = transformationMatrix.getMatrix();

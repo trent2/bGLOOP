@@ -93,4 +93,16 @@ public interface IGLTransformierbar {
 	 * @return z-Koordinate des Objekts
 	 */
 	public double gibZ();
+
+	/** @see #drehe(double, double, double)
+	 * @deprecated Diese Methode ist veraltet, verwenden Sie bitte
+	 *             {@link #drehe(double, double, double)}.
+	 */
+	@Deprecated public void dreheDich(double pWinkelX, double pWinkelY, double pWinkelZ);
+
+	/** @see #drehe(double, double, double, double, double, double) 
+	 * @deprecated Diese Methode ist veraltet, verwenden Sie bitte
+	 *             {@link #drehe(double, double, double, double, double, double)}
+	 */
+	@Deprecated public void dreheDich(double pWinkelX, double pWinkelY, double pWinkelZ, double pX, double pY, double pZ);
 }
