@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.logging.Logger;
 
-import bGLOOP.mesh.BuilderInterface;
+import static bGLOOP.mesh.builder.BuilderPOJOs.*;
 
 public class Build implements BuilderInterface {
 
@@ -49,7 +49,7 @@ public class Build implements BuilderInterface {
     
 
     public Build() {
-    	log.setLevel(java.util.logging.Level.OFF);
+    	log.setLevel(java.util.logging.Level.INFO);
     }
 
     @Override

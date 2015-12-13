@@ -4,30 +4,29 @@ import static java.lang.Math.max;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 
 import bGLOOP.mesh.Parse;
 import bGLOOP.mesh.builder.Build;
-import bGLOOP.mesh.builder.Face;
-import bGLOOP.mesh.builder.FaceVertex;
-import bGLOOP.mesh.builder.Material;
+import bGLOOP.mesh.builder.BuilderPOJOs.Face;
+import bGLOOP.mesh.builder.BuilderPOJOs.FaceVertex;
+import bGLOOP.mesh.builder.BuilderPOJOs.Material;
 
 public class GLMesh extends GLTransformableObject {
 	private boolean parseOk = false;
 	private Build meshBuild;
 	private double aMeshScale, aMaxCoordScale;
 	private double[] meshDiameter = new double[3];
-	private HashMap<String, GLTextur> texMap;
+	private File meshFile;
+//	private HashMap<String, GLTextur> texMap;
 
 	public GLMesh(String pDateiname, double pMeshMaxScale, GLTextur pTextur) {
 		super(pTextur);
-		texMap = new HashMap<String, GLTextur>(5);
+	//	texMap = new HashMap<String, GLTextur>(5);
 		try {
-			new Parse(meshBuild = new Build(), pDateiname);
+			new Parse(meshBuild = new Build(), meshFile = new File(pDateiname));
 			parseOk = true;
 			needsRedraw = true;
 			aMeshScale = pMeshMaxScale < 0 ? associatedCam.getWconf().meshMaxScale : pMeshMaxScale;
@@ -35,19 +34,12 @@ public class GLMesh extends GLTransformableObject {
 				meshDiameter[i] = meshBuild.vertexCoordinateRanges[2*i+1] - meshBuild.vertexCoordinateRanges[2*i];
 			aMaxCoordScale = max(meshDiameter[0], max(meshDiameter[1], meshDiameter[2]));
 
-			skaliere(aMeshScale / aMaxCoordScale);
-
-			if (pTextur == null)
-				for (Map.Entry<String, Material> e : meshBuild.materialLib.entrySet()) {
-					String s;
-					if ((s = e.getValue().mapKdFilename) != null)
-						texMap.put(e.getKey(), new GLTextur(new File(new File(pDateiname).getParent(), s)));
-				}
-				
+			skaliere(aMeshScale / aMaxCoordScale);	
 		} catch (IOException fnfe) {
 			fnfe.printStackTrace();
 		}
 		conf.objectRenderMode = Rendermodus.RENDER_GL;
+		setzeDarstellungsModus(conf.displayMode);
 		aVisible = true;
 	}
 
@@ -82,7 +74,7 @@ public class GLMesh extends GLTransformableObject {
 	}
 
 	@Override
-	void generateDisplayList(GL2 gl) {
+	void generateDisplayList_GL(GL2 gl) {
 		GLTextur currTex = null, newTex;
 		String currMatName = null, newMatName;
 		if (!parseOk)
@@ -91,27 +83,34 @@ public class GLMesh extends GLTransformableObject {
 		gl.glBegin(GL2.GL_TRIANGLES);
 
 		boolean userTextureAvailable = (aTex != null) && aTex.isReady();
-		boolean textureCoordinatesPresent = meshBuild.verticesT.size() > 0;
 
 		for (Face fa : meshBuild.faces) {
-			if(!userTextureAvailable) {
+			if (!userTextureAvailable && fa.material != null) {
 				newMatName = fa.material.name;
-				if(!newMatName.equals(currMatName)) {
-					newTex = texMap.get(currMatName = newMatName);
-					if(newTex != currTex) {
-						gl.glEnd();
-						(currTex = newTex).loadAndEnable(gl);
-						gl.glBegin(GL2.GL_TRIANGLES);
+				Material m = fa.material;
+				if (!newMatName.equals(currMatName)) {
+					loadMaterial(gl, m.ka.getFloatv(), m.kd.getFloatv(), m.ks.getFloatv(), aEmission, (float)m.nsExponent);
+					if (fa.material.mapKdFilename != null) {
+						newTex = new GLTextur(new File(meshFile.getParent(), fa.material.mapKdFilename));
+						if (!newTex.equals(currTex)) {
+							gl.glEnd();
+							(currTex = newTex).loadAndEnable(gl);
+							if(fa.vertices.size() == 3)
+								gl.glBegin(GL2.GL_TRIANGLES);
+							else
+								gl.glBegin(GL2.GL_QUADS);
+						}
+					} else {
+						gl.glDisable(GL2.GL_TEXTURE_2D);
 					}
 				}
 			}
-
 			for (FaceVertex fv : fa.vertices) {
 				if(fv.n != null)
 					gl.glNormal3f(fv.n.x, fv.n.y, fv.n.z);
 
 				// use texture coordinates
-				if(textureCoordinatesPresent && (currTex != null || userTextureAvailable))
+				if(fv.t != null && (currTex != null || userTextureAvailable))
 					gl.glTexCoord2d(fv.t.u, fv.t.v);
 				else if(userTextureAvailable)
 					gl.glTexCoord2d((fv.v.x + meshBuild.vertexCoordinateRanges[0]) / aMaxCoordScale,
@@ -122,8 +121,12 @@ public class GLMesh extends GLTransformableObject {
 			}
 		}
 		gl.glEnd();
+		gl.glDisable(GL2.GL_TEXTURE_2D);
 		gl.glEndList();
-		if(currTex != null && currTex.isReady())
-			currTex.disable(gl);
+	}
+	
+	@Override
+	void generateDisplayList_GLU(GL2 gl, GLU glu) {
+		doRenderGL(gl);
 	}
 }

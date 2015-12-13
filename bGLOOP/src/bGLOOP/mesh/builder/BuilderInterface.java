@@ -1,4 +1,4 @@
-package bGLOOP.mesh;
+package bGLOOP.mesh.builder;
 //code copied and modified from https://github.com/seanrowens/oObjLoader
 //code is licensed under UNLICENSE which is basically public domain
 

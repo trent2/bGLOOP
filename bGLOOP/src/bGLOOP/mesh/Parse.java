@@ -5,7 +5,6 @@ package bGLOOP.mesh;
 import static java.util.logging.Level.INFO;
 import static java.util.logging.Level.SEVERE;
 import static java.util.logging.Level.WARNING;
-import static java.util.logging.Level.OFF;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -13,6 +12,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.logging.Logger;
+
+import bGLOOP.mesh.builder.BuilderInterface;
 
 public class Parse {
     private Logger log = Logger.getLogger(Parse.class.getName());
@@ -61,21 +62,21 @@ public class Parse {
     BuilderInterface builder = null;
     File objFile = null;
 
-    public Parse(BuilderInterface builder, String filename) throws FileNotFoundException, IOException {
+    public Parse(BuilderInterface builder, File file) throws FileNotFoundException, IOException {
         this.builder = builder;
-        log.setLevel(OFF);
-        builder.setObjFilename(filename);
-        parseObjFile(filename);
+        log.setLevel(INFO);
+        builder.setObjFilename(file.getName());
+        parseObjFile(file);
 
-        builder.doneParsingObj(filename);
+        builder.doneParsingObj(file.getName());
     }
 
-    private void parseObjFile(String objFilename) throws FileNotFoundException, IOException {
+    private void parseObjFile(File objFile) throws FileNotFoundException, IOException {
         int lineCount = 0;
         FileReader fileReader = null;
         BufferedReader bufferedReader = null;
 
-        objFile = new File(objFilename);
+        this.objFile = objFile;
         fileReader = new FileReader(objFile);
         bufferedReader = new BufferedReader(fileReader);
 
