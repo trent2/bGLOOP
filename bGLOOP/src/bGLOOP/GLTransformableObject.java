@@ -1,12 +1,16 @@
 package bGLOOP;
 
+import static java.lang.Math.sin;
+import static java.lang.Math.cos;
+import static java.lang.Math.toRadians;
+
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 
 import bGLOOP.linalg.Matrix4;
 
-abstract class GLTransformableObject extends GLObjekt implements IGLTransformierbar,
-	IGLDisplayable, IGLSubdivisable {
+abstract class GLTransformableObject extends GLObjekt implements IGLTransformierbar, IGLDisplayable, IGLSubdivisable {
+	Matrix4 transformationMatrix;
 
 	GLTransformableObject() {
 		this(null);
@@ -14,13 +18,32 @@ abstract class GLTransformableObject extends GLObjekt implements IGLTransformier
 
 	GLTransformableObject(GLTextur pTex) {
 		super(pTex);
-		conf.objectRenderMode = wconf.globalObjectRenderMode;
+		// this must be initialized BEFORE adding to any display lists
+		transformationMatrix = new Matrix4();
 		setzeDarstellungsModus(conf.displayMode = wconf.globalDrawMode);
 	}
 
 	@Override
 	public synchronized void verschiebe(double pX, double pY, double pZ) {
 		transformationMatrix.translateFromLeft((float) pX, (float) pY, (float) pZ);
+		scheduleRender();
+	}
+
+	@Override
+	public synchronized void setzePosition(double pX, double pY, double pZ) {
+		final float[] m = transformationMatrix.getMatrix();
+		m[12] = (float) pX;
+		m[13] = (float) pY;
+		m[14] = (float) pZ;
+		m[15] = 1;
+	}
+
+	@Override
+	public synchronized void resetSkalierungUndRotation() {
+		float[] tm = transformationMatrix.getMatrix();
+		float[] tr = { tm[12], tm[13], tm[14] };
+		transformationMatrix = new Matrix4();
+		transformationMatrix.translateFromLeft(tr[0], tr[1], tr[2]);
 		scheduleRender();
 	}
 
@@ -32,12 +55,12 @@ abstract class GLTransformableObject extends GLObjekt implements IGLTransformier
 		// don't open link in eclipse, it's a 404!
 		// rotation is done in the following order:
 		// first x-axis, then y-axis, then z-axis
-		double A = Math.cos(Math.toRadians(pWinkelX));
-		double B = Math.sin(Math.toRadians(pWinkelX));
-		double C = Math.cos(Math.toRadians(pWinkelY));
-		double D = Math.sin(Math.toRadians(pWinkelY));
-		double E = Math.cos(Math.toRadians(pWinkelZ));
-		double F = Math.sin(Math.toRadians(pWinkelZ));
+		double A = cos(toRadians(pWinkelX));
+		double B = sin(toRadians(pWinkelX));
+		double C = cos(toRadians(pWinkelY));
+		double D = sin(toRadians(pWinkelY));
+		double E = cos(toRadians(pWinkelZ));
+		double F = sin(toRadians(pWinkelZ));
 		double AD = A * D;
 		double BD = B * D;
 		float[] r_mat = { (float) (C * E), (float) (BD * E + A * F), (float) (-AD * E + B * F), 0, (float) (-C * F),
@@ -51,7 +74,8 @@ abstract class GLTransformableObject extends GLObjekt implements IGLTransformier
 	}
 
 	@Override
-	@Deprecated public void dreheDich(double pWinkelX, double pWinkelY, double pWinkelZ, double pX, double pY, double pZ) {
+	@Deprecated
+	public void dreheDich(double pWinkelX, double pWinkelY, double pWinkelZ, double pX, double pY, double pZ) {
 		drehe(pWinkelX, pWinkelY, pWinkelZ, pX, pY, pZ);
 	}
 
@@ -62,10 +86,11 @@ abstract class GLTransformableObject extends GLObjekt implements IGLTransformier
 	}
 
 	@Override
-	@Deprecated public void dreheDich(double pWinkelX, double pWinkelY, double pWinkelZ) {
+	@Deprecated
+	public void dreheDich(double pWinkelX, double pWinkelY, double pWinkelZ) {
 		drehe(pWinkelX, pWinkelY, pWinkelZ);
 	}
-	
+
 	@Override
 	public synchronized void skaliere(double pFaktorX, double pFaktorY, double pFaktorZ) {
 		float[] tm = transformationMatrix.getMatrix();
@@ -98,7 +123,7 @@ abstract class GLTransformableObject extends GLObjekt implements IGLTransformier
 
 	@Override
 	public synchronized void setzeQualitaet(int pBreitengrade, int pLaengengrade) {
-		if(pBreitengrade != conf.xDivision || pLaengengrade != conf.yDivision) {
+		if (pBreitengrade != conf.xDivision || pLaengengrade != conf.yDivision) {
 			conf.xDivision = pBreitengrade;
 			conf.yDivision = pLaengengrade;
 			needsRedraw = true;
@@ -113,46 +138,59 @@ abstract class GLTransformableObject extends GLObjekt implements IGLTransformier
 
 	@Override
 	public double gibX() {
-		return transformationMatrix.getMatrix()[12]/transformationMatrix.getMatrix()[15];
+		return transformationMatrix.getMatrix()[12] / transformationMatrix.getMatrix()[15];
 	}
 
 	@Override
 	public double gibY() {
-		return transformationMatrix.getMatrix()[13]/transformationMatrix.getMatrix()[15];
+		return transformationMatrix.getMatrix()[13] / transformationMatrix.getMatrix()[15];
 	}
 
 	@Override
 	public double gibZ() {
-		return transformationMatrix.getMatrix()[14]/transformationMatrix.getMatrix()[15];
-	}
-
-	@Override
-	void doRenderGL(GL2 gl) {
-		renderDelegate(gl, true, null);
-	}
-
-	@Override
-	void doRenderGLU(GL2 gl, GLU glu) {
-		renderDelegate(gl, false, glu);
+		return transformationMatrix.getMatrix()[14] / transformationMatrix.getMatrix()[15];
 	}
 
 	abstract void generateDisplayList_GL(GL2 gl);
 
 	abstract void generateDisplayList_GLU(GL2 gl, GLU glu);
 
-	private void renderDelegate(GL2 gl, boolean doGL, GLU glu) {
-		if(needsRedraw) {
-			if(bufferName != -1)
-				gl.glDeleteLists(bufferName, 1);
+	abstract void generateVBO(GL2 gl);
 
-			bufferName = gl.glGenLists(1);
-			if(doGL)
-				generateDisplayList_GL(gl);
-			else
-				generateDisplayList_GLU(gl, glu);
+	abstract void drawVBO(GL2 gl);
+
+	@Override
+	void renderDelegate(GL2 gl, GLU glu) {
+		gl.glMultMatrixf(transformationMatrix.getMatrix(), 0);
+		if (needsRedraw) {
+			switch (conf.objectRenderMode) {
+			case RENDER_GLU:
+			case RENDER_GL:
+				if (bufferName != -1)
+					gl.glDeleteLists(bufferName, 1);
+
+				bufferName = gl.glGenLists(1);
+				if(conf.objectRenderMode == Rendermodus.RENDER_GL)
+					generateDisplayList_GL(gl);
+				else
+					generateDisplayList_GLU(gl, glu);
+				break;
+			case RENDER_VBOGL:
+				generateVBO(gl);
+				break;
+			}
+
 			needsRedraw = false;
 		}
-		gl.glCallList(bufferName);
-		
+		switch (conf.objectRenderMode) {
+		case RENDER_GL:
+		case RENDER_GLU:
+			gl.glCallList(bufferName);
+			break;
+		case RENDER_VBOGL:
+			drawVBO(gl);
+			break;
+		}
+
 	}
 }

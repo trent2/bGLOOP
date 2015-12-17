@@ -78,10 +78,7 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 	}
 
 	@Override
-	void doRenderGL_VBO(GL2 gl) {
-		if(needsRedraw)
-			generateVBO(gl);
-
+	void drawVBO(GL2 gl) {
 		gl.glBindBuffer( GL.GL_ARRAY_BUFFER, bufferName);
         gl.glEnableClientState( GL2.GL_VERTEX_ARRAY );
         gl.glEnableClientState( GL2.GL_NORMAL_ARRAY );
@@ -103,18 +100,22 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 		gl.glBindBuffer( GL.GL_ARRAY_BUFFER, 0);
 	}
 
+
 	@Override
 	void generateDisplayList_GLU(GL2 gl, GLU glu) {
 		// gl.glColor3f(1, 1, 1);
 		gl.glNewList(bufferName, GL2.GL_COMPILE);
-		gl.glDisable(GL2.GL_CULL_FACE);
-		glu.gluQuadricNormals(quadric, GLU.GLU_SMOOTH);
-		gl.glTranslated(0, 0, aTiefe / 2);
-		glu.gluDisk(quadric, 0, aRad1, aEckenzahl, aMantelqualitaet);
-		gl.glTranslated(0, 0, -aTiefe / 2);
-		glu.gluDisk(quadric, 0, aRad2, aEckenzahl, aMantelqualitaet);
 		gl.glEnable(GL2.GL_CULL_FACE);
-		gl.glTranslated(0, 0, -aTiefe / 2);
+		glu.gluQuadricNormals(quadric, GLU.GLU_SMOOTH);
+		glu.gluQuadricTexture(quadric, true);
+		gl.glTranslated(0, 0, aTiefe/2);
+		glu.gluDisk(quadric, 0, aRad1, aEckenzahl, aMantelqualitaet);
+		gl.glPushMatrix();
+		gl.glRotated(180, 1, 0, 0);
+		gl.glTranslated(0, 0, aTiefe);
+		glu.gluDisk(quadric, 0, aRad2, aEckenzahl, aMantelqualitaet);
+		gl.glPopMatrix();
+		gl.glTranslated(0, 0, -aTiefe);
 		glu.gluCylinder(quadric, aRad2, aRad1, aTiefe, aEckenzahl, aMantelqualitaet);
 		// glu.gluDeleteQuadric(quadric);
 		gl.glEndList();
@@ -210,9 +211,10 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 		scheduleRender();
 	}
 
-	private void generateVBO(GL2 gl) {
+	@Override
+	void generateVBO(GL2 gl) {
 		int[] t = new int[1];
-		if(bufferName != -1) {
+		if(fb != null && bufferName != -1) {
 			t[0] = bufferName;
 			gl.glDeleteBuffers(1, t, 0);
 			fb.clear();

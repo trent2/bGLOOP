@@ -25,18 +25,7 @@ public class GLHimmel extends GLObjekt {
 	}
 
 	@Override
-	void doRenderGL_VBO(GL2 gl) {
-		//		throw new UnsupportedOperationException("VBOs sind für diesen Objekttyp (noch) nicht implementiert.");
-		doRenderGL(gl);
-	}
-
-	@Override
-	void doRenderGLU(GL2 gl, GLU glu) {
-		throw new AssertionError("Diese Methode dürfte nie aufgerufen worden sein.");
-	}
-
-	@Override
-	void doRenderGL(GL2 gl) {
+	void renderDelegate(GL2 gl, GLU glu) {
 		if (!associatedCam.getWconf().aWireframe) {
 			double radius = 100;
 			int divs = 16;

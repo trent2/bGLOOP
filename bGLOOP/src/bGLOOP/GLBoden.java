@@ -26,18 +26,7 @@ public class GLBoden extends GLObjekt {
 	}
 
 	@Override
-	void doRenderGL_VBO(GL2 gl) {
-		//		throw new UnsupportedOperationException("VBOs sind für diesen Objekttyp (noch) nicht implementiert.");
-		doRenderGL(gl);
-	}
-
-	@Override
-	void doRenderGLU(GL2 gl, GLU glu) {
-		throw new AssertionError("Diese Methode dürfte nie aufgerufen worden sein.");
-	}
-
-	@Override
-	void doRenderGL(GL2 gl) {
+	void renderDelegate(GL2 gl, GLU glu) {
 		// don't render wireframe
 		if (!associatedCam.getWconf().aWireframe) {
 			double lTX = associatedCam.aPos[0] / 1000;

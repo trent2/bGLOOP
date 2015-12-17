@@ -3,7 +3,7 @@ package bGLOOP;
 import bGLOOP.GLObjekt.Darstellungsmodus;
 
 /** <p>Ein GLLichtobjekt ein normales bGLOOP-Objekt, das leuchtet. Dies kann
- * im einzelnen z.B. eine Kugel, ein {@link GLZylinder Zylinder}, ein {@link GLKegel Kegel},
+ * im einzelnen z.B. eine {@link GLKugel Kugel}, ein {@link GLZylinder Zylinder}, ein {@link GLKegel Kegel},
  * ein {@link GLKegelstumpf Kegelstumpf} usw. sein. Die Klasse kann dazu verwendet werden, um
  * etwa Kerzenflammen oder Lampen darzustellen.</p>
  * <p>Das an den {@link #GLLichtobjekt(GLTransformableObject) Konstruktor} übergebene
@@ -181,5 +181,15 @@ public class GLLichtobjekt
 	@Override
 	@Deprecated public void dreheDich(double pWinkelX, double pWinkelY, double pWinkelZ, double pX, double pY, double pZ) {
 		drehe(pWinkelX, pWinkelY, pWinkelZ, pX, pY, pZ);
+	}
+
+	@Override
+	public void setzePosition(double pX, double pY, double pZ) {
+		aLichtobjekt.setzePosition(pX, pY, pZ);
+	}
+
+	@Override
+	public void resetSkalierungUndRotation() {
+		aLichtobjekt.resetSkalierungUndRotation();
 	}
 }

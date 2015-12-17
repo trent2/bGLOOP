@@ -18,6 +18,15 @@ public interface IGLTransformierbar {
 	 */
 	public void verschiebe(double pX, double pY, double pZ);
 
+	/** Verschiebt das Objekts mit seinem Bezugspunkt (meistens der Mittelpunkt)
+	 * auf den Punkt <code>(pX, pY, pZ)</code>.
+	 * 
+	 * @param pX x-Koordinate des Zielpunkts
+	 * @param pY y-Koordinate des Zielpunkts
+	 * @param pZ z-Koordinate des Zielpunkts
+	 */
+	void setzePosition(double pX, double pY, double pZ);
+
 	/** Dreht Objekt um die Koordinatenachsen, die in Punkt
 	 * <code>P(pX, pY, pZ)</code> verschoben wurden. Dabei wird zuerst um die
 	 * x-Achse um <code>pWinkelX</code>, danach um die y-Achse um
@@ -105,4 +114,10 @@ public interface IGLTransformierbar {
 	 *             {@link #drehe(double, double, double, double, double, double)}
 	 */
 	@Deprecated public void dreheDich(double pWinkelX, double pWinkelY, double pWinkelZ, double pX, double pY, double pZ);
+
+	/** Setzt Skalierung und Drehungen zurück auf die Standardwerte.
+	 * Die bereits vollzogenen Verschiebungen (Translationen) des Objekts bleiben
+	 * erhalten.
+	 */
+	void resetSkalierungUndRotation();
 }

@@ -14,8 +14,11 @@ import bGLOOP.windowimpl.listener.KeyboardListenerFacade;
  * <li><code>a</code>: Blendet die Koordinatenachsen ein und aus</li>
  * <li><code>s</code>: Setzt die Kamera auf <code>(0,0,500)</code> mit Blickpunkt
  * auf <code>(0,0,0)</code> </li>
- * <li><code>&#8593;</code>: Rückt die Kamera ein Stück nach oben</li>
- * <li><code>&#8595;</code>: Rückt die Kamera ein Stück nach unten</li>
+ * <li><code>f</code>: Wechselt zwischen Vollbild und Fenstermodus</li>
+ * <li><code>&uarr;</code>: Rückt die Kamera ein Stück nach oben</li>
+ * <li><code>&darr;</code>: Rückt die Kamera ein Stück nach unten</li>
+ * <li><code>&larr;</code>: Rückt die Kamera ein Stück nach links</li>
+ * <li><code>&rarr;</code>: Rückt die Kamera ein Stück nach rechts</li>
  * </ul>
  * 
  * @author R. Spillner

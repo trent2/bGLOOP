@@ -72,13 +72,18 @@ public class GLMesh extends GLTransformableObject {
 	}
 
 	@Override
-	void doRenderGLU(GL2 gl, GLU glu) {
-		throw new AssertionError("Diese Methode dürfte nie aufgerufen worden sein.");
+	void generateVBO(GL2 gl) {
+		generateDisplayList_GL(gl);
 	}
 
 	@Override
-	void doRenderGL_VBO(GL2 gl) {
-		doRenderGL(gl);
+	void generateDisplayList_GLU(GL2 gl, GLU glu) {
+		generateDisplayList_GL(gl);
+	}
+
+	@Override
+	void drawVBO(GL2 gl) {
+		gl.glCallList(bufferName);
 	}
 
 	@Override
@@ -143,10 +148,5 @@ public class GLMesh extends GLTransformableObject {
 		gl.glEnd();
 		gl.glDisable(GL2.GL_TEXTURE_2D);
 		gl.glEndList();
-	}
-
-	@Override
-	void generateDisplayList_GLU(GL2 gl, GLU glu) {
-		doRenderGL(gl);
 	}
 }

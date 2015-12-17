@@ -69,7 +69,7 @@ public class GLTorus extends GLTransformableObject {
 
 	@Override
 	void generateDisplayList_GLU(GL2 gl, GLU glu) {
-		doRenderGL(gl);
+		generateDisplayList_GL(gl);
 	}
 
 	@Override
@@ -110,10 +110,7 @@ public class GLTorus extends GLTransformableObject {
 	}
 
 	@Override
-	void doRenderGL_VBO(GL2 gl) {
-		if(needsRedraw)
-			generateVBO(gl);
-
+	void drawVBO(GL2 gl) {
 		gl.glBindBuffer( GL.GL_ARRAY_BUFFER, bufferName);
         gl.glEnableClientState( GL2.GL_VERTEX_ARRAY );
         gl.glEnableClientState( GL2.GL_NORMAL_ARRAY );
@@ -131,9 +128,10 @@ public class GLTorus extends GLTransformableObject {
 		gl.glBindBuffer( GL.GL_ARRAY_BUFFER, 0);
 	}
 
-	private void generateVBO(GL2 gl) {
+	@Override
+	void generateVBO(GL2 gl) {
 		int[] t = new int[1];
-		if(bufferName != -1) {
+		if(fb != null && bufferName != -1) {
 			t[0] = bufferName;
 			gl.glDeleteBuffers(1, t, 0);
 			fb.clear();
