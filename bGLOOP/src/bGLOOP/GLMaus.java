@@ -23,9 +23,9 @@ import bGLOOP.windowimpl.listener.MouseListenerFacade;
  * </p>
  * <p>Daneben wird zwischen einem <em>echten</em> und <em>unechten</em> Linksklick
  * unterschieden: eine <em>echter</em> Linksklick ist nicht Teil einer Doppelklicks.
- * Er kann erst nach Ablauf eines kurzen Augenblicks nach Mausklick geprüft werden,
- * da abgewartet werden muss, ob einer erneuter Linksklick durchgeführt wird.
- * Ein unechter Mausklick hingegen steht einer Abfrage mittels der Methode
+ * Er kann erst nach Ablauf eines kurzen Augenblicks nach Mausklick positiv geprüft
+ * werden, da abgewartet werden muss, ob einer erneuter Linksklick durchgeführt
+ * wird. Ein unechter Mausklick hingegen steht einer Abfrage mittels der Methode
  * {@link #linksklick()} direkt zur Verfügung.
  * </p>
  * <p>Unabhängig davon kann jederzeit sofort geprüft werden, ob eine Maustaste momentan
