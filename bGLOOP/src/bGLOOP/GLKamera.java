@@ -438,4 +438,20 @@ public class GLKamera {
 	public double gibZ() {
 		return aPos[2];
 	}
+
+	/** Erstellt ein Bildschirmfoto und speichert es unter dem in der
+	 * bGLOOP-Konfigurationsdatei festgelegten Standardnamen.
+	 */
+	public void bildschirmfoto() {
+		getRenderer().scheduleScreenshot(null);
+	}
+
+	/** Erstellt ein Bildschirmfoto und speichert es unter dem übergebenen
+	 * Dateinamen.
+	 * 
+	 * @param pDateiname Dateiname des Screenshots
+	 */
+	public void bildschirmfoto(String pDateiname) {
+		getRenderer().scheduleScreenshot(pDateiname);
+	}
 }

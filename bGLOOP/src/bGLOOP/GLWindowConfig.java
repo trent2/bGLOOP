@@ -47,6 +47,7 @@ class GLWindowConfig {
 			doubleBuffering = true;
 
 	long clickTimeRange, moveTimeRange;
+	String screenshotFormat, screenshotPrefix;
 
 	GLWindowConfig() {
 		InputStream defaultSettings;
@@ -118,6 +119,8 @@ class GLWindowConfig {
 			doubleBuffering = true;
 		else
 			doubleBuffering = false;
+		screenshotFormat = bgloopSetting.getProperty("SCREENSHOT_FILE_FORMAT");
+		screenshotPrefix = bgloopSetting.getProperty("SCREENSHOT_FILE_PREFIX");
 	}
 
 	boolean isAWT() {

@@ -1,8 +1,8 @@
 DEFAULT_WINDOW_WIDTH=800
 DEFAULT_WINDOW_HEIGHT=600
 
-DEFAULT_QUALITY_X=30
-DEFAULT_QUALITY_Y=30
+DEFAULT_QUALITY_X=40
+DEFAULT_QUALITY_Y=40
 
 # enable double buffering
 DOUBLE_BUFFERING = on
@@ -58,3 +58,13 @@ MOUSE_CLICK_TIME_RANGE=1000
 
 # the same for mouse movement
 MOUSE_MOVE_TIME_RANGE=100
+
+# file format for screenshots
+# possible values are all filetypes supported by your java runtime execution
+# environment, e.g. "png" or "jpg" 
+SCREENSHOT_FILE_FORMAT = jpg
+
+# All auto-screenshot filenames will be prefixed by this string
+# following a dash and then a consecutive number starting with 0001. Thus
+# <SCREENSHOT_FILE_PREFIX>-0001.<SCREENSHOT_FILE_FORMAT> will be the first filename
+SCREENSHOT_FILE_PREFIX = bgloop-screenshot

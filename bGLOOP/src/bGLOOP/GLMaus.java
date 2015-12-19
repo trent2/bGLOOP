@@ -18,18 +18,20 @@ import bGLOOP.windowimpl.listener.MouseListenerFacade;
  * eine Maustaste im Augenblick der Anfrage gedrückt ist.
  * </p>
  * <p>Es wird zwischen Klicks und gedrückter Maustaste unterschieden: Eine Maustaste
- * gilt solange <em>gedrückt</em>, wie sie heruntergedrückt ist. Ein Klick liegt
+ * gilt solange als <em>gedrückt</em>, wie sie heruntergedrückt ist. Ein Klick liegt
  * erst dann vor, wenn die Taste wieder losgelassen wird.
  * </p>
  * <p>Daneben wird zwischen einem <em>echten</em> und <em>unechten</em> Linksklick
- * unterschieden: eine <em>echter</em> Linksklick ist nicht Teil einer Doppelklicks.
+ * unterschieden: eine <em>echter</em> Linksklick ist nicht Teil eines Doppelklicks.
  * Er kann erst nach Ablauf eines kurzen Augenblicks nach Mausklick positiv geprüft
  * werden, da abgewartet werden muss, ob einer erneuter Linksklick durchgeführt
  * wird. Ein unechter Mausklick hingegen steht einer Abfrage mittels der Methode
- * {@link #linksklick()} direkt zur Verfügung.
+ * {@link #linksklick()} direkt zur Verfügung, kann aber auch Teil eines Doppelklicks
+ * sein.
  * </p>
  * <p>Unabhängig davon kann jederzeit sofort geprüft werden, ob eine Maustaste momentan
- * heruntergedrückt ist ({@link #gedruecktLinks()}, {@link #gedruecktRechts()}).
+ * heruntergedrückt ist ({@link #gedruecktLinks()}, {@link #gedruecktRechts()}) (z.B. als
+ * Teil eines Klicks).
  * </p>
  * @author R. Spillner
  */
@@ -202,15 +204,19 @@ public class GLMaus {
 		return clickRight;
 	}
 
-	/** Liefert die x-Koordinate der aktuellen Mauszeigerposition.
-	 * @return x-Koordinate des Mauszeigers
+	/** Liefert die x-Koordinate der aktuellen Mauszeigerposition. Die Koordinate
+	 * bezieht sich nicht auf das 3D-Koordinatensystem der bGLOOP-Welt, sondern
+	 * ist in Pixeln angegeben, relativ zur linken oberen Ecke des Kamerafensters. 
+	 * @return x-Koordinate des Mauszeigers im Kamerafenster
 	 */
 	public int gibX() {
 		return posX;
 	}
 
-	/** Liefert die y-Koordinate der aktuellen Mauszeigerposition.
-	 * @return y-Koordinate des Mauszeigers
+	/** Liefert die y-Koordinate der aktuellen Mauszeigerposition. Die Koordinate
+	 * bezieht sich nicht auf das 3D-Koordinatensystem der bGLOOP-Welt, sondern
+	 * ist in Pixeln angegeben, relativ zur linken oberen Ecke des Kamerafensters.
+	 * @return y-Koordinate des Mauszeigers im Kamerafenster
 	 */
 	public int gibY() {
 		return posY;

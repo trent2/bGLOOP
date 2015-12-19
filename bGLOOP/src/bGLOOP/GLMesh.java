@@ -14,10 +14,22 @@ import bGLOOP.mesh.builder.BuilderPOJOs.Face;
 import bGLOOP.mesh.builder.BuilderPOJOs.FaceVertex;
 import bGLOOP.mesh.builder.BuilderPOJOs.Material;
 
-/** Klasse, die ein Mesh im OBJ-Format interpretiert und im
- * bGLOOP-Kontext verfügbar macht.
- * 
+/** <p>Klasse, die ein Mesh im OBJ-Format interpretiert und im bGLOOP-Kontext als Objekt
+ * verfügbar macht. Die Klasse unterstützt Mesh-Beschreibungen im
+ * Wavefront-OBJ-Format, die von allen gängigen 3D-Modellierungsprogrammen erzeugt
+ * werden können.</p>
+ * <p>Zu einer OBJ-Datei gehört häufig auch eine MTL-Datei, die in der OBJ-Datei
+ * referenziert wird und Materialbeschreibungen und Texturen enthält. Alle Referenzen,
+ * sowohl in der OBJ- als auch in der MTL-Datei, beziehen sich relativ zur Position
+ * der jeweiligen Datei. Steht also in <code>foo/material.mtl</code> eine Referenz
+ * zu einer Textur <code>images/tex1.jpg</code>, so wird diese unter
+ * <code>foo/images/tex1.jpg</code> gesucht.
+ * </p>
+ * <p>Bump-Maps werden nicht unterstützt.
+ * </p>
+ *  <img alt="Beispiel für GLMesh" src="./doc-files/Mesh-screenshot.jpg">
  * @author R. Spillner
+ * @see <a href="https://de.wikipedia.org/wiki/Wavefront_OBJ">Wavefront-OBJ-Format</a>
  */
 public class GLMesh extends GLTransformableObject {
 	private boolean parseOk = false;
@@ -27,12 +39,25 @@ public class GLMesh extends GLTransformableObject {
 	private File meshFile;
 	// private HashMap<String, GLTextur> texMap;
 
-	/** Erstellt ein <code>GLMesh</code>-Objekt.
+	/** Erstellt ein <code>GLMesh</code>-Objekt. Dazu wird eine Mesh-Datei
+	 * im Wavefront-OBJ-Format verwendet.
+	 * <div style="float:right">
+	 * <img alt="Beispiel für GLMesh" src="./doc-files/Mesh-screenshot.jpg">
+	 * </div>
+	 * <div>
+	 * <p>
+	 * <em>Abbildung:</em> Ein Beispiel für ein Mesh in bGLOOP mit Anzeige eines
+	 * das Modell umfassenden Quaders im {@link GLObjekt.Darstellungsmodus Linienmodus}. Die
+	 * Abmessungen des Quaders wurden mit den <code>gibDurchmesser?</code>-Befehlen
+	 * ermittelt (s.u.)
+	 * </p>
 	 * @param pDateiname Dateiname der OBJ-Datei. Eventuell weitere benötigte Textur-Dateien
 	 * werden in einer in der OBJ-Datei referenzierten MTL-Datei beschrieben. Hier
-	 * sind alle Angaben relativ zum Ort der OBJ-Datei zu verstehen 
+	 * sind alle Angaben relativ zum Ort der jeweiligen Datei zu verstehen, in der die Angabe
+	 * gemacht wird. 
 	 * @param pMeshMaxScale Maximale Ausdehnung des Models in eine der drei
 	 * Hauptkoordinatenrichtungen
+	 * </div><div style="clear:right"></div>
 	 */
 	public GLMesh(String pDateiname, double pMeshMaxScale) {
 		super();
@@ -55,18 +80,34 @@ public class GLMesh extends GLTransformableObject {
 		aVisible = true;
 	}
 
+	/** Erstellt ein <code>GLMesh</code>-Objekt. Dazu wird eine Mesh-Datei
+	 * im Wavefront-OBJ-Format verwendet.
+	 * @param pDateiname Dateiname der OBJ-Datei. Eventuell weitere benötigte Textur-Dateien
+	 * werden in einer in der OBJ-Datei referenzierten MTL-Datei beschrieben. Hier
+	 * sind alle Angaben relativ zum Ort der jeweiligen Datei zu verstehen, in der die Angabe
+	 * gemacht wird.
+	 */
 	public GLMesh(String pDateiname) {
 		this(pDateiname, -1);
 	}
 
+	/** Gibt die maximale Ausdehnung in x-Richtung des Objekts zurück.
+	 * @return Maximale Ausdehnung in x-Richtung
+	 */
 	public double gibDurchmesserX() {
 		return aMeshScale * meshDiameter[0] / aMaxCoordScale;
 	}
 
+	/** Gibt die maximale Ausdehnung in y-Richtung des Objekts zurück.
+	 * @return Maximale Ausdehnung in y-Richtung
+	 */
 	public double gibDurchmesserY() {
 		return aMeshScale * meshDiameter[1] / aMaxCoordScale;
 	}
 
+	/** Gibt die maximale Ausdehnung in z-Richtung des Objekts zurück.
+	 * @return Maximale Ausdehnung in z-Richtung
+	 */
 	public double gibDurchmesserZ() {
 		return aMeshScale * meshDiameter[2] / aMaxCoordScale;
 	}

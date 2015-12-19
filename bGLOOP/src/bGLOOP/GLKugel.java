@@ -25,8 +25,11 @@ public class GLKugel extends GLTransformableObject {
 
 	/**
 	 * Erzeugt eine Kugel mit Mittelpunkt <code>M(pMX, pMY, pMZ)</code> und
-	 * Radius <code>pRadius</code>. <div style="float:right"> <img alt=
-	 * "Abbildung Kugel" src="./doc-files/Kugel-1.png"> </div><div>
+	 * Radius <code>pRadius</code>.
+	 * <div style="float:right">
+	 * <img alt="Abbildung Kugel" src="./doc-files/Kugel-1.png">
+	 * </div>
+	 * <div>
 	 * <p>
 	 * <em>Abbildung:</em> Lage eine Kugel mit Mittelpunkt <code>M(0,0,0)</code>
 	 * und Radius <code>1</code>.
@@ -35,8 +38,8 @@ public class GLKugel extends GLTransformableObject {
 	 * @param pMX x-Koordinate des Mittelpunkts der Kugel
 	 * @param pMY y-Koordinate des Mittelpunkts der Kugel
 	 * @param pMZ z-Koordinate des Mittelpunkts der Kugel
-	 * @param pRadius
-	 *            Radius der Kugel </div><div style="clear:right"></div>
+	 * @param pRadius Radius der Kugel
+	 * </div><div style="clear:right"></div>
 	 */
 	public GLKugel(double pMX, double pMY, double pMZ, double pRadius) {
 		this(pMX, pMY, pMZ, pRadius, null);

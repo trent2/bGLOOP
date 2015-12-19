@@ -16,10 +16,6 @@ import bGLOOP.windowimpl.listener.MouseListenerFacade;
 final public class NEWTWindow extends Window {
 	private GLWindow glWin;
 
-	public static Window createWindowFactory() {
-		return new NEWTWindow();
-	}
-
 	@Override
 	public Object createWindow(GLCapabilities caps, int width, int height) {
 		final Animator animator;
@@ -75,5 +71,10 @@ final public class NEWTWindow extends Window {
 	@Override
 	public void startDisplay() {
 		glWin.setVisible(true);
+	}
+
+	@Override
+	public void updateFPS(float lastFPS) {
+		glWin.setTitle("bGLOOP.NEWT, FPS: " + lastFPS);
 	}
 }

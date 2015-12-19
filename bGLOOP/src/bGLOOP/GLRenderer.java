@@ -1,9 +1,18 @@
 package bGLOOP;
 
-import java.awt.Frame;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import com.jogamp.newt.opengl.GLWindow;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.regex.Pattern;
+
+import javax.imageio.ImageIO;
+
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -12,18 +21,18 @@ import com.jogamp.opengl.GLEventListener;
 import com.jogamp.opengl.GLProfile;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.util.Animator;
+import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 
 import bGLOOP.GLObjekt.Rendermodus;
 import bGLOOP.GLTextur.GLTextureImpl;
-import bGLOOP.windowimpl.AWTWindow;
-import bGLOOP.windowimpl.NEWTWindow;
+import bGLOOP.mesh.Parse;
 import bGLOOP.windowimpl.Window;
 
 class GLRenderer implements GLEventListener {
+    private Logger log = Logger.getLogger(Parse.class.getName());
 
 	private int window_rendering_needed = 2;
 	private long animatorLastFPSTime = 0;
-	private Object window;
 	private Animator animator;
 	private GLKamera aCam;
 	private GLWindowConfig wconf;
@@ -33,20 +42,20 @@ class GLRenderer implements GLEventListener {
 
 	private Window win;
 	private boolean currentLighting;
-;
 
-	// this does not belong here!!!!!!! This is just a hack
+	private boolean makeScreenshot = false;
+	private String screenshotFilename = null;
+
+	// TODO this does not belong here!!!!!!! This is just a hack
 	// to be removed when I know better --- and when I have to subclass
 	// ConcurrentHashMap for that
 	private GLHimmel sky;
 
 	GLRenderer(GLWindowConfig wc, int width, int height, GLKamera cam, boolean pFullscreen, boolean pNoDecoration) {
+		log.setLevel(Level.INFO);
 		wconf = wc;
 		aCam = cam;
-		if (wconf.isAWT())
-			win = AWTWindow.createWindowFactory();
-		else
-			win = NEWTWindow.createWindowFactory();
+		win = Window.createWindowFactory(wconf.isAWT());
 
 		GLProfile glp = GLProfile.getDefault();
 		GLCapabilities caps = new GLCapabilities(glp);
@@ -55,7 +64,7 @@ class GLRenderer implements GLEventListener {
 		caps.setDoubleBuffered(wconf.doubleBuffering);
 		caps.setDepthBits(24);
 
-		window = win.createWindow(caps, width, height);
+		win.createWindow(caps, width, height);
 		win.setFullscreen(pFullscreen);
 		win.setDecoration(pNoDecoration);
 
@@ -172,6 +181,11 @@ class GLRenderer implements GLEventListener {
 			drawable.getGL().glDisable(12288);
 		}
 		updateFPSView();
+
+		if(makeScreenshot) {
+			takeScreenshot(drawable.getGL());
+			makeScreenshot = false;
+		}
 	}
 
 	@Override
@@ -191,6 +205,11 @@ class GLRenderer implements GLEventListener {
 
 	void scheduleRender() {
 		window_rendering_needed = wconf.doubleBuffering?3:1;
+	}
+
+	void scheduleScreenshot(String filename) {
+		screenshotFilename = filename;
+		makeScreenshot = true;
 	}
 
 	private void renderScene(GL2 gl) {
@@ -252,12 +271,62 @@ class GLRenderer implements GLEventListener {
 	private void updateFPSView() {
 		long currentAnimFPSUpdateTime = animator.getLastFPSUpdateTime();
 		if (currentAnimFPSUpdateTime != animatorLastFPSTime) {
-			if (window instanceof GLWindow)
-				((GLWindow) window).setTitle("bGLOOP, FPS: " + animator.getLastFPS());
-			else if (window instanceof Frame)
-				((Frame) window).setTitle("bGLOOP, FPS: " + animator.getLastFPS());
+			win.updateFPS(animator.getLastFPS());
 			animatorLastFPSTime = currentAnimFPSUpdateTime;
 		}
+	}
 
+	private void takeScreenshot(GL gl) {
+		GLProfile glp = GLProfile.getDefault();
+
+		// take screenshot
+		AWTGLReadBufferUtil screenshot = new AWTGLReadBufferUtil(glp, false);
+		BufferedImage bi = screenshot.readPixelsToBufferedImage(gl, true);
+
+		File f;
+		if(screenshotFilename == null)
+			f = new File(
+				    wconf.screenshotPrefix + "-"
+				  + getNextScreenshotNumber(wconf.screenshotFormat, wconf.screenshotPrefix)
+				  + "." + wconf.screenshotFormat
+				);
+			else
+				f = new File(screenshotFilename);
+
+		try {
+			ImageIO.write(bi, wconf.screenshotFormat, f);
+			log.info("Screenshot taken and saved to " + f.getCanonicalPath());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
+	private static String getNextScreenshotNumber(final String fileFormat, final String filePrefix) {
+		/* Here, one could use a lambda expression
+		String[] files = new File(".").list((dir, filename) -> { return true; });
+		return null;
+		*/
+		String[] files;
+		Arrays.sort(files = new File(".").list(new FilenameFilter() {
+			private Pattern p = Pattern.compile("-\\d\\d\\d\\d\\." + fileFormat + "$"); 
+
+			@Override
+			public boolean accept(File dir, String filename) {
+				boolean res;
+				res = filename.startsWith(filePrefix);
+				res &= p.matcher(filename).find();
+				return res;
+			}
+		}));
+		
+		String res = "0001";
+		
+		if(files.length != 0) {			
+			res = files[files.length-1];
+			res = res.substring(res.length()-8, res.length()-4);
+			res = String.format("%04d", Integer.parseInt(res) + 1);
+		}
+
+		return res;
 	}
 }

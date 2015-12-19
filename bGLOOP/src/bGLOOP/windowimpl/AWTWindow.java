@@ -19,10 +19,6 @@ final public class AWTWindow extends Window {
 	private GLCanvas canvas;
 	private Frame frame;
 
-	public static Window createWindowFactory() {
-		return new AWTWindow();
-	}
-
 	@Override
 	public Object createWindow(GLCapabilities caps, int width, int height) {
 		final Animator animator;
@@ -79,5 +75,10 @@ final public class AWTWindow extends Window {
 	@Override
 	public void startDisplay() {
 		frame.setVisible(true);
+	}
+
+	@Override
+	public void updateFPS(float lastFPS) {
+		frame.setTitle("bGLOOP.AWT, FPS: " + lastFPS);
 	}
 }

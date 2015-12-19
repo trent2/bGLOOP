@@ -15,13 +15,13 @@ public class GLKegelstumpf extends GLPrismoid {
 	static final private double aSkalierung = 1;
 
 	/**
-	 * Erzeugt einen Kegelstumpf längs zur z-Achse
+	 * Erzeugt einen Kegelstumpf längs zur z-Achse.
 	 * <div style="float:right"> <img alt=
 	 * "Abbildung Kegelstumpf" src="./doc-files/Kegelstumpf-1.png"> </div> <div>
 	 * <p>
 	 * Der Kegelstumpf liegt in der Höhe parallel zur z-Achse. Die Bodenfläche
 	 * hat den Radius <code>pRadius1</code> und zeigt in positive z-Richtung,
-	 * die Deckelfläche hat den Raduis <code>pRadius2</code> und zeigt in
+	 * die Deckelfläche hat den Radius <code>pRadius2</code> und zeigt in
 	 * negative z-Richtung.
 	 * </p>
 	 * <p>
@@ -37,8 +37,8 @@ public class GLKegelstumpf extends GLPrismoid {
 	 * @param pMX x-Koordinate des Mittelpunkts
 	 * @param pMY y-Koordinate des Mittelpunkts
 	 * @param pMZ z-Koordinate des Mittelpunkts
-	 * @param pRadius1 Radius der Bodenfläche
-	 * @param pRadius2 Radius der Deckelfläche
+	 * @param pRadius1 Radius der Deckelfläche
+	 * @param pRadius2 Radius der Bodenfläche
 	 * @param pHoehe Höhe des Kegelstumpfs
 	 * </div>
 	 * <div style="clear:right"></div>

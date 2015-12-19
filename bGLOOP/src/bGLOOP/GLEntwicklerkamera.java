@@ -19,6 +19,7 @@ import bGLOOP.windowimpl.listener.KeyboardListenerFacade;
  * <li><code>&darr;</code>: Rückt die Kamera ein Stück nach unten</li>
  * <li><code>&larr;</code>: Rückt die Kamera ein Stück nach links</li>
  * <li><code>&rarr;</code>: Rückt die Kamera ein Stück nach rechts</li>
+ * <li><code>t</code>: Macht ein Bildschirmfoto</li> 
  * </ul>
  * 
  * @author R. Spillner
@@ -88,6 +89,9 @@ public class GLEntwicklerkamera extends GLSchwenkkamera {
 					aLookAt[0] = 0; aLookAt[1] = 0; aLookAt[2] = 0;
 					aUp[0] = 0; aUp[1] = 1; aUp[2] = 0;
 					getRenderer().scheduleRender();
+					break;
+				case 't':
+					getRenderer().scheduleScreenshot(null);
 					break;
 				}
 				switch (keycode) {

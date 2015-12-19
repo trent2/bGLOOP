@@ -5,6 +5,20 @@ import com.jogamp.newt.event.KeyEvent;
 import bGLOOP.windowimpl.listener.KeyboardListenerFacade;
 
 /** <p>Klasse, mit der man Tastatureingaben abfragen kann.</p>
+ * <p>Es wird zwischen <em>normalen</em> und <em>speziellen</em> Tastendrucks
+ * unterschieden: Normale Zeichen sind i.d.R. druckbare Zeichen, wie alle Buchstaben,
+ * Satzzeichen und Zahlen. Sie können als <code>char</code> durch die Methode
+ * {@link #gibZeichen()} ermittelt werden. Ihre Eingabe wird gepuffert, d.h. sie
+ * können auch nach Loslassen der entsprechenden Taste abgefragt werden.
+ * </p><p>
+ * Spezielle Zeichen hingegen können nicht gedruckt werden und eine Abfrage nach
+ * ihnen ist nur so lange positiv, wie die Taste heruntergedrückt ist. Zu ihnen
+ * gehören die Modifizierer-Tasten (ALT, STRG, Umschalten) sowie die Pfeiltasten,
+ * Enter, Backspace (Rücklöschtaste), Tab und ESC.
+ * </p><p>
+ * Die Implementierung dieser Klasse ist momentan noch auf Kompabilität zu GLOOP
+ * hin ausgelegt, wird sich aber wahrscheinlich in Zukunft ändern. 
+ * </p>
  * @author R. Spillner
  *
  */

@@ -1,14 +1,6 @@
 \documentclass[convert={density=1200,size=400x,outext=.png}]{standalone}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta,calc,shadings}
-\makeatletter
-\pgfdeclareradialshading[tikz@ball]{ball}{\pgfqpoint{-10bp}{10bp}}{%
- color(0bp)=(tikz@ball!10!white);
- color(4bp)=(tikz@ball!30!white);
- color(6bp)=(tikz@ball!90!black);
- color(12bp)=(tikz@ball!70!black);
- color(50bp)=(black)}
-\makeatother
 \pagestyle{empty}
 \begin{document}
 \begin{tikzpicture}[x={(1cm,0)},y={(0,1)},z={(-0.4cm,-0.5cm)},>={Stealth[scale=.4]}]

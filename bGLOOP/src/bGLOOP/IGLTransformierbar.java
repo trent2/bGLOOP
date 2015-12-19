@@ -50,8 +50,7 @@ public interface IGLTransformierbar {
 
 	/** Dreht Objekt um seinen Mittelpunkt. Dabei wird nacheinander um die in den
 	 * Mittelpunkt verschobenen Koordinatenachsen rotiert. <br>
-	 * Rotationsreihenfolge: x-Achse, y-Achse, zuletzt z-Achse. dann y-Achse,
-	 * dann z-Achse.
+	 * Rotationsreihenfolge: x-Achse, y-Achse, zuletzt z-Achse.
 	 * 
 	 * @param pWinkelX
 	 *            Winkel der Rotation um die x-Achse durch <code>M</code> in
@@ -115,7 +114,7 @@ public interface IGLTransformierbar {
 	 */
 	@Deprecated public void dreheDich(double pWinkelX, double pWinkelY, double pWinkelZ, double pX, double pY, double pZ);
 
-	/** Setzt Skalierung und Drehungen zurück auf die Standardwerte.
+	/** Setzt Skalierungen und Drehungen zurück auf die Standardwerte.
 	 * Die bereits vollzogenen Verschiebungen (Translationen) des Objekts bleiben
 	 * erhalten.
 	 */

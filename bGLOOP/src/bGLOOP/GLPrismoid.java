@@ -14,7 +14,7 @@ import static java.lang.Math.sin;
 import static java.lang.Math.cos;
 
 /** <p>Ein Prismoid ist eine Art polygonaler Kegelstumpf. Es besteht aus zwei
- * <em>regelmäßigen</em> n-Ecks mit unteschiedlichem Radius, deren Ecken respektive
+ * <em>regelmäßigen</em> n-Ecks mit unterschiedlichem Radius, deren Ecken respektive
  * miteinander verbunden sind. Die n-Ecks liegen so zueinander im Raum, dass die
  * Verbindungslinie durch die beiden Mittelpunkte senkrecht zu beiden n-Ecks steht
  * (also sind die beiden n-Ecks insbesondere parallel zueinander).</p>

@@ -11,6 +11,13 @@ public abstract class Window {
 	private GLAutoDrawable adraw;
 	private Animator animator;
 
+	public static Window createWindowFactory(boolean asAWT) {
+		if(asAWT)
+			return new AWTWindow();
+		else
+			return new NEWTWindow();
+	}
+
 	public abstract Object createWindow(GLCapabilities caps, int width, int height);
 
 	public abstract void addMouseListener(MouseListenerFacade mhl);
@@ -24,6 +31,8 @@ public abstract class Window {
 	public abstract void toggleFullscreen();
 
 	public abstract void startDisplay();
+
+	public abstract void updateFPS(float lastFPS);
 
 	public Animator getAnimator() {
 		return animator;

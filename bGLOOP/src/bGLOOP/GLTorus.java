@@ -21,8 +21,8 @@ public class GLTorus extends GLTransformableObject {
 
 	/** Erzeugt einen Torus mit Mittelpunkt <code>M(pMX, pMY, pMZ)</code>,
 	 * äußerem Radius <code>pRadiusA</code> und Querschnittsrradius <code>pRadiusQ</code>.
-	 * Dabei liegt der Torus in der xy-Ebene, das Loch in der Mitte ist parallel
-	 * zur z-Achse.
+	 * Dabei liegt der Torus in der xy-Ebene, die Gerade durch das Loch in der Mitte
+	 * ist parallel zur z-Achse.
 	 * 
 	 * <div style="float:right"><img alt="Abbildung Torus" src="./doc-files/Torus-1.png">
 	 * </div>
@@ -35,34 +35,33 @@ public class GLTorus extends GLTransformableObject {
 	 * @param pMX x-Koordinate des Mittelpunkts des Torus
 	 * @param pMY y-Koordinate des Mittelpunkts des Torus
 	 * @param pMZ z-Koordinate des Mittelpunkts des Torus
-	 * @param pRadiusA äußerer Radius des Torus
-	 * @param pRadiusQ Radius des Schnittkreises des Torus
+	 * @param pRadiusM Mittelkreisradius des Torus
+	 * @param pRadiusQ Radius des Querschnittkreises des Torus
 	 * </div><div style="clear:right"></div>
 	 */
-	public GLTorus(double pMX, double pMY, double pMZ, double pRadiusA, double pRadiusQ) {
-		this(pMX, pMY, pMZ, pRadiusA, pRadiusQ, null);
+	public GLTorus(double pMX, double pMY, double pMZ, double pRadiusM, double pRadiusQ) {
+		this(pMX, pMY, pMZ, pRadiusM, pRadiusQ, null);
 	}
 
-	/**
 	/** Erzeugt einen Torus mit Textur.
 	 * 
 	 * @param pMX x-Koordinate des Mittelpunkts des Torus
 	 * @param pMY y-Koordinate des Mittelpunkts des Torus
 	 * @param pMZ z-Koordinate des Mittelpunkts des Torus
-	 * @param pRadiusA äußerer Radius des Torus
-	 * @param pRadiusQ Radius des Schnittkreises des Torus
+	 * @param pRadiusM Mittelkreiseradius des Torus
+	 * @param pRadiusQ Radius des Querschnittkreises des Torus
 	 * @param pTextur Textur-Objekt für die Oberfläche des Torus
 	 * @see #GLTorus(double, double, double, double, double)
 	 */
-	public GLTorus(double pMX, double pMY, double pMZ, double pRadiusA, double pRadiusQ, GLTextur pTextur) {
+	public GLTorus(double pMX, double pMY, double pMZ, double pRadiusM, double pRadiusQ, GLTextur pTextur) {
 		super(pTextur);
 //		if(conf.objectRenderMode == Rendermodus.RENDER_GLU)
 //			conf.objectRenderMode = Rendermodus.RENDER_GL;
 //		setzeDarstellungsModus(conf.displayMode);
 		verschiebe(pMX, pMY, pMZ);
-		if(pRadiusA<0 || pRadiusQ<0)
+		if(pRadiusM<0 || pRadiusQ<0)
 			throw new IllegalArgumentException("Die Radien dürfen nicht negativ sein.");
-		aRadA = pRadiusA;
+		aRadA = pRadiusM;
 		aRadQ = pRadiusQ;
 		aVisible = true;
 	}
