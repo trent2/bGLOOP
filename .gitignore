@@ -10,3 +10,6 @@
 /jogl-2.3.2/
 /mesh/
 /bin/
+/.ant-targets-build.xml
+/.project
+/.settings/
