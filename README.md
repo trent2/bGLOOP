@@ -16,5 +16,8 @@ are still missing.
 in your classpath
 * start coding
 
+## Documentation
+Please have a look at the [Java API documentation](trent2.github.io/bGLOOP/apidocs).
+
 ## Examples
 will come soon
