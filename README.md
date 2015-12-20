@@ -1,4 +1,5 @@
 # bGLOOP
+A better GLOOP.
 
 This is a reimplementation of the [GLOOP library](http://www.brd.nrw.de/lerntreffs/informatik/structure/material/sek2/einfuehrungen/gloop.php).
 It's still work in progress but has already an impressive number of features.
@@ -11,7 +12,7 @@ are still missing.
 
 ##Building and using
 * Compile by typing ant
-* be sure to have jogl-all.jar, jogl-all-natives-*.jar, gluegen-rt.jar, and gluegen-rt-natives-*.jar along with bGLOOP.jar
+* be sure to have jogl-all.jar, jogl-all-natives-???.jar, gluegen-rt.jar, and gluegen-rt-natives-???.jar along with bGLOOP.jar
 in your classpath
 * start coding
 

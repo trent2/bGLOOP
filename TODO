@@ -5,5 +5,5 @@ is in displayable state
 - document GLPrismoid (DONE)
 - reimplement the drawing of the primitives
 - implement some kind of mesh loading mechanism to deploy cool
- meshs of funny objects with the library
-- implement GLTorus
+ meshs of funny objects with the library (DONE)
+- implement GLTorus (DONE)
