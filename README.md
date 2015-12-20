@@ -17,7 +17,7 @@ in your classpath
 * start coding
 
 ## Documentation
-Please have a look at the [Java API documentation](trent2.github.io/bGLOOP/apidocs).
+Please have a look at the [Java API documentation](http://trent2.github.io/bGLOOP/apidocs).
 
 ## Examples
 will come soon
