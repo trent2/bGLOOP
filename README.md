@@ -2,7 +2,7 @@
 A better GLOOP.
 
 This is a reimplementation of the [GLOOP library](http://www.brd.nrw.de/lerntreffs/informatik/structure/material/sek2/einfuehrungen/gloop.php).
-It's still work in progress but has already an impressive number of features.
+It's still work in progress but already has an impressive number of features.
 All major features from the old GLOOP library have been implemented, yet some side features
 are still missing.
 
