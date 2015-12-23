@@ -22,7 +22,7 @@ LIGHTING = on
 # This should be supported by all OpenGL implementations >= 2.0, so be
 # sure your graphic card supports this.
 #
-DEFAULT_OBJECT_RENDER_MODE = GL
+DEFAULT_OBJECT_RENDER_MODE = VBO
 
 # valid values are "POINT", "LINE", "FILL"
 DEFAULT_RENDER_DRAW_MODE = FILL
@@ -41,8 +41,12 @@ DEFAULT_AXES_WIDTH = 5
 # width of wireframe
 DEFAULT_LINE_WIDTH = 1
 
-# by how many pixels will the camera zoom
+# by how many units will the camera zoom
 DEFAULT_MOUSE_WHEEL_SCALE = 10
+
+# by how many units will the developer camera move
+# when hitting an arrow key, or w or s. 
+DEFAULT_CAMERA_MOVE_DISTANCE_BY_KEYS = 10
 
 # scale each mesh in its largest diameter (in x, y or z direction)
 # to a maximum width of DEFAULT_MESH_MAX_SCALE points

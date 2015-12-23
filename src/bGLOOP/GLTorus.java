@@ -8,6 +8,10 @@ import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 
+import static java.lang.Math.PI;
+import static java.lang.Math.sin;
+import static java.lang.Math.cos;
+
 /**
  * Ein Torusmodell.<br>
  * <img alt="Abbildung Torus" src="./doc-files/Torus-1.png">
@@ -76,22 +80,20 @@ public class GLTorus extends GLTransformableObject {
 		double lxy, lz;
 		boolean texturePresent = (aTex != null) && aTex.isReady();
 
-		float qStrip = (float) (2 * Math.PI / conf.yDivision);
-		float qRound = (float) (2 * Math.PI / conf.xDivision);
+		float qStrip = (float) (2 * PI / conf.yDivision);
+		float qRound = (float) (2 * PI / conf.xDivision);
 
 		gl.glNewList(bufferName, GL2.GL_COMPILE);
-		for (int i = 0; i < conf.xDivision; ++i) { // conf.xDivision; i++) {
-			double ring1X = Math.cos(i*qRound);
-			double ring2X = Math.cos((i + 1) * qRound);
-
-			double ring1Y = Math.sin(i * qRound);
-			double ring2Y = Math.sin((i + 1) * qRound);
+		double ring1X = 1, ring1Y = 0, ring2X, ring2Y;
+		for (int i = 0; i < conf.xDivision; ++i) {
+			ring2X = cos((i + 1) * qRound);
+			ring2Y = sin((i + 1) * qRound);
 
 			// need to go around one whole turn
 			gl.glBegin(GL2.GL_QUAD_STRIP);
 			for (int j = 0; j <= conf.yDivision; j++) {
-				lxy = Math.cos(j * qStrip);
-				lz  = Math.sin(j * qStrip);
+				lxy = cos(j * qStrip);
+				lz  = sin(j * qStrip);
 
 				gl.glNormal3d(lxy * ring1X, lxy * ring1Y, lz);
 				if (texturePresent)
@@ -104,6 +106,8 @@ public class GLTorus extends GLTransformableObject {
 				gl.glVertex3d(ring2X * (aRadA + lxy * aRadQ), ring2Y * (aRadA + lxy * aRadQ), lz * aRadQ);
 			}
 			gl.glEnd();
+			ring1X = ring2X;
+			ring1Y = ring2Y;
 		}
 		gl.glEndList();
 	}
@@ -152,15 +156,14 @@ public class GLTorus extends GLTransformableObject {
 				.asFloatBuffer();
 
 		// ready for drawing (to buffer)
-		float qStrip = (float) (2 * Math.PI / conf.yDivision);
-		float qRound = (float) (2 * Math.PI / conf.xDivision);
+		float qStrip = (float) (2 * PI / conf.yDivision);
+		float qRound = (float) (2 * PI / conf.xDivision);
 		double lxy, lz;
-		for (int i = 0; i < conf.xDivision; ++i) { // conf.xDivision; i++) {
-			double ring1X = Math.cos(i*qRound);
-			double ring2X = Math.cos((i + 1) * qRound);
 
-			double ring1Y = Math.sin(i * qRound);
-			double ring2Y = Math.sin((i + 1) * qRound);
+		double ring1X = 1, ring1Y = 0, ring2X, ring2Y;
+		for (int i = 0; i < conf.xDivision; ++i) {
+			ring2X = cos((i + 1) * qRound);
+			ring2Y = sin((i + 1) * qRound);
 
 			// need to go around one whole turn
 			for (int j = 0; j <= conf.yDivision; j++) {
@@ -185,6 +188,8 @@ public class GLTorus extends GLTransformableObject {
 				fb.put((float)(ring2Y * (aRadA + lxy * aRadQ)));
 				fb.put((float)(lz * aRadQ));
 			}
+			ring1X = ring2X;
+			ring1Y = ring2Y;
 		}
 		gl.glUnmapBuffer(GL.GL_ARRAY_BUFFER);
 		needsRedraw = false;

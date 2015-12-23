@@ -305,15 +305,15 @@ public class GLKamera {
 	 * Bewegt die Kamera auf ihren Blickpunkt zu.
 	 * 
 	 * @param pSchrittweite
-	 *            Schrittweite der Bewegung. Die Schrittweite entspricht den
-	 *            Koordinaten der 3D-Welt.
+	 *            Schrittweite der Bewegung. Die Schrittweite ist in der Maßeinheit
+	 *            des Koordinatensystems der 3D-Welt.
 	 */
 	synchronized public void vor(double pSchrittweite) {
 		float[] dir = new float[3];
 		float[] pos = { (float) this.aPos[0], (float) this.aPos[1], (float) this.aPos[2] };
 		float[] lookAt = { (float) this.aLookAt[0], (float) this.aLookAt[1], (float) this.aLookAt[2] };
 
-		VectorUtil.subVec3(dir, pos, lookAt);
+		VectorUtil.subVec3(dir, lookAt, pos);
 		VectorUtil.normalizeVec3(dir);
 		VectorUtil.scaleVec3(dir, dir, (float) pSchrittweite);
 		VectorUtil.addVec3(pos, pos, dir);

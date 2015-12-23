@@ -2,6 +2,10 @@ package bGLOOP;
 
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.math.VectorUtil;
+
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 
 /**
  * Ein Kegelstumpf ist ein Kegel, dessen Spitze abgeschitten wurde. Die
@@ -12,8 +16,6 @@ import com.jogamp.opengl.glu.GLU;
  * @author R. Spillner
  */
 public class GLKegelstumpf extends GLPrismoid {
-	static final private double aSkalierung = 1;
-
 	/**
 	 * Erzeugt einen Kegelstumpf längs zur z-Achse.
 	 * <div style="float:right"> <img alt=
@@ -62,33 +64,34 @@ public class GLKegelstumpf extends GLPrismoid {
 			GLTextur pTextur) {
 		super(pMX, pMY, pMZ, pRadius1, pRadius2, 12, pHoehe, pTextur);
 		aMantelglaettung = true;
-		aMantelqualitaet = 3;
-		aEckenzahl = 0;
+		aKonzentrischeKreise = 3;
+		aEcken = 0;
 	}
 
-	private void berechneQualitaet() {
+	private void setQualityBasedOnCameraDistance() {
 		float[] trl = transformationMatrix.getMatrix();
-		double lDist = Math.sqrt(Math.pow(trl[12] - associatedCam.aPos[0], 2)
-				+ Math.pow(trl[13] - associatedCam.aPos[1], 2) + Math.pow(trl[14] - associatedCam.aPos[2], 2));
+		float dist = VectorUtil.normVec3(new float[] {
+				(float)(trl[12] - associatedCam.aPos[0]),
+				(float)(trl[13] - associatedCam.aPos[1]),
+				(float)(trl[14] - associatedCam.aPos[2])
+			});
 
-		aEckenzahl = (int) (lDist * (250 / Math.max(aRad1, aRad2) * aSkalierung) * -0.006 + 43);
-		if (aEckenzahl < 12)
-			aEckenzahl = 12;
-		if (aEckenzahl > 40)
-			aEckenzahl = 40;
+		aEcken = (int) (-1.25 * dist / max(aRad1, aRad2) + 50);
+		aEcken = max(min(aEcken, 50), 10);
+
 		needsRedraw = true;
 	}
 
 	@Override
 	void render(GL2 gl, GLU glu) {
-		if (aEckenzahl == 0)
-			berechneQualitaet();
+		if (aEcken == 0)
+			setQualityBasedOnCameraDistance();
 		super.render(gl, glu);
 	}
 
 	@Override
 	public synchronized void setzeQualitaet(int pQ) {
-		aEckenzahl = pQ;
+		aEcken = pQ;
 		needsRedraw = true;
 		scheduleRender();
 	}

@@ -226,6 +226,7 @@ class GLRenderer implements GLEventListener {
 
 		GLTextureImpl tImp = null;
 
+		// TODO this is why I needed a GLHimmel reference:
 		// render sky before all other objects
 		if(sky != null && sky.aTex != null && sky.aTex.aTexturImpl != null) {
 			tImp = sky.aTex.aTexturImpl;
@@ -301,8 +302,11 @@ class GLRenderer implements GLEventListener {
 		}
 	}
 
+	/* get the next free consecutive number to name the next screenshot
+	 */
 	private static String getNextScreenshotNumber(final String fileFormat, final String filePrefix) {
-		/* Here, one could use a lambda expression
+		/* Here, with Java 8, one could use a lambda expression. Something like
+
 		String[] files = new File(".").list((dir, filename) -> { return true; });
 		return null;
 		*/

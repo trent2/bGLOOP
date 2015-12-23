@@ -25,7 +25,7 @@ import bGLOOP.mesh.builder.BuilderPOJOs.Material;
  * zu einer Textur <code>images/tex1.jpg</code>, so wird diese unter
  * <code>foo/images/tex1.jpg</code> gesucht.
  * </p>
- * <p>Bump-Maps werden nicht unterstützt.
+ * <p>Eine Reihe von Features des Formats, u.a. Bump-Maps, werden nicht unterstützt.
  * </p>
  *  <img alt="Beispiel für GLMesh" src="./doc-files/Mesh-screenshot.jpg">
  * @author R. Spillner

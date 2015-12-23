@@ -38,6 +38,7 @@ class GLWindowConfig {
 	double axesLength;
 	double mouseWheelScale;
 	double meshMaxScale;
+	double keyMoveScale;
 	float axesWidth;
 	float wireframeLineWidth;
 	Darstellungsmodus globalDrawMode = Darstellungsmodus.FUELLEN;
@@ -81,6 +82,7 @@ class GLWindowConfig {
 		clickTimeRange = Long.parseLong(bgloopSetting.getProperty("MOUSE_CLICK_TIME_RANGE"));
 		moveTimeRange = Long.parseLong(bgloopSetting.getProperty("MOUSE_MOVE_TIME_RANGE"));
 		mouseWheelScale = Double.parseDouble(bgloopSetting.getProperty("DEFAULT_MOUSE_WHEEL_SCALE"));
+		keyMoveScale = Double.parseDouble(bgloopSetting.getProperty("DEFAULT_CAMERA_MOVE_DISTANCE_BY_KEYS"));
 		meshMaxScale = Double.parseDouble(bgloopSetting.getProperty("DEFAULT_MESH_MAX_SCALE"));
 
 		axesWidth = Float.parseFloat(bgloopSetting.getProperty("DEFAULT_AXES_WIDTH"));
