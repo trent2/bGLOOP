@@ -10,6 +10,7 @@
     <!--[if lt IE 9]>
     <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
     <![endif]-->
+    
     <title>bGLOOP by trent2</title>
   </head>
 
@@ -34,30 +35,102 @@
           <h3>
 <a id="welcome-bgloop" class="anchor" href="#welcome-bgloop" aria-hidden="true"><span class="octicon octicon-link"></span></a>Welcome bGLOOP</h3>
 
-<p>bGLOOP is a reimplementation of the <a href="http://www.brd.nrw.de/lerntreffs/informatik/structure/material/sek2/einfuehrungen/gloop.php">GLOOP library</a>, a library for teaching beginner courses for OOP in Java with application to 3d programming.
+<p>bGLOOP is a reimplementation of the <a href="http://www.brd.nrw.de/lerntreffs/informatik/structure/material/sek2/einfuehrungen/gloop.php">GLOOP library</a>,
+a library for teaching beginner courses for OOP in Java with application to 3d programming.
 It is basically a wrapper to the basic functionality in <a href="http://www.jogamp.org">jogl</a>. It's main focus is to make creation
 of small 3d programs really simple to focus on the basic ideas of OOP.</p>
-
-<div style="float:right">
+<p>Calling bGLOOP a &ldquo;better&rdquo; GLOOP is not meant to refer to features, stability, and the like. The thing that's better about
+bGLOOP is that it's <a href="https://www.gnu.org/philosophy/free-sw.en.html">free software</a>, unlike GLOOP which is a closed
+source project. So if like to change anything to suit your specific needs &mdash; feel free to do so.
+</p>
+<div style="float:right; margin-left:2em; width:40%;">
   <img src="apidocs/bGLOOP/doc-files/Mesh-screenshot.jpg" alt="Tiger Mesh">
 </div>
 <div>
-<p>The API is in German.</p>
 
 <h3>
 <a id="documentation" class="anchor" href="#documentation" aria-hidden="true"><span class="octicon octicon-link"></span></a>Documentation</h3>
+<p>The API and the documentation is in German.
+Have a look at the <a href="http://trent2.github.io/bGLOOP/apidocs/index.html">javadoc</a>.
+</p>
 
-<p>Have a look at the <a href="http://trent2.github.io/bGLOOP/apidocs/index.html">javadoc</a>.</p>
+<h3>
+<a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features, differences to GLOOP</h3>
+<p>GLOOP programs can be run with little changes to the source code. Most of the time it suffices changing <code>import GLOOP.*</code>
+to <code>import bGLOOP.*</code>. However, some things are done differently, and some features do not (yet) exist.</p>
+<p>bGLOOP has most of the features of GLOOP. Have a look at the most notable differences (some are more internal implementation
+details of the library):</p>
+<table><colgroup><col style="width:50%"><col style="width:50%"></colgroup>
+<thead><tr><th><strong>GLOOP</strong></th><th><strong>bGLOOP</strong></th></tr></thead>
+<tr>
+<td>selection of objects by window coordinates via <code>Sys.gibObjekt(double,double)</code></td>
+<td>not yet implemented, coming soon</td>
+</tr>
+<tr>
+<td><code>GLTafel</code> to represent a string in the GL window, rendering is done
+by texturing an object with parts of a png-picture</td>
+<td>not implemented (<em>most certainly won't be implemented this way</em>)</td>
+</tr>
+<tr>
+<td>steographic rendering</td>
+<td>not implemented</td>
+</tr>
+<tr>
+<td>not implemented</td>
+<td>configuration by .bgloop property file to control different aspects
+of the library's behaviour</td>
+</tr>
+<tr>
+<td><code>GLObjekt.setzeSelbstleuchten</code></td>
+<td><code>GLLichtobjekt</code> class following the GoF decorator pattern to avoid
+cluttering <code>GLObjekt</code> class more and to achieve looser coupling</td>
+</tr>
+<tr>
+<td>not implemented</td>
+<td>rendering of objects in wireframe/fill mode on a per object level</td>
+</tr>
+<tr>
+<td>not implemented</td>
+<td>Three different drawing models for (most) of the base geometry classes
+(GLU, GL, VBO). Can be switched without recompilation by changing a flag
+in the .bgloop property file</td>
+</tr>
+<tr>
+<td>not implemented</td>
+<td><code>GLMesh</code> class to display mesh objects in OBJ format</td>
+</tr>
+<tr>
+  <td><code>GLObjekt</code> is the base class for all GLOOP objects</td>
+  <td><code>GLObjekt</code> is the base class for all bGLOOP objects, yet
+    services have been distributed over interfaces in an attempt to achieve looser coupling
+    between the main classes
+  </td>
+</tr>
+</table>
 
 <h3>
 <a id="examples" class="anchor" href="#examples" aria-hidden="true"><span class="octicon octicon-link"></span></a>Examples</h3>
 
 <p>Will follow soon.</p>
+
+<h3>
+<a id="download" class="anchor" href="#download" aria-hidden="true"><span class="octicon octicon-link"></span></a>Download</h3>
+<p>
+If you do not want to build the library by yourself you can use the current build. I have not thought about a versioning scheme,
+only incrementing the build number at the moment. To use bGLOOP you also need the jogamp jars (version >=2.3.2) listed below.
+</p>
+<ul>
+<li><a href="dist/bGLOOP.jar">bGLOOP.jar (build 46)</a></li>
+<li>From the <a href="http://jogamp.org/deployment/archive/rc/v2.3.2/jar/">jogamp deployment archives</a> download <code>jogl-all.jar</code>,
+<code>jogl-all-natives-<em>platform</em>.jar</code>, <code>gluegen-rt.jar</code>, and <code>gluegen-rt-<em>platform</em>.jar</code>
+where <em>platform</em> is a placeholder for your OS. Put these files in the same directory as the <code>bGLOOP.jar</code> file.</li>
+<li><a href="dist/doc-bGLOOP.zip">javadoc API documentation, zipped.</a></li>
+</ul>
 </div>
 </section>
 
         <footer style="clear:right">
-          Bgloop is maintained by <a href="https://github.com/trent2">trent2</a><br>
+          bGLOOP is maintained by <a href="https://github.com/trent2">trent2</a><br>
           This page was generated by <a href="https://pages.github.com">GitHub Pages</a>. Tactile theme by <a href="https://twitter.com/jasonlong">Jason Long</a>.
         </footer>
 
