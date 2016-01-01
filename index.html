@@ -63,19 +63,20 @@ details of the library):</p>
 <thead><tr><th><strong>GLOOP</strong></th><th><strong>bGLOOP</strong></th></tr></thead>
 <tr>
 <td>selection of objects by window coordinates via <code>Sys.gibObjekt(double,double)</code></td>
-<td>not yet implemented, coming soon</td>
+<td><em>not yet implemented, coming soon</em></td>
 </tr>
 <tr>
 <td><code>GLTafel</code> to represent a string in the GL window, rendering is done
 by texturing an object with parts of a png-picture</td>
-<td>not implemented (<em>most certainly won't be implemented this way</em>)</td>
+<td>First version online as <code>GLText</code>, auto rotation already supported.
+Implementation is cooler &mdash; of course, no supplemental png-file is needed.</td>
 </tr>
 <tr>
 <td>steographic rendering</td>
-<td>not implemented</td>
+<td><em>not implemented (no plans to do so since I hate 3D movies)</em></td>
 </tr>
 <tr>
-<td>not implemented</td>
+<td><em>not implemented</em></td>
 <td>configuration by .bgloop property file to control different aspects
 of the library's behaviour</td>
 </tr>
@@ -85,17 +86,17 @@ of the library's behaviour</td>
 cluttering <code>GLObjekt</code> class more and to achieve looser coupling</td>
 </tr>
 <tr>
-<td>not implemented</td>
+<td><em>not implemented</em></td>
 <td>rendering of objects in wireframe/fill mode on a per object level</td>
 </tr>
 <tr>
-<td>not implemented</td>
+<td><em>not implemented</em></td>
 <td>Three different drawing models for (most) of the base geometry classes
 (GLU, GL, VBO). Can be switched without recompilation by changing a flag
 in the .bgloop property file</td>
 </tr>
 <tr>
-<td>not implemented</td>
+<td><em>not implemented</em></td>
 <td><code>GLMesh</code> class to display mesh objects in OBJ format</td>
 </tr>
 <tr>
@@ -119,11 +120,11 @@ If you do not want to build the library by yourself you can use the current buil
 only incrementing the build number at the moment. To use bGLOOP you also need the jogamp jars (version >=2.3.2) listed below.
 </p>
 <ul>
-<li><a href="dist/bGLOOP.jar">bGLOOP.jar (build 46)</a></li>
+<li><a href="dist/bGLOOP.jar">bGLOOP.jar (build 51)</a>, packed and obfuscated with <a href="http://proguard.sourceforge.net">Proguard</a></li>
 <li>From the <a href="http://jogamp.org/deployment/archive/rc/v2.3.2/jar/">jogamp deployment archives</a> download <code>jogl-all.jar</code>,
 <code>jogl-all-natives-<em>platform</em>.jar</code>, <code>gluegen-rt.jar</code>, and <code>gluegen-rt-<em>platform</em>.jar</code>
 where <em>platform</em> is a placeholder for your OS. Put these files in the same directory as the <code>bGLOOP.jar</code> file.</li>
-<li><a href="dist/doc-bGLOOP.zip">javadoc API documentation, zipped.</a></li>
+<li><a href="dist/doc-bGLOOP.zip">javadoc API documentation (for build 51), zipped.</a></li>
 </ul>
 </div>
 </section>
