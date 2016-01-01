@@ -3,7 +3,7 @@ package bGLOOP;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 
-abstract class GLDisplayItem {
+abstract class DisplayItem {
 	GLRenderer associatedRenderer;
 
 	GLKamera associatedCam;

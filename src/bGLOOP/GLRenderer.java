@@ -36,8 +36,8 @@ class GLRenderer implements GLEventListener {
 	private Animator animator;
 	private GLKamera aCam;
 	private GLWindowConfig wconf;
-	private CopyOnWriteArrayList<GLDisplayItem> noTextureItemList;
-	private ConcurrentHashMap<GLTextureImpl, CopyOnWriteArrayList<GLDisplayItem>>
+	private CopyOnWriteArrayList<DisplayItem> noTextureItemList;
+	private ConcurrentHashMap<GLTextureImpl, CopyOnWriteArrayList<DisplayItem>>
 		textureItemMap;
 
 	private Window win;
@@ -74,19 +74,19 @@ class GLRenderer implements GLEventListener {
 		animator.setUpdateFPSFrames(wconf.doubleBuffering?60:2000, null);
 		win.startDisplay();
 		currentLighting = !wconf.globalLighting;
-		textureItemMap = new ConcurrentHashMap<GLTextureImpl, CopyOnWriteArrayList<GLDisplayItem>>(10);
-		noTextureItemList = new CopyOnWriteArrayList<GLDisplayItem>();
+		textureItemMap = new ConcurrentHashMap<GLTextureImpl, CopyOnWriteArrayList<DisplayItem>>(10);
+		noTextureItemList = new CopyOnWriteArrayList<DisplayItem>();
 	}
 
-	CopyOnWriteArrayList<GLDisplayItem> getNoTextureItemList() {
+	CopyOnWriteArrayList<DisplayItem> getNoTextureItemList() {
 			return noTextureItemList;
 	}
 
 	// remove oldImpl from map
-	void addObjectToTextureMap(GLTextureImpl tImp, GLDisplayItem di, GLTextureImpl oldImpl) {
+	void addObjectToTextureMap(GLTextureImpl tImp, DisplayItem di, GLTextureImpl oldImpl) {
 		if (!(di instanceof GLHimmel)) {
 			if (oldImpl != null) {
-				CopyOnWriteArrayList<GLDisplayItem> dil = textureItemMap.get(oldImpl);
+				CopyOnWriteArrayList<DisplayItem> dil = textureItemMap.get(oldImpl);
 				if (dil != null)
 					dil.remove(di);
 			}
@@ -96,12 +96,12 @@ class GLRenderer implements GLEventListener {
 			sky = (GLHimmel)di;
 	}
 
-	private void addObjectToTextureMap(GLTextureImpl tImp, GLDisplayItem di) {
+	private void addObjectToTextureMap(GLTextureImpl tImp, DisplayItem di) {
 		if(textureItemMap.containsKey(tImp))
 			textureItemMap.get(tImp).add(di);
 		else {
-			CopyOnWriteArrayList<GLDisplayItem> dil;
-			dil = new CopyOnWriteArrayList<GLDisplayItem>();
+			CopyOnWriteArrayList<DisplayItem> dil;
+			dil = new CopyOnWriteArrayList<DisplayItem>();
 			dil.add(di);
 			textureItemMap.put(tImp, dil);
 		}
@@ -228,21 +228,24 @@ class GLRenderer implements GLEventListener {
 
 		// TODO this is why I needed a GLHimmel reference:
 		// render sky before all other objects
-		if(sky != null && sky.aTex != null && sky.aTex.aTexturImpl != null) {
-			tImp = sky.aTex.aTexturImpl;
-			tImp.load(gl);
-			if (tImp.isReady()) {
-				tImp.getTexture().enable(gl);
-				tImp.getTexture().bind(gl);
-			}
-			if (sky.aVisible)
-				synchronized (sky) {
-					sky.render(gl, glu);
+		if (sky != null) {
+			GLTextur skyTexture = sky.gibTextur();
+			if (skyTexture != null && skyTexture.aTexturImpl != null) {
+				tImp = skyTexture.aTexturImpl;
+				tImp.load(gl);
+				if (tImp.isReady()) {
+					tImp.getTexture().enable(gl);
+					tImp.getTexture().bind(gl);
 				}
+				if (sky.aVisible)
+					synchronized (sky) {
+						sky.render(gl, glu);
+					}
+			}
 		}
 
 		// render objects without texture
-		for (ConcurrentHashMap.Entry<GLTextureImpl, CopyOnWriteArrayList<GLDisplayItem>> entry : textureItemMap
+		for (ConcurrentHashMap.Entry<GLTextureImpl, CopyOnWriteArrayList<DisplayItem>> entry : textureItemMap
 				.entrySet()) {
 			// load texture
 			tImp = entry.getKey();
@@ -252,15 +255,16 @@ class GLRenderer implements GLEventListener {
 				tImp.getTexture().bind(gl);
 			}
 			// render objects
-			for (GLDisplayItem di : entry.getValue())
+			for (DisplayItem di : entry.getValue())
 				di.render(gl, glu);
 		}
+
 		if(tImp != null && tImp.isReady())
 			tImp.getTexture().disable(gl);
 
 		gl.glDisable(GL2.GL_TEXTURE_2D);
-		// render objects with texture
-		for (GLDisplayItem di : noTextureItemList)
+		// render objects without texture
+		for (DisplayItem di : noTextureItemList)
 			if (di.aVisible)
 					di.render(gl, glu);
 

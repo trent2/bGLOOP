@@ -66,7 +66,7 @@ public class GLMaus {
 		};
 
 		associatedCam = GLKamera.aktiveKamera();
-		associatedCam.getRenderer().getWindow().addMouseListener(new MouseListenerFacade() {
+		associatedCam.associatedRenderer.getWindow().addMouseListener(new MouseListenerFacade() {
 			@Override
 			public void handleMouseWheel(float wheelRotation) {
 			}

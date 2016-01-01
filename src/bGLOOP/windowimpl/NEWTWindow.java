@@ -74,6 +74,11 @@ final public class NEWTWindow extends Window {
 	}
 
 	@Override
+	public void closeDisplay() {
+		glWin.destroy();
+	}
+
+	@Override
 	public void updateFPS(float lastFPS) {
 		glWin.setTitle("bGLOOP.NEWT, FPS: " + lastFPS);
 	}

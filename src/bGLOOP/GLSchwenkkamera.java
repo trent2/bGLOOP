@@ -55,7 +55,7 @@ public class GLSchwenkkamera extends GLKamera {
 	}
 
 	private void addMouseListener() {
-		renderer.getWindow().addMouseListener(new MouseListenerFacade() {
+		associatedRenderer.getWindow().addMouseListener(new MouseListenerFacade() {
 			float[] oldDir = new float[3];
 			int xstart, ystart;
 			double[] aPrevPos, aPrevUp;
@@ -76,7 +76,7 @@ public class GLSchwenkkamera extends GLKamera {
 				aPos[1] = pos[1];
 				aPos[2] = pos[2];
 				System.arraycopy(dir, 0, oldDir, 0, 3);
-				getRenderer().scheduleRender();
+				associatedRenderer.scheduleRender();
 				
 			}
 			
@@ -116,7 +116,7 @@ public class GLSchwenkkamera extends GLKamera {
 						aPos[2] = aPos[2] * c + t * s;
 						aUp[1] = aPrevUp[1] * c - aPrevUp[2] * s;
 						aUp[2] = aPrevUp[2] * c + aPrevUp[1] * s;
-						getRenderer().scheduleRender();
+						associatedRenderer.scheduleRender();
 					}
 				} else if (button3) {
 					// rotate around z-axis
@@ -125,7 +125,7 @@ public class GLSchwenkkamera extends GLKamera {
 						aPos[1] = aPrevPos[1] * c - aPrevPos[0] * s;
 						aUp[0] = aPrevUp[0] * c + aPrevUp[1] * s;
 						aUp[1] = aPrevUp[1] * c - aPrevUp[0] * s;
-						getRenderer().scheduleRender();
+						associatedRenderer.scheduleRender();
 					}
 				}
 			}

@@ -9,7 +9,8 @@ import com.jogamp.opengl.glu.GLU;
  * @author R. Spillner
  *
  */
-public class GLBoden extends GLObjekt {
+public class GLBoden extends GLObjekt implements IGLSurface {
+	private GLTextur aTex;
 
 	/**
 	 * Erstellt eine weiße Bodenfläche.
@@ -19,9 +20,16 @@ public class GLBoden extends GLObjekt {
 	}
 
 	public GLBoden(GLTextur pTextur) {
-		super(pTextur);
+		super();
 		conf.objectRenderMode = Rendermodus.RENDER_GL;
 		conf.displayMode = Darstellungsmodus.FUELLEN;
+
+		aTex = pTextur;
+		if (aTex != null)
+			associatedRenderer.addObjectToTextureMap(aTex.aTexturImpl, this, null);
+		else
+			associatedRenderer.getNoTextureItemList().add(this);
+
 		aVisible = true;
 	}
 
@@ -69,5 +77,29 @@ public class GLBoden extends GLObjekt {
 
 			gl.glEnd();
 		}
+	}
+
+
+	@Override
+	public synchronized void setzeTextur(GLTextur pTextur) {
+		if (aTex != null)
+			associatedRenderer.addObjectToTextureMap(pTextur.aTexturImpl, this, aTex.aTexturImpl);
+		else {
+			associatedRenderer.getNoTextureItemList().remove(this);
+			associatedRenderer.addObjectToTextureMap(pTextur.aTexturImpl, this, null);
+		}
+
+		aTex = pTextur;
+		scheduleRender();
+	}
+
+	@Override
+	public void setzeTextur(String pTexturBilddatei) {
+		setzeTextur(new GLTextur(pTexturBilddatei));
+	}
+
+	@Override
+	public GLTextur gibTextur() {
+		return aTex;
 	}
 }

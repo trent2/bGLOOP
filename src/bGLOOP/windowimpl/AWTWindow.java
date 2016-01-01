@@ -78,6 +78,11 @@ final public class AWTWindow extends Window {
 	}
 
 	@Override
+	public void closeDisplay() {
+		frame.dispose();
+	}
+
+	@Override
 	public void updateFPS(float lastFPS) {
 		frame.setTitle("bGLOOP.AWT, FPS: " + lastFPS);
 	}

@@ -18,7 +18,7 @@ import static java.lang.Math.cos;
  * 
  * @author R. Spillner
  */
-public class GLTorus extends GLTransformableObject {
+public class GLTorus extends TransformableSurfaceObject {
 	private double aRadA, aRadQ;
 	private FloatBuffer fb;
 	private int[] firstOffsets, countOffsets;
@@ -78,7 +78,8 @@ public class GLTorus extends GLTransformableObject {
 	@Override
 	void generateDisplayList_GL(GL2 gl) {
 		double lxy, lz;
-		boolean texturePresent = (aTex != null) && aTex.isReady();
+		
+		boolean texturePresent = (gibTextur() != null) && gibTextur().isReady();
 
 		float qStrip = (float) (2 * PI / conf.yDivision);
 		float qRound = (float) (2 * PI / conf.xDivision);

@@ -8,7 +8,7 @@ import com.jogamp.opengl.glu.GLU;
  * 
  * @author R. Spillner
  */
-public class GLLicht extends GLDisplayItem {
+public class GLLicht extends DisplayItem implements IGLColorable {
 	private final static int LIGHT_NUMS[] = { GL2.GL_LIGHT0, GL2.GL_LIGHT1, GL2.GL_LIGHT2, GL2.GL_LIGHT3, GL2.GL_LIGHT4,
 			GL2.GL_LIGHT5, GL2.GL_LIGHT6, GL2.GL_LIGHT7 };
 	private static int lightCount = 0;
@@ -30,7 +30,7 @@ public class GLLicht extends GLDisplayItem {
 		lightDiffusePosition = new float[] { (float) pX, (float) pY, (float) pZ, 1.0f };
 		id = lightCount++;
 		associatedCam = GLKamera.aktiveKamera();
-		(associatedRenderer = associatedCam.getRenderer()).getNoTextureItemList().add(this);
+		(associatedRenderer = associatedCam.associatedRenderer).getNoTextureItemList().add(this);
 		aVisible = true;
 	}
 
@@ -61,11 +61,20 @@ public class GLLicht extends GLDisplayItem {
 	 * @param pG Grünanteil
 	 * @param pB Blauanteil
 	 */
+	@Override
 	public synchronized void setzeFarbe(double pR, double pG, double pB) {
 		lightDiffuseValue[0] = (float)pR;
 		lightDiffuseValue[1] = (float)pG;
 		lightDiffuseValue[2] = (float)pB;
 		associatedRenderer.scheduleRender();
+	}
+
+	/** Farbe der Lichtquelle.
+	 * @return Dreielementiges Array mit Rot-, Grün und Blauanteilen.
+	 */
+	@Override
+	public double[] gibFarbe() {
+		return new double[] { lightDiffuseValue[0], lightDiffuseValue[1], lightDiffuseValue[2] }; 
 	}
 
 	/**

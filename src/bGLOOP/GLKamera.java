@@ -18,8 +18,9 @@ public class GLKamera {
 	private static GLKamera activeCamera;
 
 	private GLWindowConfig wconf;
+	boolean drawLookAt;
 
-	GLRenderer renderer;
+	GLRenderer associatedRenderer;
 
 	double[] aPos = { 0, 0, 500 };
 	double[] aLookAt = { 0, 0, 0 };
@@ -73,7 +74,7 @@ public class GLKamera {
 		activeCamera = this;
 		wconf = new GLWindowConfig();
 
-		renderer = new GLRenderer(wconf, width, height, this, pVollbild, pKeineDekoration);
+		associatedRenderer = new GLRenderer(wconf, width, height, this, pVollbild, pKeineDekoration);
 	}
 
 	/** Rückgabe der aktiven Kamera. Die aktive Kamera ist die zuletzt erstellte
@@ -94,10 +95,6 @@ public class GLKamera {
 		GLKamera.activeCamera = activeCamera;
 	}
 
-	GLRenderer getRenderer() {
-		return renderer;
-	}
-
 	GLWindowConfig getWconf() {
 		return wconf;
 	}
@@ -111,7 +108,7 @@ public class GLKamera {
 	 */
 	synchronized public void beleuchtungAktivieren(boolean pBeleuchtungAn) {
 		wconf.globalLighting = pBeleuchtungAn;
-		renderer.scheduleRender();
+		associatedRenderer.scheduleRender();
 	}
 
 	/** Setzt den Blickpunkt der Kamera. Der Blickpunkt ist der Punkt, der in der
@@ -125,7 +122,7 @@ public class GLKamera {
 		aLookAt[0] = pX;
 		aLookAt[1] = pY;
 		aLookAt[2] = pZ;
-		renderer.scheduleRender();
+		associatedRenderer.scheduleRender();
 	}
 
 	/** Setzt die Position der Kamera.
@@ -138,7 +135,7 @@ public class GLKamera {
 		aPos[0] = pX;
 		aPos[1] = pY;
 		aPos[2] = pZ;
-		renderer.scheduleRender();
+		associatedRenderer.scheduleRender();
 	}
 
 	/** Dreht die Kamera um den angegebenen Winkel um die x-Achse im Koordinatensystem.
@@ -158,7 +155,7 @@ public class GLKamera {
 		aUp[1] = t * c - aUp[2] * s;
 		aUp[2] = aUp[2] * c + t * s;
 
-		renderer.scheduleRender();
+		associatedRenderer.scheduleRender();
 	}
 
 	/** Dreht die Kamera um den angegebenen Winkel um die y-Achse im Koordinatensystem.
@@ -174,7 +171,7 @@ public class GLKamera {
 		aPos[0] = t * c - aPos[2] * s;
 		aPos[2] = aPos[2] * c + t * s;
 
-		renderer.scheduleRender();
+		associatedRenderer.scheduleRender();
 	}
 
 	/** Dreht die Kamera um die angegebene Achse im Raum. Die Achse wird
@@ -206,6 +203,8 @@ public class GLKamera {
 	void renderPostObjects(GL2 gl, GLU glu) {
 		if (wconf.aDisplayAxes)
 			drawAxes(gl);
+		if (drawLookAt)
+			drawLookAt(gl);
 	}
 
 	/*
@@ -247,7 +246,7 @@ public class GLKamera {
 	 *            geschaltet.
 	 */
 	public void setzeVollbildmodus(boolean pVollbild) {
-		renderer.getWindow().setFullscreen(pVollbild);
+		associatedRenderer.getWindow().setFullscreen(pVollbild);
 	}
 
 	/**
@@ -259,7 +258,7 @@ public class GLKamera {
 	 */
 	synchronized public void zeigeAchsen(double pAchsenlaenge) {
 		wconf.axesLength = pAchsenlaenge;
-		renderer.scheduleRender();
+		associatedRenderer.scheduleRender();
 	}
 
 	/**
@@ -276,6 +275,18 @@ public class GLKamera {
 	}
 
 	/**
+	 * Zeichnet den Blickpunkt ins Kamerafenster.
+	 * @param pBlickpunktZeichnen
+	 *            Wenn <code>true</code>, dann wird der Blickpunkt im Kamerafenster
+	 *            angezeigt, wenn <code>false</code>, dann nicht.
+	 */
+	public void zeigeBlickpunkt(boolean pBlickpunktZeichnen) {
+		drawLookAt = pBlickpunktZeichnen;
+		associatedRenderer.scheduleRender();
+	}
+	
+
+	/**
 	 * Zeigt alle beweglichen bGLOOP-Objekte als Drahtgittermodelle an.
 	 * Ausgenommen davon sind Himmel und Boden &mdash; diese werden im
 	 * Drahtgittermodus gar nicht dargestellt.
@@ -287,7 +298,7 @@ public class GLKamera {
 	 */
 	synchronized public void setzeGittermodelldarstellung(boolean pZeigeGitter) {
 		wconf.aWireframe = pZeigeGitter;
-		renderer.scheduleRender();
+		associatedRenderer.scheduleRender();
 	}
 
 	/**
@@ -324,7 +335,7 @@ public class GLKamera {
 		this.aLookAt[0] = lookAt[0];
 		this.aLookAt[1] = lookAt[1];
 		this.aLookAt[2] = lookAt[2];
-		renderer.scheduleRender();
+		associatedRenderer.scheduleRender();
 	}
 
 	private void drawAxes(GL2 gl) {
@@ -382,6 +393,30 @@ public class GLKamera {
 		gl.glDisable(GL2.GL_COLOR_MATERIAL);
 		gl.glLineWidth(wconf.wireframeLineWidth);
 	}
+
+	private void drawLookAt(GL2 gl) {
+		gl.glDisable(GL2.GL_LIGHTING);
+		gl.glEnable(GL2.GL_COLOR_MATERIAL);
+		gl.glDisable(GL2.GL_TEXTURE_2D);
+		gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
+
+		gl.glBegin(GL2.GL_LINES);
+		gl.glColor3f(1, 1, 1);
+		gl.glVertex3d(aLookAt[0]-5, aLookAt[1], aLookAt[2]);
+		gl.glVertex3d(aLookAt[0]+5, aLookAt[1], aLookAt[2]);
+		gl.glVertex3d(aLookAt[0], aLookAt[1]-5, aLookAt[2]);
+		gl.glVertex3d(aLookAt[0], aLookAt[1]+5, aLookAt[2]);
+		gl.glVertex3d(aLookAt[0], aLookAt[1], aLookAt[2]-5);
+		gl.glVertex3d(aLookAt[0], aLookAt[1], aLookAt[2]+5);
+		gl.glEnd();
+		
+		if (wconf.globalLighting)
+			gl.glEnable(GL2.GL_LIGHTING);
+
+		gl.glDisable(GL2.GL_COLOR_MATERIAL);
+		gl.glLineWidth(wconf.wireframeLineWidth);
+	}
+
 
 	/** Gibt die x-Koordinate des Blickpunkts der Kamera zurück.
 	 * @return x-Koordinate des Blickpunkts
@@ -443,7 +478,7 @@ public class GLKamera {
 	 * bGLOOP-Konfigurationsdatei festgelegten Standardnamen.
 	 */
 	public void bildschirmfoto() {
-		getRenderer().scheduleScreenshot(null);
+		associatedRenderer.scheduleScreenshot(null);
 	}
 
 	/** Erstellt ein Bildschirmfoto und speichert es unter dem übergebenen
@@ -452,6 +487,6 @@ public class GLKamera {
 	 * @param pDateiname Dateiname des Screenshots
 	 */
 	public void bildschirmfoto(String pDateiname) {
-		getRenderer().scheduleScreenshot(pDateiname);
+		associatedRenderer.scheduleScreenshot(pDateiname);
 	}
 }

@@ -1,4 +1,7 @@
 <project default="jar" name="bGLOOP built file">
+	<taskdef resource="proguard/ant/task.properties"
+		     classpath="jar/proguard.jar" />
+
 	<property name="VERSION" value="1.0" />
 	<target name="clean">
 		<delete dir="build" />
@@ -10,7 +13,8 @@
 
 	<target name="compile" depends="clean">
 		<mkdir dir="build/classes" />
-		<javac srcdir="src/bGLOOP" destdir="build/classes" includeantruntime="false">
+		<javac srcdir="src/bGLOOP" destdir="build/classes" includeantruntime="false" source="1.7" target="1.7">
+			<compilerarg value="-Xlint:-options" />
 			<classpath>
 				<pathelement location="/home/trent/workspace/jogamp-all-platforms/jar/jogl-all.jar" />
 				<pathelement location="/home/trent/workspace/jogamp-all-platforms/jar/gluegen-rt.jar" />
@@ -31,32 +35,39 @@
 	</target>
 
 	<target name="doc">
-		<javadoc packagenames="bGLOOP" sourcepath="src" destdir="doc" windowtitle="bGLOOP Dokumentation" access="public" stylesheetfile="stylesheet.css" docencoding="UTF-8" encoding="UTF-8" charset="UTF-8">
+		<javadoc packagenames="bGLOOP" sourcepath="src" destdir="doc"
+			windowtitle="bGLOOP Dokumentation" access="public" stylesheetfile="stylesheet.css"
+			docencoding="UTF-8" encoding="UTF-8" charset="UTF-8" noqualifier="java.lang">
 			<classpath>
 				<pathelement location="/home/trent/workspace/jogamp-all-platforms/jar/jogl-all.jar" />
 				<pathelement location="/home/trent/workspace/jogamp-all-platforms/jar/gluegen-rt.jar" />
 			</classpath>
 			<doctitle>
-				<![CDATA[<h1>bGLOOP Dokumentation</h1>]]></doctitle>
-	</javadoc>
-</target>
+				<![CDATA[<h1>bGLOOP Dokumentation</h1>]]>
+			</doctitle>
+		</javadoc>
+		<zip destfile="dist/doc-bGLOOP.zip">
+			<fileset dir="doc" />
+		</zip>
+	</target>
 
-<target name="jar" depends="compile">
-	<property file="build.number" />
-	<tstamp>
-		<format property="TODAY" pattern="dd. MMMM YYYY, HH:mm:ss" locale="de,DE"/>
-	</tstamp>
-	<jar destfile="dist/bGLOOP.jar">
-		<manifest>
-			<attribute name="Implementation-Title" value="A better GLOOP" />
-			<attribute name="Implementation-Version" value="${VERSION} ${TODAY}" />
-			<attribute name="Implementation-Build" value="${build.number}" />
-			<attribute name="Implementation-Vendor" value="Robert Spillner" />
-		</manifest>
-		<fileset file="src/.bgloop" />
-		<fileset dir="build/classes" />
-	</jar>
-	<echo message="Building built ${build.number}" />
-	<buildnumber />
-</target>
+	<target name="jar" depends="compile">
+		<property file="build.number" />
+		<tstamp>
+			<format property="TODAY" pattern="dd. MMMM YYYY, HH:mm:ss" locale="de,DE" />
+		</tstamp>
+		<jar destfile="dist/bGLOOP.jar">
+			<manifest>
+				<attribute name="Implementation-Title" value="A better GLOOP" />
+				<attribute name="Implementation-Version" value="${VERSION} ${TODAY}" />
+				<attribute name="Implementation-Build" value="${build.number}" />
+				<attribute name="Implementation-Vendor" value="Robert Spillner" />
+			</manifest>
+			<fileset file="src/.bgloop" />
+			<fileset dir="build/classes" />
+		</jar>
+		<echo message="Building built ${build.number}" />
+		<buildnumber />
+		<proguard configuration="bGLOOP.pro" />
+	</target>
 </project>

@@ -34,6 +34,8 @@ public abstract class Window {
 
 	public abstract void updateFPS(float lastFPS);
 
+	public abstract void closeDisplay();
+
 	public Animator getAnimator() {
 		return animator;
 	}

@@ -23,7 +23,7 @@ import static java.lang.Math.cos;
  * können auch GLPrismoid-Objekte instanziiert werden.</p>
  * @author R. Spillner
  */
-public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable {
+public class GLPrismoid extends TransformableSurfaceObject {
 	int aEcken, numberOfRadsNotEqualToZero = 0;
 	double aRad1;
 	double aRad2;
@@ -127,7 +127,8 @@ public class GLPrismoid extends GLTransformableObject implements IGLSubdivisable
 
 		double lNorm = 0;
 		double lMAbschnitt = aHoehe / aKonzentrischeKreise;
-		boolean texturePresent = (aTex != null) && aTex.isReady();
+		boolean texturePresent = (gibTextur() != null) && gibTextur().isReady();
+
 
 		gl.glNewList(bufferName, GL2.GL_COMPILE);
 		for (int j = 0; j < aKonzentrischeKreise; j++) {

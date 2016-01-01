@@ -40,7 +40,7 @@ public class GLTastatur {
 	/** Erzeugt ein GLTastatur-Objekt zur Abfrage der Tastatur.
 	 */
 	public GLTastatur() {
-		GLKamera.aktiveKamera().getRenderer().getWindow().addKeyboardListener(new KeyboardListenerFacade() {
+		GLKamera.aktiveKamera().associatedRenderer.getWindow().addKeyboardListener(new KeyboardListenerFacade() {
 			@Override
 			public void handleKeyPressed(char key, int keycode, int modifiers) {
 				// keycodes for NEWT KeyEvent and AWT KeyEvent are
@@ -80,7 +80,9 @@ public class GLTastatur {
 					aBack = true;
 					break;
 				default:
-					cbuf += key;
+					synchronized (cbuf) {
+						cbuf += key;	
+					}
 				}
 			}
 
@@ -136,12 +138,15 @@ public class GLTastatur {
 	 * zurück gegeben.
 	 */
 	public char gibZeichen() {
-		if(!cbuf.isEmpty()) {
-			char c = cbuf.charAt(0);
-			cbuf = cbuf.substring(1);
-			return c;
-		} else
-			return 0;
+		char c;
+		synchronized (cbuf) {
+			if (!cbuf.isEmpty()) {
+				c = cbuf.charAt(0);
+				cbuf = cbuf.substring(1);
+			} else
+				c = 0;
+		}
+		return c;
 	}
 
 	/** Liefert true, wenn ein normales Zeichen ({@link #gibZeichen()}) im Tastaturpuffer
@@ -150,7 +155,9 @@ public class GLTastatur {
 	 * vorhanden ist, sonst <code>false</code>.
 	 */
 	public boolean wurdeGedrueckt() {
-		return !cbuf.isEmpty();
+		synchronized (cbuf) {
+			return !cbuf.isEmpty();
+		}
 	}
 
 	/** Liefert true, wenn irgendeine Taste (speziell oder normal) gedrückt wurde.
@@ -165,7 +172,9 @@ public class GLTastatur {
 	/** Leert den Puffer der normalen Zeichen.
 	 */
 	public void loeschePuffer() {
-		cbuf = "";
+		synchronized (cbuf) {
+			cbuf = "";
+		}
 	}
 
 	/**

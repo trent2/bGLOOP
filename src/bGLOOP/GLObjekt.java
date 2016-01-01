@@ -9,9 +9,9 @@ import com.jogamp.opengl.glu.GLUquadric;
  * 
  * @author R. Spillner
  */
-public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
-	final private float[] aAmbient = { 0.15f, 0.15f, 0.15f, 1 };
+public abstract class GLObjekt extends DisplayItem implements IGLColorable{
 	float[] aDiffuse = { 1, 1, 1, 1 };
+	final private float[] aAmbient = { 0.15f, 0.15f, 0.15f, 1 };
 	private float[] aSpecular = { 0, 0, 0, 1 };
 	float[] aEmission = { 0, 0, 0, 1 };
 	private float aGlanz = 70; // between 0 and 128
@@ -38,13 +38,18 @@ public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
 		 * <code>Darstellungsmodus.FUELLEN</code>: Die Seitenflächen des Objekts
 		 * sind durchgehend mit der Farbe gefüllt.
 		 */
-		FUELLEN(GL2.GL_FILL);
+		FUELLEN(GL2.GL_FILL),
+		/**
+		 * <code>Darstellungsmodus.NA</code>: Darstellungsmodus nicht verfügbar.
+		 * In diesem Fall wird der Standarddarstellungsmodus des Fensters gewählt. 
+		 */
+		NV(-1);
 		private int dm;
 		private Darstellungsmodus(int i) {
 			dm = i;
 		}
 
-		private int getMode() {
+		int getMode() {
 			return dm;
 		}
 	};
@@ -68,7 +73,6 @@ public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
 
 	final GLConfig conf;
 	final GLWindowConfig wconf;
-	GLTextur aTex;
 	int bufferName = -1;
 
 	GLUquadric quadric;
@@ -78,56 +82,18 @@ public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
 	abstract void renderDelegate(GL2 gl, GLU glu);
 
 	GLObjekt() {
-		this(null);
-	}
-
-	GLObjekt(GLTextur pTextur) {
 		conf = new GLConfig();
-		aTex = pTextur;
 		associatedCam = GLKamera.aktiveKamera();
-		associatedRenderer = associatedCam.getRenderer();
+		associatedRenderer = associatedCam.associatedRenderer;
 
 		wconf = associatedCam.getWconf();
 		conf.xDivision = wconf.xDivision;
 		conf.yDivision = wconf.yDivision;
 
 		conf.objectRenderMode = wconf.globalObjectRenderMode;
-
-		if (aTex != null)
-			associatedRenderer.addObjectToTextureMap(aTex.aTexturImpl, this, null);
-		else
-			associatedRenderer.getNoTextureItemList().add(this);
+		conf.displayMode = Darstellungsmodus.NV;
 
 		scheduleRender();
-	}
-
-	/**
-	 * Setzt die Farbe des Objekts. Die Parameterwerte müssen zwischen 0 und 1
-	 * liegen.
-	 * 
-	 * @param pR
-	 *            Rotanteil, zwischen 0 und 1
-	 * @param pG
-	 *            Grünanteil, zwischen 0 und 1
-	 * @param pB
-	 *            Blauanteil, zwischen 0 und 1
-	 */
-	@Override
-	public synchronized void setzeFarbe(double pR, double pG, double pB) {
-		aDiffuse[0] = (float) pR;
-		aDiffuse[1] = (float) pG;
-		aDiffuse[2] = (float) pB;
-		scheduleRender();
-	}
-
-	/**
-	 * Farbe des Objekts.
-	 * 
-	 * @return Dreielementiges Array mit Rot-, Grün und Blauanteilen.
-	 */
-	@Override
-	public double[] gibFarbe() {
-		return new double[] { aDiffuse[0], aDiffuse[1], aDiffuse[2] };
 	}
 
 	/**
@@ -144,6 +110,29 @@ public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
 		aGlanz = pMaterial.getShininess();
 		scheduleRender();
 	}
+
+	/** Farbe des Objekts.
+	 * @return Dreielementiges Array mit Rot-, Grün und Blauanteilen.
+	 */
+	@Override
+	public double[] gibFarbe() {
+		return new double[] { aDiffuse[0], aDiffuse[1], aDiffuse[2] };
+	}
+
+	/** Setzt die Farbe des Objekts. Die Parameterwerte müssen zwischen 0 und 1
+	 * liegen.
+	 * 
+	 * @param pR Rotanteil, zwischen 0 und 1
+	 * @param pG Grünanteil, zwischen 0 und 1
+	 * @param pB Blauanteil, zwischen 0 und 1
+	 */
+	@Override
+	public void setzeFarbe(double pR, double pG, double pB) {
+		aDiffuse[0] = (float) pR;
+		aDiffuse[1] = (float) pG;
+		aDiffuse[2] = (float) pB;
+	}
+
 
 	/**
 	 * Setzt die Reflektivität und Farbe der Reflexion. Eine hohe Reflektivität
@@ -168,9 +157,18 @@ public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
 		scheduleRender();
 	}
 
+	/**
+	 * Bestimmt, ob das Objekt gezeichnet wird oder nicht. Wenn die Sichtbarkeit
+	 * auf <code>false</code> gesetzt wird, wird keinerlei OpenGL-Code zum Rendern
+	 * des Objekts ausgeführt.
+	 * 
+	 * @param pSichtbar
+	 *            Wenn <code>true</code>, so wird das Objekt gezeichnet, bei
+	 *            <code>false</code> wird es nicht gezeichnet.
+	 */
 	public synchronized void setzeSichtbarkeit(boolean pSichtbar) {
 		aVisible = pSichtbar;
-		associatedCam.getRenderer().scheduleRender();
+		associatedRenderer.scheduleRender();
 	}
 
 	/**
@@ -182,58 +180,14 @@ public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
 		scheduleRender();
 	}
 
-	/**
-	 * Legt die übergebene Textur auf das Objekt.
-	 * 
-	 * @param pTextur
-	 *            Ein {@link GLTextur}-Objekt
-	 */
-	@Override
-	public synchronized void setzeTextur(GLTextur pTextur) {
-		if (aTex != null)
-			associatedRenderer.addObjectToTextureMap(pTextur.aTexturImpl, this, aTex.aTexturImpl);
-		else {
-			associatedRenderer.getNoTextureItemList().remove(this);
-			associatedRenderer.addObjectToTextureMap(pTextur.aTexturImpl, this, null);
-		}
-		aTex = pTextur;
-		scheduleRender();
-	}
-
-	/**
-	 * Legt die übergebene Textur auf das Objekt.
-	 * 
-	 * @param pTexturBilddatei
-	 *            Ein Dateiname einer Bilddatei (.jpg oder .png)
-	 */
-	@Override
-	public synchronized void setzeTextur(String pTexturBilddatei) {
-		setzeTextur(new GLTextur(pTexturBilddatei));
-	}
-
 	@Override
 	synchronized void render(GL2 gl, GLU glu) {
-		loadMaterial(gl, aAmbient, aDiffuse, aSpecular, aEmission, aGlanz);
-
-		gl.glPushMatrix();
-
-		if (conf.objectRenderMode == Rendermodus.RENDER_GLU) {
+		if (conf.objectRenderMode == Rendermodus.RENDER_GLU)
 			if (quadric == null)
 				quadric = glu.gluNewQuadric();
 
-			if (associatedCam.istDrahtgittermodell()) {
-//				glu.gluQuadricDrawStyle(quadric, GLU.GLU_LINE);
-				gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
-			} else {
-//				glu.gluQuadricDrawStyle(quadric, computeDrawMode(conf.displayMode, conf.objectRenderMode));
-				gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, conf.displayMode.getMode());
-			}
-		} else {
-			if (associatedCam.istDrahtgittermodell())
-				gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
-			else
-				gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, conf.displayMode.getMode());
-		}
+		loadMaterial(gl);
+		gl.glPushMatrix();
 		renderDelegate(gl, glu);
 		gl.glPopMatrix();
 	}
@@ -242,12 +196,20 @@ public abstract class GLObjekt extends GLDisplayItem implements IGLSurface {
 		return conf;
 	}
 
-	void loadMaterial(GL2 gl, float[] amb, float[] diff, float[] spec, float[] emiss, float glanz) {
-		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, amb, 0);
-		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, diff, 0);
-		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, spec, 0);
-		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_EMISSION, emiss, 0);
-		gl.glMaterialf(GL2.GL_FRONT, GL2.GL_SHININESS, glanz);
+	void loadMaterial(GL2 gl) {
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, aAmbient, 0);
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, aDiffuse, 0);
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, aSpecular, 0);
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_EMISSION, aEmission, 0);
+		gl.glMaterialf(GL2.GL_FRONT, GL2.GL_SHININESS, aGlanz);
+	}
+
+	void loadMaterial(GL2 gl, float[] pAmb, float[] pDiff, float[] pSpec, float[] pEmiss, float pGlanz) {
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, pAmb, 0);
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, pDiff, 0);
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, pSpec, 0);
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_EMISSION, pEmiss, 0);
+		gl.glMaterialf(GL2.GL_FRONT, GL2.GL_SHININESS, pGlanz);
 	}
 
 	void scheduleRender() {

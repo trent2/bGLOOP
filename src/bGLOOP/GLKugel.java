@@ -18,7 +18,7 @@ import com.jogamp.opengl.glu.GLU;
  * 
  * @author R. Spillner
  */
-public class GLKugel extends GLTransformableObject {
+public class GLKugel extends TransformableSurfaceObject {
 	private double aRad;
 	private FloatBuffer fb;
 	private int[] firstOffsets, countOffsets;
@@ -80,17 +80,15 @@ public class GLKugel extends GLTransformableObject {
 	@Override
 	void generateDisplayList_GL(GL2 gl) {
 		double lX, lZ;
-		boolean texturePresent = (aTex != null) && aTex.isReady();
+		boolean texturePresent = (gibTextur() != null) && gibTextur().isReady();
 		float qx = (float) (PI / conf.xDivision);
 		float qy = (float) (2 * PI / conf.yDivision);
 
 		gl.glNewList(bufferName, GL2.GL_COMPILE);
+		double ring1Y = 1, ring1X = 0, ring2Y, ring2X; 
 		for (int i = 0; i < conf.xDivision; ++i) { // conf.xDivision; i++) {
-			double ring1Y = cos(i * qx);
-			double ring2Y = cos((i + 1) * qx);
-
-			double ring1X = sin(i * qx);
-			double ring2X = sin((i + 1) * qx);
+			ring2Y = cos((i + 1) * qx);
+			ring2X = sin((i + 1) * qx);
 
 			// need to go around one whole turn
 			gl.glBegin(GL2.GL_QUAD_STRIP);
@@ -113,6 +111,8 @@ public class GLKugel extends GLTransformableObject {
 				gl.glVertex3d(lX * aRad * ring2X, lZ * aRad * ring2X, ring2Y * aRad);
 			}
 			gl.glEnd();
+			ring1Y = ring2Y;
+			ring1X = ring2X;
 		}
 		gl.glEndList();
 	}
@@ -164,12 +164,10 @@ public class GLKugel extends GLTransformableObject {
 		float lX, lZ;
 		float qx = (float)(PI / conf.xDivision);
 		float qy = (float)(2*PI / conf.yDivision);
+		float ring1Y = 1, ring1X = 0, ring2Y, ring2X;
 		for (int i = 0; i < conf.xDivision; ++i) { // conf.xDivision; i++) {
-			float ring1Y = (float)cos(i * qx);
-			float ring2Y = (float)cos((i + 1) * qx);
-
-			float ring1X = (float)sin(i * qx);
-			float ring2X = (float)sin((i + 1) * qx);
+			ring2Y = (float)cos((i + 1) * qx);
+			ring2X = (float)sin((i + 1) * qx);
 
 			// need to go around one whole turn
 			for (int j = 0; j <= conf.yDivision; j++) {
@@ -201,6 +199,8 @@ public class GLKugel extends GLTransformableObject {
 				fb.put(lZ * (float) aRad * ring2X);
 				fb.put(ring2Y * (float) aRad);
 			}
+			ring1Y = ring2Y;
+			ring1X = ring2X;
 		}
 		gl.glUnmapBuffer(GL.GL_ARRAY_BUFFER);
 		needsRedraw = false;

@@ -1,23 +1,15 @@
 package bGLOOP;
 
-import static java.lang.Math.sin;
 import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
-
-import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.glu.GLU;
-
 import bGLOOP.linalg.Matrix4;
 
-abstract class GLTransformableObject extends GLObjekt implements IGLTransformierbar, IGLDisplayable, IGLSubdivisable {
+abstract class TransformableObject extends GLObjekt implements IGLTransformierbar, IGLDisplayable {
 	Matrix4 transformationMatrix;
 
-	GLTransformableObject() {
-		this(null);
-	}
-
-	GLTransformableObject(GLTextur pTex) {
-		super(pTex);
+	TransformableObject() {
+		super();
 		// this must be initialized BEFORE adding to any display lists
 		transformationMatrix = new Matrix4();
 		setzeDarstellungsModus(conf.displayMode = wconf.globalDrawMode);
@@ -122,21 +114,6 @@ abstract class GLTransformableObject extends GLObjekt implements IGLTransformier
 	}
 
 	@Override
-	public synchronized void setzeQualitaet(int pBreitengrade, int pLaengengrade) {
-		if (pBreitengrade != conf.xDivision || pLaengengrade != conf.yDivision) {
-			conf.xDivision = pBreitengrade;
-			conf.yDivision = pLaengengrade;
-			needsRedraw = true;
-			scheduleRender();
-		}
-	}
-
-	@Override
-	public synchronized void setzeQualitaet(int pUnterteilungen) {
-		setzeQualitaet(pUnterteilungen, pUnterteilungen);
-	}
-
-	@Override
 	public double gibX() {
 		return transformationMatrix.getMatrix()[12] / transformationMatrix.getMatrix()[15];
 	}
@@ -149,48 +126,5 @@ abstract class GLTransformableObject extends GLObjekt implements IGLTransformier
 	@Override
 	public double gibZ() {
 		return transformationMatrix.getMatrix()[14] / transformationMatrix.getMatrix()[15];
-	}
-
-	abstract void generateDisplayList_GL(GL2 gl);
-
-	abstract void generateDisplayList_GLU(GL2 gl, GLU glu);
-
-	abstract void generateVBO(GL2 gl);
-
-	abstract void drawVBO(GL2 gl);
-
-	@Override
-	void renderDelegate(GL2 gl, GLU glu) {
-		gl.glMultMatrixf(transformationMatrix.getMatrix(), 0);
-		if (needsRedraw) {
-			switch (conf.objectRenderMode) {
-			case RENDER_GLU:
-			case RENDER_GL:
-				if (bufferName != -1)
-					gl.glDeleteLists(bufferName, 1);
-
-				bufferName = gl.glGenLists(1);
-				if(conf.objectRenderMode == Rendermodus.RENDER_GL)
-					generateDisplayList_GL(gl);
-				else
-					generateDisplayList_GLU(gl, glu);
-				break;
-			case RENDER_VBOGL:
-				generateVBO(gl);
-				break;
-			}
-
-			needsRedraw = false;
-		}
-		switch (conf.objectRenderMode) {
-		case RENDER_GL:
-		case RENDER_GLU:
-			gl.glCallList(bufferName);
-			break;
-		case RENDER_VBOGL:
-			drawVBO(gl);
-			break;
-		}
-
 	}
 }

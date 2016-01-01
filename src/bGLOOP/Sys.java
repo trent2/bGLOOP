@@ -4,6 +4,10 @@ package bGLOOP;
  * @author R. Spillner
  */
 public class Sys {
+	/** Warte die angegebene Zeitspanne in Millisekunden.
+	 * @param pMilliseconds Zeitspanne in Millisekundne, die der aktuelle
+	 * 	Thread angehalten wird.
+	 */
 	public static void warte(long pMilliseconds) {
 		try {
 			Thread.sleep(pMilliseconds);
@@ -12,7 +16,13 @@ public class Sys {
 		}
 	}
 
+	/** Wartet eine Millisekunde.
+	 */
 	public static void warte() {
 		warte(1);
+	}
+
+	public static void beenden() {
+		GLKamera.aktiveKamera().associatedRenderer.getWindow().closeDisplay();
 	}
 }

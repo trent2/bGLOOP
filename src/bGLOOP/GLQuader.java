@@ -14,7 +14,7 @@ import com.jogamp.opengl.glu.GLU;
  * 
  * @author R. Spillner
  */
-public class GLQuader extends GLTransformableObject {
+public class GLQuader extends TransformableSurfaceObject {
 	private FloatBuffer fb;
 	private int[] firstOffsets = { 0, 10, 14 }, countOffsets = { 10, 4, 4 };
 

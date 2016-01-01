@@ -6,7 +6,7 @@ import bGLOOP.GLObjekt.Darstellungsmodus;
  * im einzelnen z.B. eine {@link GLKugel Kugel}, ein {@link GLZylinder Zylinder}, ein {@link GLKegel Kegel},
  * ein {@link GLKegelstumpf Kegelstumpf} usw. sein. Die Klasse kann dazu verwendet werden, um
  * etwa Kerzenflammen oder Lampen darzustellen.</p>
- * <p>Das an den {@link #GLLichtobjekt(GLTransformableObject) Konstruktor} übergebene
+ * <p>Das an den {@link #GLLichtobjekt(TransformableSurfaceObject) Konstruktor} übergebene
  * Objekt sollte nicht mehr verwendet werden, d.h. es sollten keine Methoden auf
  * ihm ausgeführt werden. Dies sollte nun auf dem Lichtobjekt passieren.</p><p>
  * <em>Beispiel:</em>
@@ -19,10 +19,10 @@ import bGLOOP.GLObjekt.Darstellungsmodus;
  * @author R. Spillner
  */
 public class GLLichtobjekt
-		implements IGLTransformierbar, IGLDisplayable, IGLSubdivisable, IGLSurface {
+ implements IGLTransformierbar, IGLDisplayable, IGLSubdivisable, IGLSurface, IGLColorable {
 	// designed after the Decorator pattern, see
 	// GoF, Design Patterns, Addison Wesley
-	private GLTransformableObject aLichtobjekt;
+	private TransformableSurfaceObject aLichtobjekt;
 	private GLLicht aLicht;
 
 	/** Erstellt ein Lichtobjekt. Der Übergabeparameter muss eine {@link GLKugel Kugel}-,
@@ -33,7 +33,7 @@ public class GLLichtobjekt
 	 * sollte nach Möglichkeit nicht mehr verwendet werden (s. {@link GLLichtobjekt}). 
 	 * @param pLichtobjekt Objekt, welches beleuchtet wird.
 	 */
-	public GLLichtobjekt(GLTransformableObject pLichtobjekt) {
+	public GLLichtobjekt(TransformableSurfaceObject pLichtobjekt) {
 		super();
 		aLichtobjekt = pLichtobjekt;
 		aLicht = new GLLicht(aLichtobjekt.gibX(), aLichtobjekt.gibY(), aLichtobjekt.gibZ());
@@ -119,6 +119,11 @@ public class GLLichtobjekt
 	@Override
 	public void setzeTextur(String pTexturBilddatei) {
 		aLichtobjekt.setzeTextur(pTexturBilddatei);
+	}
+
+	@Override
+	public GLTextur gibTextur() {
+		return aLichtobjekt.gibTextur();
 	}
 
 	@Override

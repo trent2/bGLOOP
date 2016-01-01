@@ -6,7 +6,7 @@ package bGLOOP;
  * 
  * @author R. Spillner
  */
-public interface IGLTransformierbar {
+interface IGLTransformierbar {
 	/** Verschiebt das Objekt um den Vektor <code>(pX, pY, pZ)</code>
 	 * 
 	 * @param pX
@@ -34,22 +34,22 @@ public interface IGLTransformierbar {
 	 * <code>pWinkelZ</code> gedreht.
 	 * 
 	 * @param pWinkelX
-	 *            Winkel der Rotation um die x-Achse durch P in Grad
+	 *            Winkel der Rotation um die x-Achse durch <code>P</code> in Grad
 	 * @param pWinkelY
-	 *            Winkel der Rotation um die y-Achse durch P in Grad
+	 *            Winkel der Rotation um die y-Achse durch <code>P</code> in Grad
 	 * @param pWinkelZ
-	 *            Winkel der Rotation um die z-Achse durch P in Grad
+	 *            Winkel der Rotation um die z-Achse durch <code>P</code> in Grad
 	 * @param pX
-	 *            x-Koordinate von P
+	 *            x-Koordinate von <code>P</code>
 	 * @param pY
-	 *            y-Koordinate von P
+	 *            y-Koordinate von <code>P</code>
 	 * @param pZ
-	 *            z-Koordinate von P
+	 *            z-Koordinate von <code>P</code>
 	 */
 	public void drehe(double pWinkelX, double pWinkelY, double pWinkelZ, double pX, double pY, double pZ);
 
 	/** Dreht Objekt um seinen Mittelpunkt. Dabei wird nacheinander um die in den
-	 * Mittelpunkt verschobenen Koordinatenachsen rotiert. <br>
+	 * Mittelpunkt <code>M</code> verschobenen Koordinatenachsen rotiert. <br>
 	 * Rotationsreihenfolge: x-Achse, y-Achse, zuletzt z-Achse.
 	 * 
 	 * @param pWinkelX
@@ -102,15 +102,15 @@ public interface IGLTransformierbar {
 	 */
 	public double gibZ();
 
-	/** @see #drehe(double, double, double)
+	/** 
 	 * @deprecated Diese Methode ist veraltet, verwenden Sie bitte
 	 *             {@link #drehe(double, double, double)}.
-	 */
+	 **/
 	@Deprecated public void dreheDich(double pWinkelX, double pWinkelY, double pWinkelZ);
 
-	/** @see #drehe(double, double, double, double, double, double) 
+	/**
 	 * @deprecated Diese Methode ist veraltet, verwenden Sie bitte
-	 *             {@link #drehe(double, double, double, double, double, double)}
+	 *             {@link #drehe(double, double, double, double, double, double) drehe}
 	 */
 	@Deprecated public void dreheDich(double pWinkelX, double pWinkelY, double pWinkelZ, double pX, double pY, double pZ);
 

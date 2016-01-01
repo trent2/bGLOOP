@@ -2,6 +2,9 @@ package bGLOOP;
 
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
+import static java.lang.Math.PI;
+import static java.lang.Math.sin;
+import static java.lang.Math.cos;
 
 /**
  * Sichtbarer Himmel in einer Szene. Die Darstellung erfolgt durch das
@@ -9,7 +12,9 @@ import com.jogamp.opengl.glu.GLU;
  * 
  * @author R. Spillner
  */
-public class GLHimmel extends GLObjekt {
+public class GLHimmel extends GLObjekt implements IGLSurface {
+	private GLTextur aTex;
+
 	/**
 	 * Erstellt ein Himmelobjekt mit weißer Hintergrundfarbe.
 	 */
@@ -18,9 +23,16 @@ public class GLHimmel extends GLObjekt {
 	}
 
 	public GLHimmel(GLTextur pTextur) {
-		super(pTextur);
+		super();
 		conf.objectRenderMode = Rendermodus.RENDER_GL;
 		conf.displayMode = Darstellungsmodus.FUELLEN;
+
+		aTex = pTextur;
+		if (aTex != null)
+			associatedRenderer.addObjectToTextureMap(aTex.aTexturImpl, this, null);
+		else
+			associatedRenderer.getNoTextureItemList().add(this);
+
 		aVisible = true;
 	}
 
@@ -29,7 +41,7 @@ public class GLHimmel extends GLObjekt {
 		if (!associatedCam.getWconf().aWireframe) {
 			double radius = 100;
 			int divs = 16;
-			double quality = 180.0 / divs;
+			double quality = PI / divs;
 			double lX, lZ;
 
 			// the GLHimmel sphere is permanently moved to the position of the
@@ -43,17 +55,15 @@ public class GLHimmel extends GLObjekt {
 			gl.glTranslated(associatedCam.aPos[0], associatedCam.aPos[1], associatedCam.aPos[2]);
 			gl.glRotatef(90, 1, 0, 0);
 
+			double lY1 = 1, lRT1 = 0, lY2, lRT2;
 			for (int i = 0; i < divs; ++i) { // 16; i++) {
-				double lY1 = Math.cos(Math.toRadians(i * quality));
-				double lY2 = Math.cos(Math.toRadians((i + 1) * quality));
-
-				double lRT1 = Math.sin(Math.toRadians(i * quality));
-				double lRT2 = Math.sin(Math.toRadians((i + 1) * quality));
+				lY2 = cos((i + 1) * quality);
+				lRT2 = sin((i + 1) * quality);
 
 				gl.glBegin(GL2.GL_QUAD_STRIP);
 				for (int j = 0; j <= divs; j++) {
-					lX = Math.cos(Math.toRadians(j * 2 * quality));
-					lZ = Math.sin(Math.toRadians(j * 2 * quality));
+					lX = cos(j * 2 * quality);
+					lZ = sin(j * 2 * quality);
 
 					gl.glNormal3d(-lX * lRT1, -lZ * lRT1, -lY1);
 					gl.glTexCoord2d(1.0 * (divs - j) / divs, 1.0 * (divs - i) / divs);
@@ -63,10 +73,35 @@ public class GLHimmel extends GLObjekt {
 					gl.glVertex3d(lX * radius * lRT2, lZ * radius * lRT2, lY2 * radius);
 				}
 				gl.glEnd();
+				lY1 = lY2;
+				lRT1 = lRT2;
 			}
 			gl.glEnable(GL2.GL_DEPTH_TEST);
 			gl.glCullFace(GL2.GL_BACK);
 			gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
 		}
+	}
+
+	@Override
+	public synchronized void setzeTextur(GLTextur pTextur) {
+		if (aTex != null)
+			associatedRenderer.addObjectToTextureMap(pTextur.aTexturImpl, this, aTex.aTexturImpl);
+		else {
+			associatedRenderer.getNoTextureItemList().remove(this);
+			associatedRenderer.addObjectToTextureMap(pTextur.aTexturImpl, this, null);
+		}
+
+		aTex = pTextur;
+		scheduleRender();
+	}
+
+	@Override
+	public void setzeTextur(String pTexturBilddatei) {
+		setzeTextur(new GLTextur(pTexturBilddatei));
+	}
+
+	@Override
+	public GLTextur gibTextur() {
+		return aTex;
 	}
 }

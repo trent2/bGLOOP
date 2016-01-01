@@ -4,7 +4,7 @@ package bGLOOP;
  * unterteilbar sind.
  * @author R. Spillner
  */
-public interface IGLSubdivisable {
+interface IGLSubdivisable {
 	/** Anzahl der polygonalen Unterteilungen des Modells. Jedem Objekt liegt ein
 	 * Gittermodell zugrundeliegenden. Je größer die Anzahl der Unteilungen,
 	 * desto feiner sind die Schattierungen auf der Oberfläche. Allerdings führt

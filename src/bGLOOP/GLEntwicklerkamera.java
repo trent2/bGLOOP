@@ -14,6 +14,7 @@ import bGLOOP.windowimpl.listener.KeyboardListenerFacade;
  * <li><code>g</code>: Wechselt zwischen individueller und
  * Drahtgitterdarstellung.</li>
  * <li><code>a</code>: Blendet die Koordinatenachsen ein und aus</li>
+ * <li><code>b</code>: Blendet den Blickpunkt ein</li>
  * <li><code>d</code>: Setzt die Kamera auf <code>(0,0,500)</code> mit Blickpunkt
  * auf <code>(0,0,0)</code> </li>
  * <li><code>f</code>: Wechselt zwischen Vollbild und Fenstermodus</li>
@@ -73,7 +74,7 @@ public class GLEntwicklerkamera extends GLSchwenkkamera {
 	}
 
 	private void addKeyboardListener() {
-		renderer.getWindow().addKeyboardListener(new KeyboardListenerFacade() {
+		associatedRenderer.getWindow().addKeyboardListener(new KeyboardListenerFacade() {
 			private float[] aLeft = new float[3];
 
 			@Override
@@ -83,21 +84,24 @@ public class GLEntwicklerkamera extends GLSchwenkkamera {
 				case 'a':  // show axis
 					zeigeAchsen(!getWconf().aDisplayAxes);
 					break; // "zeigeAchsen" does a scheduleRender()
+				case 'b':  // show axis
+					zeigeBlickpunkt(!drawLookAt);
+					break; // "zeigeAchsen" does a scheduleRender()
 				case 'g':  // wireframe
 					getWconf().aWireframe = !getWconf().aWireframe;
-					getRenderer().scheduleRender();
+					associatedRenderer.scheduleRender();
 					break;
 				case 'f':  // fullscreen
-					getRenderer().getWindow().toggleFullscreen();
+					associatedRenderer.getWindow().toggleFullscreen();
 					break;
 				case 'd':
 					aPos[0] = 0; aPos[1] = 0; aPos[2] = 500;
 					aLookAt[0] = 0; aLookAt[1] = 0; aLookAt[2] = 0;
 					aUp[0] = 0; aUp[1] = 1; aUp[2] = 0;
-					getRenderer().scheduleRender();
+					associatedRenderer.scheduleRender();
 					break;
 				case 't':
-					getRenderer().scheduleScreenshot(null);
+					associatedRenderer.scheduleScreenshot(null);
 					break;
 				case 'c':
 					System.out.println("Kamera-Position: " + Arrays.toString(aPos));
@@ -114,29 +118,29 @@ public class GLEntwicklerkamera extends GLSchwenkkamera {
 				case KeyEvent.VK_UP:
 					aPos[0] += aUp[0]*moveScale; aPos[1] += aUp[1]*moveScale; aPos[2] += aUp[2]*moveScale;
 					aLookAt[0] += aUp[0]*moveScale; aLookAt[1] += aUp[1]*moveScale; aLookAt[2] += aUp[2]*moveScale;
-					getRenderer().scheduleRender();
+					associatedRenderer.scheduleRender();
 					break;
 				case KeyEvent.VK_DOWN:
 					aPos[0] -= aUp[0]*moveScale; aPos[1] -= aUp[1]*moveScale; aPos[2] -= aUp[2]*moveScale;
 					aLookAt[0] -= aUp[0]*moveScale; aLookAt[1] -= aUp[1]*moveScale; aLookAt[2] -= aUp[2]*moveScale;
-					getRenderer().scheduleRender();
+					associatedRenderer.scheduleRender();
 					break;
 				case KeyEvent.VK_RIGHT:
 					computeVectorLeft();
 					aPos[0] -= aLeft[0]*moveScale; aPos[1] -= aLeft[1]*moveScale; aPos[2] -= aLeft[2]*moveScale;
 					aLookAt[0] -= aLeft[0]*moveScale; aLookAt[1] -= aLeft[1]*moveScale; aLookAt[2] -= aLeft[2]*moveScale;
-					getRenderer().scheduleRender();
+					associatedRenderer.scheduleRender();
 					break;
 				case KeyEvent.VK_LEFT:
 					computeVectorLeft();
 					aPos[0] += aLeft[0]*moveScale; aPos[1] += aLeft[1]*moveScale; aPos[2] += aLeft[2]*moveScale;
 					aLookAt[0] += aLeft[0]*moveScale; aLookAt[1] += aLeft[1]*moveScale; aLookAt[2] += aLeft[2]*moveScale;
-					getRenderer().scheduleRender();
+					associatedRenderer.scheduleRender();
 					break;
 				}
 
 				if((int)key == 17)  // ctrl-q --> quit
-					renderer.getWindow().getAutoDrawable().destroy();
+					associatedRenderer.getWindow().getAutoDrawable().destroy();
 			}
 
 			private void computeVectorLeft() {

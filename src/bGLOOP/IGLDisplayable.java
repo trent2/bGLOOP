@@ -8,7 +8,7 @@ import bGLOOP.GLObjekt.Darstellungsmodus;
  * 
  * @author R. Spillner
  */
-public interface IGLDisplayable {
+interface IGLDisplayable {
 	/**
 	 * Setzt den {@link GLObjekt.Darstellungsmodus} des Objekts.
 	 * 

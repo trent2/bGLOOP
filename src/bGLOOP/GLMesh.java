@@ -31,7 +31,7 @@ import bGLOOP.mesh.builder.BuilderPOJOs.Material;
  * @author R. Spillner
  * @see <a href="https://de.wikipedia.org/wiki/Wavefront_OBJ">Wavefront-OBJ-Format</a>
  */
-public class GLMesh extends GLTransformableObject {
+public class GLMesh extends TransformableSurfaceObject {
 	private boolean parseOk = false;
 	private Build meshBuild;
 	private double aMeshScale, aMaxCoordScale;
@@ -137,7 +137,7 @@ public class GLMesh extends GLTransformableObject {
 			return;
 		gl.glNewList(bufferName, GL2.GL_COMPILE);
 
-		boolean userTextureAvailable = (aTex != null) && aTex.isReady();
+		boolean userTextureAvailable = (gibTextur() != null) && gibTextur().isReady();
 
 		for (Face fa : meshBuild.faces) {
 			if (!isEnded && currentVerticeSize != (currentVerticeSize = fa.vertices.size())) {
