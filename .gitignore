@@ -1,0 +1,16 @@
+/.classpath
+/build/
+/src/
+/doc/
+/hooks/
+/jar/
+/jogl-2.0.2/
+/jogl-2.1.0/
+/jogl-2.1.5/
+/jogl-2.2/
+/jogl-2.3.2/
+/mesh/
+/bin/
+/.ant-targets-build.xml
+/.project
+/.settings/
