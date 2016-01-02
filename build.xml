@@ -2,7 +2,7 @@
 	<taskdef resource="proguard/ant/task.properties"
 		     classpath="jar/proguard.jar" />
 
-	<property name="VERSION" value="1.0" />
+	<property name="VERSION" value="1.1" />
 	<target name="clean">
 		<delete dir="build" />
 		<delete file="dist/bGLOOP.jar" />
