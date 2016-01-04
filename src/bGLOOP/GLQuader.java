@@ -26,7 +26,7 @@ public class GLQuader extends TransformableSurfaceObject {
 	 * </div><div>
 	 * <p>
 	 * <em>Abbildung:</em> Lage eines Quaders mit Mittelpunkt
-	 * <code>M(0,0,0)</code> und Seitenlängen <code>1</code>.
+	 * <code>M(0,0,0)</code> und Seitenlängen <code>(1.4,0.6,1)</code>.
 	 * </p>
 	 * 
 	 * @param pMX x-Koordinate des Mittelpunkts des Quaders

@@ -21,6 +21,8 @@ public class GLText extends TransformableObject {
     private static final int MAX_FONT_RENDER_SIZE = 72;
 	private static final TextRenderer textWriter = 
 			new TextRenderer(new Font("Serif", Font.PLAIN, MAX_FONT_RENDER_SIZE), true, true);
+	private int bufferName = -1;
+	private float[] aRMs;
 
 	/** Erzeugt einen {@link GLText}-Objekt. Die Schriftgröße ist dabei ein Näherungswert an
 	 * die Schriftgröße eines Textverarbeitungsprogramm (in Punkten), wenn der
@@ -71,7 +73,7 @@ public class GLText extends TransformableObject {
 	 */
 	public void setzeAutodrehung(boolean pAutoDrehung) {
 		if (aAutoRotation != (aAutoRotation = pAutoDrehung))
-			associatedRenderer.scheduleRender();
+			scheduleRender();
 	}
 
 	/** Legt die Schriftgröße des darzustellenden Textes fest. Die Schriftgröße ist dabei ein Näherungswert an
@@ -82,6 +84,8 @@ public class GLText extends TransformableObject {
 	 */
 	public void setzeSchriftgroesse(double pSchriftgroesse) {
 		aFSize = pSchriftgroesse;
+		needsRedraw = true;
+		scheduleRender();
 	}
 
 	/** Gibt die Schriftgröße des dargestellten Textes zurück.
@@ -100,8 +104,27 @@ public class GLText extends TransformableObject {
 
 	@Override
 	void renderDelegate(GL2 gl, GLU glu) {
-		float[] aRM = autoRotateMatrix.getMatrix();
-//		float[] tM = transformationMatrix.getMatrix();
+		if(needsRedraw) {
+			if (bufferName != -1)
+				gl.glDeleteLists(bufferName, 1);
+
+			bufferName = gl.glGenLists(1);
+
+			renderText(gl);
+			needsRedraw = false;
+		}
+
+		computeAutoRotation();
+
+		gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
+		gl.glMultMatrixf(transformationMatrix.getMatrix(), 0);
+		gl.glMultMatrixf(aRMs, 0);
+
+		gl.glCallList(bufferName);
+	}
+
+	private void computeAutoRotation() {
+		aRMs = autoRotateMatrix.getMatrix();
 
 		if(aAutoRotation) {
 			/* do an orthonormal basis transformation:
@@ -136,12 +159,15 @@ public class GLText extends TransformableObject {
 			VectorUtil.crossVec3(v1, v2, v3);
 			VectorUtil.normalizeVec3(v1);
 
-			aRM[0] = v1[0]; aRM[1] = v1[1];  aRM[2] = v1[2];
-			aRM[4] = v2[0]; aRM[5] = v2[1];  aRM[6] = v2[2];
-			aRM[8] = v3[0]; aRM[9] = v3[1]; aRM[10] = v3[2];
-		} else
-			gl.glDisable(GL2.GL_CULL_FACE);
+			aRMs[0] = v1[0]; aRMs[1] = v1[1];  aRMs[2] = v1[2];
+			aRMs[4] = v2[0]; aRMs[5] = v2[1];  aRMs[6] = v2[2];
+			aRMs[8] = v3[0]; aRMs[9] = v3[1]; aRMs[10] = v3[2];
+		}
+	}
 
+	private void renderText(GL2 gl) {
+		if(!aAutoRotation)
+			gl.glDisable(GL2.GL_CULL_FACE);
 		/*  // Draw test plane
 		gl.glBegin(GL2.GL_QUADS);
 		gl.glNormal3d(0,0,1);
@@ -152,14 +178,14 @@ public class GLText extends TransformableObject {
 		gl.glEnd();
 		*/
 
-		gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_FILL);
-		gl.glMultMatrixf(transformationMatrix.getMatrix(), 0);
-		gl.glMultMatrixf(aRM, 0);
+		gl.glNewList(bufferName, GL2.GL_COMPILE);
 		textWriter.begin3DRendering();
 		textWriter.draw3D(aText, 0, 0, 0, (float)aFSize/MAX_FONT_RENDER_SIZE);
 		textWriter.end3DRendering();
 
-		gl.glEnable(GL2.GL_CULL_FACE);
+		if(!aAutoRotation)
+			gl.glEnable(GL2.GL_CULL_FACE);
+		gl.glEndList();
 	}
 
 	@Override

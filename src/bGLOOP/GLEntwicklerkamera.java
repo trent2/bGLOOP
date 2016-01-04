@@ -2,9 +2,6 @@ package bGLOOP;
 
 import java.util.Arrays;
 
-import com.jogamp.newt.event.KeyEvent;
-import com.jogamp.opengl.math.VectorUtil;
-
 import bGLOOP.windowimpl.listener.KeyboardListenerFacade;
 
 /** Die Entwicklerkamera hat zusätzliche Fähigkeiten gegenüber der
@@ -15,17 +12,11 @@ import bGLOOP.windowimpl.listener.KeyboardListenerFacade;
  * Drahtgitterdarstellung.</li>
  * <li><code>a</code>: Blendet die Koordinatenachsen ein und aus</li>
  * <li><code>b</code>: Blendet den Blickpunkt ein</li>
- * <li><code>d</code>: Setzt die Kamera auf <code>(0,0,500)</code> mit Blickpunkt
- * auf <code>(0,0,0)</code> </li>
  * <li><code>f</code>: Wechselt zwischen Vollbild und Fenstermodus</li>
- * <li><code>&uarr;</code>: Rückt die Kamera ein Stück nach oben</li>
- * <li><code>&darr;</code>: Rückt die Kamera ein Stück nach unten</li>
- * <li><code>&larr;</code>: Rückt die Kamera ein Stück nach links</li>
- * <li><code>&rarr;</code>: Rückt die Kamera ein Stück nach rechts</li>
- * <li><code>w</code>: Rückt die Kamera ein Stück nach vorn in Blickrichtung</li>
- * <li><code>s</code>: Rückt die Kamera ein Stück nach hinten in Blickrichtung</li>
  * <li><code>c</code>: Gibt Kamera-Koordinaten und Blickpunkt auf der Konsole aus.</li> 
- * <li><code>t</code>: Macht ein Bildschirmfoto</li> 
+ * <li><code>t</code>: Macht ein Bildschirmfoto</li>
+ * <li><code>Strg-q</code>: Schließt das aktuelle Kamerafenster und beendet so (zumeist)
+ * das laufende Programm</li>  
  * </ul>
  * 
  * @author R. Spillner
@@ -75,11 +66,8 @@ public class GLEntwicklerkamera extends GLSchwenkkamera {
 
 	private void addKeyboardListener() {
 		associatedRenderer.getWindow().addKeyboardListener(new KeyboardListenerFacade() {
-			private float[] aLeft = new float[3];
-
 			@Override
 			public void handleKeyPressed(char key, int keycode, int modifiers) {
-				double moveScale = getWconf().keyMoveScale;
 				switch (key) {
 				case 'a':  // show axis
 					zeigeAchsen(!getWconf().aDisplayAxes);
@@ -94,12 +82,6 @@ public class GLEntwicklerkamera extends GLSchwenkkamera {
 				case 'f':  // fullscreen
 					associatedRenderer.getWindow().toggleFullscreen();
 					break;
-				case 'd':
-					aPos[0] = 0; aPos[1] = 0; aPos[2] = 500;
-					aLookAt[0] = 0; aLookAt[1] = 0; aLookAt[2] = 0;
-					aUp[0] = 0; aUp[1] = 1; aUp[2] = 0;
-					associatedRenderer.scheduleRender();
-					break;
 				case 't':
 					associatedRenderer.scheduleScreenshot(null);
 					break;
@@ -107,51 +89,10 @@ public class GLEntwicklerkamera extends GLSchwenkkamera {
 					System.out.println("Kamera-Position: " + Arrays.toString(aPos));
 					System.out.println("Kamera-Blickpunkt: " + Arrays.toString(aLookAt));
 					break;
-				case 'w':
-					vor(moveScale);
-					break;
-				case 's':
-					vor(-moveScale);
-					break;
-				}
-				switch (keycode) {
-				case KeyEvent.VK_UP:
-					aPos[0] += aUp[0]*moveScale; aPos[1] += aUp[1]*moveScale; aPos[2] += aUp[2]*moveScale;
-					aLookAt[0] += aUp[0]*moveScale; aLookAt[1] += aUp[1]*moveScale; aLookAt[2] += aUp[2]*moveScale;
-					associatedRenderer.scheduleRender();
-					break;
-				case KeyEvent.VK_DOWN:
-					aPos[0] -= aUp[0]*moveScale; aPos[1] -= aUp[1]*moveScale; aPos[2] -= aUp[2]*moveScale;
-					aLookAt[0] -= aUp[0]*moveScale; aLookAt[1] -= aUp[1]*moveScale; aLookAt[2] -= aUp[2]*moveScale;
-					associatedRenderer.scheduleRender();
-					break;
-				case KeyEvent.VK_RIGHT:
-					computeVectorLeft();
-					aPos[0] -= aLeft[0]*moveScale; aPos[1] -= aLeft[1]*moveScale; aPos[2] -= aLeft[2]*moveScale;
-					aLookAt[0] -= aLeft[0]*moveScale; aLookAt[1] -= aLeft[1]*moveScale; aLookAt[2] -= aLeft[2]*moveScale;
-					associatedRenderer.scheduleRender();
-					break;
-				case KeyEvent.VK_LEFT:
-					computeVectorLeft();
-					aPos[0] += aLeft[0]*moveScale; aPos[1] += aLeft[1]*moveScale; aPos[2] += aLeft[2]*moveScale;
-					aLookAt[0] += aLeft[0]*moveScale; aLookAt[1] += aLeft[1]*moveScale; aLookAt[2] += aLeft[2]*moveScale;
-					associatedRenderer.scheduleRender();
-					break;
 				}
 
 				if((int)key == 17)  // ctrl-q --> quit
-					associatedRenderer.getWindow().getAutoDrawable().destroy();
-			}
-
-			private void computeVectorLeft() {
-				float[] dir = new float[3];
-				float[] pos = { (float) aPos[0], (float) aPos[1], (float) aPos[2] };
-				float[] lookAt = { (float) aLookAt[0], (float) aLookAt[1], (float) aLookAt[2] };
-				float[] up =  { (float) aUp[0], (float) aUp[1], (float) aUp[2] };
-
-				VectorUtil.subVec3(dir, lookAt, pos);
-				VectorUtil.crossVec3(aLeft, up, dir);
-				VectorUtil.normalizeVec3(aLeft);
+					associatedRenderer.getWindow().closeDisplay();
 			}
 
 			@Override

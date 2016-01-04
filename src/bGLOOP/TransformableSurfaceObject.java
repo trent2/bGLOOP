@@ -5,6 +5,7 @@ import com.jogamp.opengl.glu.GLU;
 
 abstract class TransformableSurfaceObject extends TransformableObject implements IGLSurface, IGLSubdivisable {
 	private GLTextur aTex;
+	int bufferName = -1;
 
 	TransformableSurfaceObject() {
 		this(null);
@@ -58,7 +59,6 @@ abstract class TransformableSurfaceObject extends TransformableObject implements
 		return aTex;
 	}
 
-
 	abstract void generateDisplayList_GL(GL2 gl);
 
 	abstract void generateDisplayList_GLU(GL2 gl, GLU glu);
@@ -74,6 +74,7 @@ abstract class TransformableSurfaceObject extends TransformableObject implements
 		else
 			gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, conf.displayMode.getMode());
 
+		// now transform the object accordingly
 		gl.glMultMatrixf(transformationMatrix.getMatrix(), 0);
 		if (needsRedraw) {
 			switch (conf.objectRenderMode) {

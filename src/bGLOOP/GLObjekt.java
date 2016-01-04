@@ -73,7 +73,6 @@ public abstract class GLObjekt extends DisplayItem implements IGLColorable{
 
 	final GLConfig conf;
 	final GLWindowConfig wconf;
-	int bufferName = -1;
 
 	GLUquadric quadric;
 	// true if needed to be recomputed
@@ -168,7 +167,7 @@ public abstract class GLObjekt extends DisplayItem implements IGLColorable{
 	 */
 	public synchronized void setzeSichtbarkeit(boolean pSichtbar) {
 		aVisible = pSichtbar;
-		associatedRenderer.scheduleRender();
+		scheduleRender();
 	}
 
 	/**

@@ -1,11 +1,26 @@
 package bGLOOP;
 
+import com.jogamp.newt.event.KeyEvent;
 import com.jogamp.opengl.math.VectorUtil;
 
+import bGLOOP.windowimpl.listener.KeyboardListenerFacade;
 import bGLOOP.windowimpl.listener.MouseListenerFacade;
 
 /** Die Schwenkkamera ist gegenüber der {@link GLKamera} durch Maus-Dragging
  * um ihren Blickpunkt rotierbar. Außerdem ermöglicht sie Zoomen per Mausrad.
+
+/** Neben der Maussteuerung kann die dargestellte Szene durch folgende Tasten
+ * verändert werden:
+ * <ul>
+ * <li><code>d</code>: Setzt die Kamera auf <code>(0,0,500)</code> mit Blickpunkt
+ * auf <code>(0,0,0)</code></li>
+ * <li><code>&uarr;</code>: Rückt die Kamera ein Stück nach oben</li>
+ * <li><code>&darr;</code>: Rückt die Kamera ein Stück nach unten</li>
+ * <li><code>&larr;</code>: Rückt die Kamera ein Stück nach links</li>
+ * <li><code>&rarr;</code>: Rückt die Kamera ein Stück nach rechts</li>
+ * <li><code>w</code>: Rückt die Kamera ein Stück nach vorn in Blickrichtung</li>
+ * <li><code>s</code>: Rückt die Kamera ein Stück nach hinten in Blickrichtung</li>
+ * </ul>
  * 
  * @author R. Spillner
  */
@@ -30,6 +45,7 @@ public class GLSchwenkkamera extends GLKamera {
 	public GLSchwenkkamera(boolean pVollbild, boolean pKeineDekoration) {
 		super(pVollbild, false);
 		addMouseListener();
+		addKeyboardListener();
 	}
 
 	
@@ -42,6 +58,7 @@ public class GLSchwenkkamera extends GLKamera {
 	public GLSchwenkkamera(int width, int height) {
 		super(width, height);
 		addMouseListener();
+		addKeyboardListener();
 	}
 
 	/**
@@ -142,6 +159,70 @@ public class GLSchwenkkamera extends GLKamera {
 			@Override
 			public void handleMouseReleased(boolean button1, boolean button3) { }
 
+		});
+	}
+
+	private void addKeyboardListener() {
+		associatedRenderer.getWindow().addKeyboardListener(new KeyboardListenerFacade() {
+			private float[] aLeft = new float[3];
+
+			@Override
+			public void handleKeyPressed(char key, int keycode, int modifiers) {
+				double moveScale = getWconf().keyMoveScale;
+				switch (key) {
+				case 'd':
+					aPos[0] = 0; aPos[1] = 0; aPos[2] = 500;
+					aLookAt[0] = 0; aLookAt[1] = 0; aLookAt[2] = 0;
+					aUp[0] = 0; aUp[1] = 1; aUp[2] = 0;
+					associatedRenderer.scheduleRender();
+					break;
+				case 'w':
+					vor(moveScale);
+					break;
+				case 's':
+					vor(-moveScale);
+					break;
+				}
+				switch (keycode) {
+				case KeyEvent.VK_UP:
+					aPos[0] += aUp[0]*moveScale; aPos[1] += aUp[1]*moveScale; aPos[2] += aUp[2]*moveScale;
+					aLookAt[0] += aUp[0]*moveScale; aLookAt[1] += aUp[1]*moveScale; aLookAt[2] += aUp[2]*moveScale;
+					associatedRenderer.scheduleRender();
+					break;
+				case KeyEvent.VK_DOWN:
+					aPos[0] -= aUp[0]*moveScale; aPos[1] -= aUp[1]*moveScale; aPos[2] -= aUp[2]*moveScale;
+					aLookAt[0] -= aUp[0]*moveScale; aLookAt[1] -= aUp[1]*moveScale; aLookAt[2] -= aUp[2]*moveScale;
+					associatedRenderer.scheduleRender();
+					break;
+				case KeyEvent.VK_RIGHT:
+					computeVectorLeft();
+					aPos[0] -= aLeft[0]*moveScale; aPos[1] -= aLeft[1]*moveScale; aPos[2] -= aLeft[2]*moveScale;
+					aLookAt[0] -= aLeft[0]*moveScale; aLookAt[1] -= aLeft[1]*moveScale; aLookAt[2] -= aLeft[2]*moveScale;
+					associatedRenderer.scheduleRender();
+					break;
+				case KeyEvent.VK_LEFT:
+					computeVectorLeft();
+					aPos[0] += aLeft[0]*moveScale; aPos[1] += aLeft[1]*moveScale; aPos[2] += aLeft[2]*moveScale;
+					aLookAt[0] += aLeft[0]*moveScale; aLookAt[1] += aLeft[1]*moveScale; aLookAt[2] += aLeft[2]*moveScale;
+					associatedRenderer.scheduleRender();
+					break;
+				}
+			}
+
+			private void computeVectorLeft() {
+				float[] dir = new float[3];
+				float[] pos = { (float) aPos[0], (float) aPos[1], (float) aPos[2] };
+				float[] lookAt = { (float) aLookAt[0], (float) aLookAt[1], (float) aLookAt[2] };
+				float[] up =  { (float) aUp[0], (float) aUp[1], (float) aUp[2] };
+
+				VectorUtil.subVec3(dir, lookAt, pos);
+				VectorUtil.crossVec3(aLeft, up, dir);
+				VectorUtil.normalizeVec3(aLeft);
+			}
+
+			@Override
+			public void handleKeyReleased(char key, int keycode) {
+			}
 		});
 	}
 }
