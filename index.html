@@ -36,7 +36,7 @@
 
 <p>bGLOOP is a reimplementation of the <a href="http://www.brd.nrw.de/lerntreffs/informatik/structure/material/sek2/einfuehrungen/gloop.php">GLOOP library</a>,
 a library for teaching beginner courses for OOP in Java with application to 3d programming.
-It is basically a wrapper to the basic functionality in <a href="http://www.jogamp.org">jogl</a>. It's main focus is to make creation
+It is basically a wrapper to the basic functionality in <a href="http://www.jogamp.org">JOGL</a>. It's main focus is to make creation
 of small 3d programs really simple to focus on the basic ideas of OOP.</p>
 <p>Calling bGLOOP a &ldquo;better&rdquo; GLOOP is not meant to refer to features, stability, and the like. The thing that's better about
 bGLOOP is that it's <a href="https://www.gnu.org/philosophy/free-sw.en.html">free software</a>, unlike GLOOP which is a closed
@@ -57,10 +57,14 @@ Have a look at the <a href="http://trent2.github.io/bGLOOP/apidocs/index.html">j
 <a id="features" class="anchor" href="#features" aria-hidden="true"><span class="octicon octicon-link"></span></a>Features, differences to GLOOP</h3>
 <p>GLOOP programs can be run with little changes to the source code. Most of the time it suffices changing <code>import GLOOP.*</code>
 to <code>import bGLOOP.*</code>. However, some things are done differently, and some features do not (yet) exist.</p>
-<p>bGLOOP has most of the features of GLOOP. Have a look at the most notable differences (some are more internal implementation
+<p>bGLOOP has most of the features of GLOOP. Have a look at the most notable differences (some are rather internal implementation
 details of the library):</p>
 <table><colgroup><col style="width:50%"><col style="width:50%"></colgroup>
 <thead><tr><th><strong>GLOOP</strong></th><th><strong>bGLOOP</strong></th></tr></thead>
+<tr>
+<td>only working with old <a href="www.jogamp.org">JOGL</a> &lt; 2.1.X library</td>
+<td>uses current much more improved version of JOGL, currently version 2.3.2</td>
+</tr>
 <tr>
 <td>selection of objects by window coordinates via <code>Sys.gibObjekt(double,double)</code></td>
 <td><em>not yet implemented, coming soon</em></td>
@@ -68,8 +72,10 @@ details of the library):</p>
 <tr>
 <td><code>GLTafel</code> to represent a string in the GL window, rendering is done
 by texturing an object with parts of a png-picture</td>
-<td>First version online as <code>GLText</code>, auto rotation already supported.
-Implementation is cooler &mdash; of course, no supplemental png-file is needed.</td>
+<td><code>GLText</code> class and deprecated <code>GLTafel</code> class. Auto rotation
+is supported. Implementation via jogl's
+<code><a href="http://download.java.net/media/jogl/jogl-2.x-docs/com/sun/opengl/util/awt/TextRenderer.html">TextRenderer</a></code>
+ &mdash; no supplemental png-file is needed.</td>
 </tr>
 <tr>
 <td>steographic rendering</td>
@@ -77,13 +83,17 @@ Implementation is cooler &mdash; of course, no supplemental png-file is needed.<
 </tr>
 <tr>
 <td><em>not implemented</em></td>
-<td>configuration by .bgloop property file to control different aspects
+<td>configuration by <code>.bgloop</code> property file to control different aspects
 of the library's behaviour</td>
+</tr>
+<tr>
+<td><em>not implemented</em></td>
+<td>make a screenshot by calling a method or hitting a key</td>
 </tr>
 <tr>
 <td><code>GLObjekt.setzeSelbstleuchten</code></td>
 <td><code>GLLichtobjekt</code> class following the GoF decorator pattern to avoid
-cluttering <code>GLObjekt</code> class more and to achieve looser coupling</td>
+further cluttering <code>GLObjekt</code> class and to achieve looser coupling</td>
 </tr>
 <tr>
 <td><em>not implemented</em></td>
@@ -120,11 +130,11 @@ If you do not want to build the library by yourself you can use the current buil
 only incrementing the build number at the moment. To use bGLOOP you also need the jogamp jars (version >=2.3.2) listed below.
 </p>
 <ul>
-<li><a href="dist/bGLOOP.jar">bGLOOP.jar (build 52)</a>, packed and obfuscated with <a href="http://proguard.sourceforge.net">Proguard</a></li>
+<li><a href="dist/bGLOOP.jar">bGLOOP.jar (build 53)</a>, packed and obfuscated with <a href="http://proguard.sourceforge.net">Proguard</a></li>
 <li>From the <a href="http://jogamp.org/deployment/archive/rc/v2.3.2/jar/">jogamp deployment archives</a> download <code>jogl-all.jar</code>,
 <code>jogl-all-natives-<em>platform</em>.jar</code>, <code>gluegen-rt.jar</code>, and <code>gluegen-rt-<em>platform</em>.jar</code>
 where <em>platform</em> is a placeholder for your OS. Put these files in the same directory as the <code>bGLOOP.jar</code> file.</li>
-<li><a href="dist/doc-bGLOOP.zip">javadoc API documentation (for build 52), zipped.</a></li>
+<li><a href="dist/doc-bGLOOP.zip">javadoc API documentation (for build 53), zipped.</a></li>
 </ul>
 </div>
 </section>
