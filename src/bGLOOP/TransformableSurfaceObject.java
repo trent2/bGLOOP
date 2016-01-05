@@ -69,11 +69,6 @@ abstract class TransformableSurfaceObject extends TransformableObject implements
 
 	@Override
 	void renderDelegate(GL2 gl, GLU glu) {
-		if (associatedCam.istDrahtgittermodell())
-			gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
-		else
-			gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, conf.displayMode.getMode());
-
 		// now transform the object accordingly
 		gl.glMultMatrixf(transformationMatrix.getMatrix(), 0);
 		if (needsRedraw) {

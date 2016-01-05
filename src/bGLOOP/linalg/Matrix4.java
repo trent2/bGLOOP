@@ -14,6 +14,15 @@ public class Matrix4 extends com.jogamp.opengl.math.Matrix4 {
 	}
 
 	/**
+	 * Multiply matrix: [this] = [m] x [this]
+	 * 
+	 * @param m
+	 *            4x4 matrix in column-major order
+	 */
+	public final void multMatrixFromLeft(Matrix4 m) {
+		multMatrixFromLeft(m.getMatrix());
+	}
+	/**
 	 * Schedule translation before all other operations described in this
 	 * matrix.
 	 */

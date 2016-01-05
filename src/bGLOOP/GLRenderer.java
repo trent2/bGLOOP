@@ -221,7 +221,7 @@ class GLRenderer implements GLEventListener {
 		doLighting(gl);
 
 		synchronized (aCam) {
-			aCam.renderPreObjects(gl, glu);
+			renderPreObjects(gl, glu);
 		}
 
 		GLTextureImpl tImp = null;
@@ -269,7 +269,7 @@ class GLRenderer implements GLEventListener {
 					di.render(gl, glu);
 
 		synchronized (aCam) {
-			aCam.renderPostObjects(gl, glu);
+			renderPostObjects(gl, glu);
 		}
 	}
 
@@ -337,4 +337,97 @@ class GLRenderer implements GLEventListener {
 
 		return res;
 	}
+
+	private void renderPreObjects(GL2 gl, GLU glu) {
+		// camera position and look-at point
+		glu.gluLookAt(aCam.aPos[0], aCam.aPos[1], aCam.aPos[2], aCam.aLookAt[0], aCam.aLookAt[1], aCam.aLookAt[2],
+				aCam.aUp[0], aCam.aUp[1], aCam.aUp[2]);
+	}
+
+	private void renderPostObjects(GL2 gl, GLU glu) {
+		if (wconf.aDisplayAxes)
+			drawAxes(gl);
+		if (aCam.drawLookAt)
+			drawLookAt(gl);
+	}
+
+	private void drawAxes(GL2 gl) {
+		double axesLength = wconf.axesLength;
+		gl.glDisable(GL2.GL_LIGHTING);
+		gl.glEnable(GL2.GL_COLOR_MATERIAL);
+		gl.glDisable(GL2.GL_TEXTURE_2D);
+		gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
+		gl.glLineWidth(wconf.axesWidth);
+		gl.glBegin(GL2.GL_LINE_STRIP);
+		for (int i = 0; i < axesLength; i += 20) {
+			gl.glColor3f(1, 1, 1);
+			gl.glVertex3f(i, 0, 0);
+			gl.glColor3f(1, 0, 0);
+			gl.glVertex3f(i + 1, 0, 0);
+		}
+		gl.glColor3f(1, 1, 1);
+		gl.glVertex3f((float) axesLength, 0, 0);
+		gl.glVertex3f((float) axesLength - 20, -10, 0);
+		gl.glVertex3f((float) axesLength, 0, 0);
+		gl.glVertex3f((float) axesLength - 20, 10, 0);
+		gl.glEnd();
+
+		gl.glBegin(3);
+		for (int i = 0; i < axesLength; i += 20) {
+			gl.glColor3f(1, 1, 1);
+			gl.glVertex3f(0, i, 0);
+			gl.glColor3f(0, 1, 0);
+			gl.glVertex3f(0, i + 1, 0);
+		}
+		gl.glColor3f(1, 1, 1);
+		gl.glVertex3f(0, (float) axesLength, 0);
+		gl.glVertex3f(10, (float) axesLength - 20, 0);
+		gl.glVertex3f(0, (float) axesLength, 0);
+		gl.glVertex3f(-10, (float) axesLength - 20, 0);
+		gl.glEnd();
+
+		gl.glBegin(3);
+		for (int i = 0; i < axesLength; i += 20) {
+			gl.glColor3f(1, 1, 1);
+			gl.glVertex3f(0, 0, i);
+			gl.glColor3f(0, 0, 1);
+			gl.glVertex3f(0, 0, i + 1);
+		}
+		gl.glColor3f(1, 1, 1);
+		gl.glVertex3f(0, 0, (float) axesLength);
+		gl.glVertex3f(0, 10, (float) axesLength - 20);
+		gl.glVertex3f(0, 0, (float) axesLength);
+		gl.glVertex3f(0, -10, (float) axesLength - 20);
+		gl.glEnd();
+
+		if (wconf.globalLighting)
+			gl.glEnable(GL2.GL_LIGHTING);
+
+		gl.glDisable(GL2.GL_COLOR_MATERIAL);
+		gl.glLineWidth(wconf.wireframeLineWidth);
+	}
+
+	private void drawLookAt(GL2 gl) {
+		gl.glDisable(GL2.GL_LIGHTING);
+		gl.glEnable(GL2.GL_COLOR_MATERIAL);
+		gl.glDisable(GL2.GL_TEXTURE_2D);
+		gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
+
+		gl.glBegin(GL2.GL_LINES);
+		gl.glColor3f(1, 1, 1);
+		gl.glVertex3d(aCam.aLookAt[0]-5, aCam.aLookAt[1], aCam.aLookAt[2]);
+		gl.glVertex3d(aCam.aLookAt[0]+5, aCam.aLookAt[1], aCam.aLookAt[2]);
+		gl.glVertex3d(aCam.aLookAt[0], aCam.aLookAt[1]-5, aCam.aLookAt[2]);
+		gl.glVertex3d(aCam.aLookAt[0], aCam.aLookAt[1]+5, aCam.aLookAt[2]);
+		gl.glVertex3d(aCam.aLookAt[0], aCam.aLookAt[1], aCam.aLookAt[2]-5);
+		gl.glVertex3d(aCam.aLookAt[0], aCam.aLookAt[1], aCam.aLookAt[2]+5);
+		gl.glEnd();
+		
+		if (wconf.globalLighting)
+			gl.glEnable(GL2.GL_LIGHTING);
+
+		gl.glDisable(GL2.GL_COLOR_MATERIAL);
+		gl.glLineWidth(wconf.wireframeLineWidth);
+	}
+
 }

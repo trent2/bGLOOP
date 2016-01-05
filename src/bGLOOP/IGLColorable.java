@@ -4,7 +4,7 @@ interface IGLColorable {
 	/** Farbe des Objekts.
 	 * @return Dreielementiges Array mit Rot-, Grün und Blauanteilen.
 	 */
-	abstract public double[] gibFarbe();
+	public double[] gibFarbe();
 
 	/** Setzt die Farbe des Objekts. Die Parameterwerte müssen zwischen 0 und 1
 	 * liegen.
@@ -13,5 +13,5 @@ interface IGLColorable {
 	 * @param pG Grünanteil, zwischen 0 und 1
 	 * @param pB Blauanteil, zwischen 0 und 1
 	 */
-	abstract public void setzeFarbe(double pR, double pG, double pB);
+	public void setzeFarbe(double pR, double pG, double pB);
 }

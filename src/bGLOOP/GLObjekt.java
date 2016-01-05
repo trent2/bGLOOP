@@ -9,7 +9,7 @@ import com.jogamp.opengl.glu.GLUquadric;
  * 
  * @author R. Spillner
  */
-public abstract class GLObjekt extends DisplayItem implements IGLColorable{
+public abstract class GLObjekt extends DisplayItem implements IGLColorable {
 	float[] aDiffuse = { 1, 1, 1, 1 };
 	final private float[] aAmbient = { 0.15f, 0.15f, 0.15f, 1 };
 	private float[] aSpecular = { 0, 0, 0, 1 };
@@ -111,25 +111,27 @@ public abstract class GLObjekt extends DisplayItem implements IGLColorable{
 	}
 
 	/** Farbe des Objekts.
-	 * @return Dreielementiges Array mit Rot-, Grün und Blauanteilen.
+	 * @return dreielementiges Array mit Rot-, Grün und Blauanteilen
 	 */
 	@Override
 	public double[] gibFarbe() {
 		return new double[] { aDiffuse[0], aDiffuse[1], aDiffuse[2] };
 	}
 
-	/** Setzt die Farbe des Objekts. Die Parameterwerte müssen zwischen 0 und 1
-	 * liegen.
+	/** Setzt die Farbe des Objekts. Standardmäßig ist hier die Farbe weiß,
+	 * also <code>(1,1,1)</code> voreingestellt.
+	 * Die Parameterwerte müssen zwischen 0 und 1 liegen.
 	 * 
 	 * @param pR Rotanteil, zwischen 0 und 1
 	 * @param pG Grünanteil, zwischen 0 und 1
 	 * @param pB Blauanteil, zwischen 0 und 1
 	 */
 	@Override
-	public void setzeFarbe(double pR, double pG, double pB) {
+	public synchronized void setzeFarbe(double pR, double pG, double pB) {
 		aDiffuse[0] = (float) pR;
 		aDiffuse[1] = (float) pG;
 		aDiffuse[2] = (float) pB;
+		scheduleRender();
 	}
 
 
@@ -184,6 +186,11 @@ public abstract class GLObjekt extends DisplayItem implements IGLColorable{
 		if (conf.objectRenderMode == Rendermodus.RENDER_GLU)
 			if (quadric == null)
 				quadric = glu.gluNewQuadric();
+
+		if (associatedCam.istDrahtgittermodell())
+			gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
+		else
+			gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, conf.displayMode.getMode());
 
 		loadMaterial(gl);
 		gl.glPushMatrix();

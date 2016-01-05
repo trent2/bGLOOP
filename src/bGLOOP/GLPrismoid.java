@@ -213,7 +213,7 @@ public class GLPrismoid extends TransformableSurfaceObject {
 	 * und Deckelfläche an einen Kreis entstehen.
 	 * @param pG aktiviert Mantelglättung
 	 */
-	public void setzeMantelglaettung(boolean pG) {
+	public synchronized void setzeMantelglaettung(boolean pG) {
 		aMantelglaettung = pG;
 		needsRedraw = true;
 		scheduleRender();

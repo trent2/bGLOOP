@@ -1,6 +1,7 @@
 /build/
 /dist/
 /doc/
+/apidocs/
 /hooks/
 /jar/
 /jogl-2.0.2/

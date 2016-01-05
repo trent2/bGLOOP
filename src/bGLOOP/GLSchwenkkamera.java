@@ -78,23 +78,23 @@ public class GLSchwenkkamera extends GLKamera {
 			double[] aPrevPos, aPrevUp;
 			@Override
 			public void handleMouseWheel(float wheelRotation) {
-				
-				float[] dir = new float[3];
-				float[] pos = { (float) aPos[0], (float) aPos[1], (float) aPos[2] };
-				float[] lookAt = { (float) aLookAt[0], (float) aLookAt[1], (float) aLookAt[2] };
+				synchronized (GLSchwenkkamera.this) {
+					float[] dir = new float[3];
+					float[] pos = { (float) aPos[0], (float) aPos[1], (float) aPos[2] };
+					float[] lookAt = { (float) aLookAt[0], (float) aLookAt[1], (float) aLookAt[2] };
 
-				VectorUtil.subVec3(dir, pos, lookAt);
-				VectorUtil.normalizeVec3(dir);
-				if(VectorUtil.normSquareVec3(dir) == 0)
-					System.arraycopy(oldDir, 0, dir, 0, 3);
-				VectorUtil.scaleVec3(dir, dir, (float) (wheelRotation * getWconf().mouseWheelScale));
-				VectorUtil.addVec3(pos, pos, dir);
-				aPos[0] = pos[0];
-				aPos[1] = pos[1];
-				aPos[2] = pos[2];
-				System.arraycopy(dir, 0, oldDir, 0, 3);
-				associatedRenderer.scheduleRender();
-				
+					VectorUtil.subVec3(dir, pos, lookAt);
+					VectorUtil.normalizeVec3(dir);
+					if(VectorUtil.normSquareVec3(dir) == 0)
+						System.arraycopy(oldDir, 0, dir, 0, 3);
+					VectorUtil.scaleVec3(dir, dir, (float) (wheelRotation * getWconf().mouseWheelScale));
+					VectorUtil.addVec3(pos, pos, dir);
+					aPos[0] = pos[0];
+					aPos[1] = pos[1];
+					aPos[2] = pos[2];
+					System.arraycopy(dir, 0, oldDir, 0, 3);
+					associatedRenderer.scheduleRender();
+				}
 			}
 			
 			@Override
@@ -171,10 +171,12 @@ public class GLSchwenkkamera extends GLKamera {
 				double moveScale = getWconf().keyMoveScale;
 				switch (key) {
 				case 'd':
-					aPos[0] = 0; aPos[1] = 0; aPos[2] = 500;
-					aLookAt[0] = 0; aLookAt[1] = 0; aLookAt[2] = 0;
-					aUp[0] = 0; aUp[1] = 1; aUp[2] = 0;
-					associatedRenderer.scheduleRender();
+					synchronized (GLSchwenkkamera.this) {
+						aPos[0] = 0; aPos[1] = 0; aPos[2] = 500;
+						aLookAt[0] = 0; aLookAt[1] = 0; aLookAt[2] = 0;
+						aUp[0] = 0; aUp[1] = 1; aUp[2] = 0;
+						associatedRenderer.scheduleRender();
+					}
 					break;
 				case 'w':
 					vor(moveScale);
@@ -185,26 +187,34 @@ public class GLSchwenkkamera extends GLKamera {
 				}
 				switch (keycode) {
 				case KeyEvent.VK_UP:
-					aPos[0] += aUp[0]*moveScale; aPos[1] += aUp[1]*moveScale; aPos[2] += aUp[2]*moveScale;
-					aLookAt[0] += aUp[0]*moveScale; aLookAt[1] += aUp[1]*moveScale; aLookAt[2] += aUp[2]*moveScale;
-					associatedRenderer.scheduleRender();
+					synchronized (GLSchwenkkamera.this) {
+						aPos[0] += aUp[0]*moveScale; aPos[1] += aUp[1]*moveScale; aPos[2] += aUp[2]*moveScale;
+						aLookAt[0] += aUp[0]*moveScale; aLookAt[1] += aUp[1]*moveScale; aLookAt[2] += aUp[2]*moveScale;
+						associatedRenderer.scheduleRender();
+					}
 					break;
 				case KeyEvent.VK_DOWN:
-					aPos[0] -= aUp[0]*moveScale; aPos[1] -= aUp[1]*moveScale; aPos[2] -= aUp[2]*moveScale;
-					aLookAt[0] -= aUp[0]*moveScale; aLookAt[1] -= aUp[1]*moveScale; aLookAt[2] -= aUp[2]*moveScale;
-					associatedRenderer.scheduleRender();
+					synchronized (GLSchwenkkamera.this) {
+						aPos[0] -= aUp[0]*moveScale; aPos[1] -= aUp[1]*moveScale; aPos[2] -= aUp[2]*moveScale;
+						aLookAt[0] -= aUp[0]*moveScale; aLookAt[1] -= aUp[1]*moveScale; aLookAt[2] -= aUp[2]*moveScale;
+						associatedRenderer.scheduleRender();
+					}
 					break;
 				case KeyEvent.VK_RIGHT:
-					computeVectorLeft();
-					aPos[0] -= aLeft[0]*moveScale; aPos[1] -= aLeft[1]*moveScale; aPos[2] -= aLeft[2]*moveScale;
-					aLookAt[0] -= aLeft[0]*moveScale; aLookAt[1] -= aLeft[1]*moveScale; aLookAt[2] -= aLeft[2]*moveScale;
-					associatedRenderer.scheduleRender();
+					synchronized (GLSchwenkkamera.this) {
+						computeVectorLeft();
+						aPos[0] -= aLeft[0]*moveScale; aPos[1] -= aLeft[1]*moveScale; aPos[2] -= aLeft[2]*moveScale;
+						aLookAt[0] -= aLeft[0]*moveScale; aLookAt[1] -= aLeft[1]*moveScale; aLookAt[2] -= aLeft[2]*moveScale;
+						associatedRenderer.scheduleRender();
+					}
 					break;
 				case KeyEvent.VK_LEFT:
-					computeVectorLeft();
-					aPos[0] += aLeft[0]*moveScale; aPos[1] += aLeft[1]*moveScale; aPos[2] += aLeft[2]*moveScale;
-					aLookAt[0] += aLeft[0]*moveScale; aLookAt[1] += aLeft[1]*moveScale; aLookAt[2] += aLeft[2]*moveScale;
-					associatedRenderer.scheduleRender();
+					synchronized (GLSchwenkkamera.this) {
+						computeVectorLeft();
+						aPos[0] += aLeft[0]*moveScale; aPos[1] += aLeft[1]*moveScale; aPos[2] += aLeft[2]*moveScale;
+						aLookAt[0] += aLeft[0]*moveScale; aLookAt[1] += aLeft[1]*moveScale; aLookAt[2] += aLeft[2]*moveScale;
+						associatedRenderer.scheduleRender();
+					}
 					break;
 				}
 			}

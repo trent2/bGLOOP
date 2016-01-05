@@ -1,7 +1,5 @@
 package bGLOOP;
 
-import com.jogamp.opengl.GL2;
-import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.math.VectorUtil;
 
 /** Klasse, die eine virtuelle Kamera beschreibt, die die 3D-Szene betrachtet.
@@ -195,18 +193,6 @@ public class GLKamera {
 		
 	}
 
-	void renderPreObjects(GL2 gl, GLU glu) {
-		// camera position and look-at point
-		glu.gluLookAt(aPos[0], aPos[1], aPos[2], aLookAt[0], aLookAt[1], aLookAt[2], aUp[0], aUp[1], aUp[2]);
-	}
-
-	void renderPostObjects(GL2 gl, GLU glu) {
-		if (wconf.aDisplayAxes)
-			drawAxes(gl);
-		if (drawLookAt)
-			drawLookAt(gl);
-	}
-
 	/*
 	 * public void rotiere_defekt(double pWinkel, double pPunktX, double
 	 * pPunktY, double pPunktZ, double pRichtungX, double pRichtungY, double
@@ -269,9 +255,9 @@ public class GLKamera {
 	 *            Wenn <code>true</code>, dann wird die Achsendarstellung
 	 *            aktiviert, wenn <code>false</code>, so wird sie deaktiviert.
 	 */
-	public void zeigeAchsen(boolean pZeigeAchsen) {
+	public synchronized void zeigeAchsen(boolean pZeigeAchsen) {
 		wconf.aDisplayAxes = pZeigeAchsen;
-		zeigeAchsen(wconf.axesLength);
+		associatedRenderer.scheduleRender();
 	}
 
 	/**
@@ -280,7 +266,7 @@ public class GLKamera {
 	 *            Wenn <code>true</code>, dann wird der Blickpunkt im Kamerafenster
 	 *            angezeigt, wenn <code>false</code>, dann nicht.
 	 */
-	public void zeigeBlickpunkt(boolean pBlickpunktZeichnen) {
+	public synchronized void zeigeBlickpunkt(boolean pBlickpunktZeichnen) {
 		drawLookAt = pBlickpunktZeichnen;
 		associatedRenderer.scheduleRender();
 	}
@@ -337,86 +323,6 @@ public class GLKamera {
 		this.aLookAt[2] = lookAt[2];
 		associatedRenderer.scheduleRender();
 	}
-
-	private void drawAxes(GL2 gl) {
-		double axesLength = wconf.axesLength;
-		gl.glDisable(GL2.GL_LIGHTING);
-		gl.glEnable(GL2.GL_COLOR_MATERIAL);
-		gl.glDisable(GL2.GL_TEXTURE_2D);
-		gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
-		gl.glLineWidth(wconf.axesWidth);
-		gl.glBegin(GL2.GL_LINE_STRIP);
-		for (int i = 0; i < axesLength; i += 20) {
-			gl.glColor3f(1, 1, 1);
-			gl.glVertex3f(i, 0, 0);
-			gl.glColor3f(1, 0, 0);
-			gl.glVertex3f(i + 1, 0, 0);
-		}
-		gl.glColor3f(1, 1, 1);
-		gl.glVertex3f((float) axesLength, 0, 0);
-		gl.glVertex3f((float) axesLength - 20, -10, 0);
-		gl.glVertex3f((float) axesLength, 0, 0);
-		gl.glVertex3f((float) axesLength - 20, 10, 0);
-		gl.glEnd();
-
-		gl.glBegin(3);
-		for (int i = 0; i < axesLength; i += 20) {
-			gl.glColor3f(1, 1, 1);
-			gl.glVertex3f(0, i, 0);
-			gl.glColor3f(0, 1, 0);
-			gl.glVertex3f(0, i + 1, 0);
-		}
-		gl.glColor3f(1, 1, 1);
-		gl.glVertex3f(0, (float) axesLength, 0);
-		gl.glVertex3f(10, (float) axesLength - 20, 0);
-		gl.glVertex3f(0, (float) axesLength, 0);
-		gl.glVertex3f(-10, (float) axesLength - 20, 0);
-		gl.glEnd();
-
-		gl.glBegin(3);
-		for (int i = 0; i < axesLength; i += 20) {
-			gl.glColor3f(1, 1, 1);
-			gl.glVertex3f(0, 0, i);
-			gl.glColor3f(0, 0, 1);
-			gl.glVertex3f(0, 0, i + 1);
-		}
-		gl.glColor3f(1, 1, 1);
-		gl.glVertex3f(0, 0, (float) axesLength);
-		gl.glVertex3f(0, 10, (float) axesLength - 20);
-		gl.glVertex3f(0, 0, (float) axesLength);
-		gl.glVertex3f(0, -10, (float) axesLength - 20);
-		gl.glEnd();
-
-		if (wconf.globalLighting)
-			gl.glEnable(GL2.GL_LIGHTING);
-
-		gl.glDisable(GL2.GL_COLOR_MATERIAL);
-		gl.glLineWidth(wconf.wireframeLineWidth);
-	}
-
-	private void drawLookAt(GL2 gl) {
-		gl.glDisable(GL2.GL_LIGHTING);
-		gl.glEnable(GL2.GL_COLOR_MATERIAL);
-		gl.glDisable(GL2.GL_TEXTURE_2D);
-		gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
-
-		gl.glBegin(GL2.GL_LINES);
-		gl.glColor3f(1, 1, 1);
-		gl.glVertex3d(aLookAt[0]-5, aLookAt[1], aLookAt[2]);
-		gl.glVertex3d(aLookAt[0]+5, aLookAt[1], aLookAt[2]);
-		gl.glVertex3d(aLookAt[0], aLookAt[1]-5, aLookAt[2]);
-		gl.glVertex3d(aLookAt[0], aLookAt[1]+5, aLookAt[2]);
-		gl.glVertex3d(aLookAt[0], aLookAt[1], aLookAt[2]-5);
-		gl.glVertex3d(aLookAt[0], aLookAt[1], aLookAt[2]+5);
-		gl.glEnd();
-		
-		if (wconf.globalLighting)
-			gl.glEnable(GL2.GL_LIGHTING);
-
-		gl.glDisable(GL2.GL_COLOR_MATERIAL);
-		gl.glLineWidth(wconf.wireframeLineWidth);
-	}
-
 
 	/** Gibt die x-Koordinate des Blickpunkts der Kamera zurück.
 	 * @return x-Koordinate des Blickpunkts
