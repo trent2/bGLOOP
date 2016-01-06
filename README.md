@@ -18,7 +18,7 @@ in your classpath
 * start coding
 
 ## Download
-If you do not want to build the bGLOOP.jar file by yourself you can [download it here](http://trent2.github.io/bGLOOP/dist/bGLOOP.jar). Also go ahead and graph the [jogamp jar files](http://jogamp.org/deployment/v2.3.2/jar/) as mentioned above and place them in your classpath. You should be good now. Finally, if you want to change the default settings in the library download the <code>.bGLOOP</code> file from above, change all necessary properties, and place it in your classpath.
+If you do not want to build the bGLOOP.jar file by yourself you can [download it here](http://trent2.github.io/bGLOOP/dist/bGLOOP.jar). Also go ahead and grab the [jogamp jar files](http://jogamp.org/deployment/v2.3.2/jar/) (as described above) and place them in your classpath. You should be good now. Finally, if you want to change the default settings in the library download the <code>.bGLOOP</code> file from above, change all necessary properties, and place it in your classpath.
 
 ## Documentation
 Please have a look at the [Java API documentation](http://trent2.github.io/bGLOOP/apidocs).
