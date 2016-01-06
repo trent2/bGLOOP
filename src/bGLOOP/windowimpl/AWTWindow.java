@@ -33,11 +33,20 @@ final public class AWTWindow extends Window {
 		frame.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
+				shuttingDown();
+			}
+
+			@Override
+			public void windowClosed(WindowEvent e) {
+				shuttingDown();
+			}
+
+			private void shuttingDown() {
 				animator.stop();
 
 				// prevent jogl babbling about unimportant stuff
 				System.err.close();
-				System.exit(0);
+				System.exit(0);				
 			}
 		});
 		return frame;
