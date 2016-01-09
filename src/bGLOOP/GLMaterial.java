@@ -9,9 +9,7 @@ package bGLOOP;
  * <pre>
  * glo.setzeMaterial(GLMaterial.GOLD2)
  * </pre>
- * 
  * bzw. nach Import der Materialkonstanten aus der Klasse <code>GLMaterial</code> 
- * 
  * <pre>
  * <b>import static</b> bGLOOP.GLMaterial.*;
  * ...

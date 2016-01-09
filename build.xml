@@ -56,7 +56,7 @@
 		<tstamp>
 			<format property="TODAY" pattern="dd. MMMM YYYY, HH:mm:ss" locale="de,DE" />
 		</tstamp>
-		<jar destfile="dist/bGLOOP.jar">
+		<jar destfile="dist/bGLOOP_unguarded.jar">
 			<manifest>
 				<attribute name="Implementation-Title" value="A better GLOOP" />
 				<attribute name="Implementation-Version" value="${VERSION} ${TODAY}" />

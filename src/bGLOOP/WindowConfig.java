@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.logging.Level;
 
 import bGLOOP.GLObjekt.Darstellungsmodus;
 import bGLOOP.GLObjekt.Rendermodus;
@@ -13,17 +14,17 @@ import bGLOOP.GLObjekt.Rendermodus;
 /**
  * Configuration object specific to a certain bGLOOP window (i.e.
  * {@link GLKamera} object). All {@link GLObjekt} objects share the
- * GLWindowConfig object of the camera which was active camera during the
+ * WindowConfig object of the camera which was active camera during the
  * object's generation.
  * 
  * @author Robert Spillner
  */
-class GLWindowConfig {
+class WindowConfig {
 	/**
 	 * Configuration object for initialization of the camera when no tampering
-	 * with the camera's GLWindowConfig object has been done before
+	 * with the camera's WindowConfig object has been done before
 	 */
-	final static GLWindowConfig defaultWindowConfig = new GLWindowConfig();
+	final static WindowConfig defaultWindowConfig = new WindowConfig();
 
 	private final static String DEFAULT_PROPERTIES_FILE_NAME = ".bgloop";
 	private Properties bgloopSetting;
@@ -41,6 +42,7 @@ class GLWindowConfig {
 	double keyMoveScale;
 	float axesWidth;
 	float wireframeLineWidth;
+	Level loggingLevel;
 	Darstellungsmodus globalDrawMode = Darstellungsmodus.FUELLEN;
 	int globalShadeModel = 0x1D01; // GL_SMOOTH
 	Rendermodus globalObjectRenderMode = Rendermodus.RENDER_GLU;
@@ -50,7 +52,7 @@ class GLWindowConfig {
 	long clickTimeRange, moveTimeRange;
 	String screenshotFormat, screenshotPrefix;
 
-	GLWindowConfig() {
+	WindowConfig() {
 		InputStream defaultSettings;
 		File userFileName;
 		bgloopSetting = new Properties();
@@ -93,6 +95,7 @@ class GLWindowConfig {
 		globalDefaultHeight = Integer.parseInt(bgloopSetting.getProperty("DEFAULT_WINDOW_HEIGHT"));
 
 		globalShadeModel = Integer.parseInt(bgloopSetting.getProperty("DEFAULT_SHADE_MODEL"), 16);
+		loggingLevel =  Level.parse(bgloopSetting.getProperty("LOGGING"));
 
 		t = bgloopSetting.getProperty("DEFAULT_OBJECT_RENDER_MODE");
 

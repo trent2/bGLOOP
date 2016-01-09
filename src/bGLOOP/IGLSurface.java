@@ -23,4 +23,10 @@ interface IGLSurface {
 	 * @return Das aktuelle {@link GLTextur}-Objekt
 	 */
 	public GLTextur gibTextur();
+
+	/** Setzt den Durchsichtigkeitsfaktor des Objekts.
+	 * @param pAlpha Ein Wert zwischen 0 (komplett durchsichtig) und 1
+	 * (vollständig opak)
+	 */
+	void setzeDurchsichtigkeit(double pAlpha);
 }

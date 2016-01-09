@@ -197,4 +197,9 @@ public class GLLichtobjekt
 	public void resetSkalierungUndRotation() {
 		aLichtobjekt.resetSkalierungUndRotation();
 	}
+
+	@Override
+	public void setzeDurchsichtigkeit(double pAlpha) {
+		aLichtobjekt.setzeDurchsichtigkeit(pAlpha);
+	}
 }

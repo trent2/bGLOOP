@@ -5,6 +5,9 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.ListIterator;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
@@ -25,20 +28,31 @@ import com.jogamp.opengl.util.awt.AWTGLReadBufferUtil;
 
 import bGLOOP.GLObjekt.Rendermodus;
 import bGLOOP.GLTextur.GLTextureImpl;
-import bGLOOP.mesh.Parse;
 import bGLOOP.windowimpl.Window;
 
 class GLRenderer implements GLEventListener {
-    private Logger log = Logger.getLogger(Parse.class.getName());
+	private class TransparencyComparator implements Comparator<DisplayItem> {
+		@Override
+		public int compare(DisplayItem o1, DisplayItem o2) {
+			if(o1.isTransparent() == o2.isTransparent())
+				return 0;
+			else if(o1.isTransparent() && !o2.isTransparent())
+				return 1;
+			else
+				return -1;
+		}
+	}
+
+    private Logger log = Logger.getLogger("bGLOOP");
 
 	private int window_rendering_needed = 2;
 	private long animatorLastFPSTime = 0;
 	private Animator animator;
 	private GLKamera aCam;
-	private GLWindowConfig wconf;
-	private CopyOnWriteArrayList<DisplayItem> noTextureItemList;
+	private WindowConfig wconf;
 	private ConcurrentHashMap<GLTextureImpl, CopyOnWriteArrayList<DisplayItem>>
-		textureItemMap;
+		renderItemMap;
+	private TransparencyComparator tc = new TransparencyComparator();
 
 	private Window win;
 	private boolean currentLighting;
@@ -51,8 +65,7 @@ class GLRenderer implements GLEventListener {
 	// ConcurrentHashMap for that
 	private GLHimmel sky;
 
-	GLRenderer(GLWindowConfig wc, int width, int height, GLKamera cam, boolean pFullscreen, boolean pNoDecoration) {
-		log.setLevel(Level.INFO);
+	GLRenderer(WindowConfig wc, int width, int height, GLKamera cam, boolean pFullscreen, boolean pNoDecoration) {
 		wconf = wc;
 		aCam = cam;
 		win = Window.createWindowFactory(wconf.isAWT());
@@ -71,39 +84,43 @@ class GLRenderer implements GLEventListener {
 		win.getAutoDrawable().addGLEventListener(this);
 		animator = win.getAnimator();
 		animator.start();
-		animator.setUpdateFPSFrames(wconf.doubleBuffering?60:2000, null);
+		animator.setUpdateFPSFrames(wconf.doubleBuffering ? 60:2000, null);
 		win.startDisplay();
 		currentLighting = !wconf.globalLighting;
-		textureItemMap = new ConcurrentHashMap<GLTextureImpl, CopyOnWriteArrayList<DisplayItem>>(10);
-		noTextureItemList = new CopyOnWriteArrayList<DisplayItem>();
-	}
-
-	CopyOnWriteArrayList<DisplayItem> getNoTextureItemList() {
-			return noTextureItemList;
+		renderItemMap = new ConcurrentHashMap<GLTextureImpl, CopyOnWriteArrayList<DisplayItem>>(10);
+//		noTextureItemList = new CopyOnWriteArrayList<DisplayItem>();
 	}
 
 	// remove oldImpl from map
-	void addObjectToTextureMap(GLTextureImpl tImp, DisplayItem di, GLTextureImpl oldImpl) {
-		if (!(di instanceof GLHimmel)) {
-			if (oldImpl != null) {
-				CopyOnWriteArrayList<DisplayItem> dil = textureItemMap.get(oldImpl);
-				if (dil != null)
-					dil.remove(di);
-			}
-			addObjectToTextureMap(tImp, di);
-		}
-		else
+	void updateObjectRenderMap(GLTextur tex, DisplayItem di, GLTextur oldTex) {
+		if ((di instanceof GLHimmel))  // treat sky separately
 			sky = (GLHimmel)di;
-	}
-
-	private void addObjectToTextureMap(GLTextureImpl tImp, DisplayItem di) {
-		if(textureItemMap.containsKey(tImp))
-			textureItemMap.get(tImp).add(di);
 		else {
 			CopyOnWriteArrayList<DisplayItem> dil;
-			dil = new CopyOnWriteArrayList<DisplayItem>();
-			dil.add(di);
-			textureItemMap.put(tImp, dil);
+			dil = renderItemMap.get(oldTex.aTexturImpl);
+			if (dil != null)
+				dil.remove(di);
+
+			addObjectToRenderMap(tex, di);
+		}
+	}
+
+	void removeObjectFromRenderMap(GLTextur tex, DisplayItem di) {
+		renderItemMap.get(tex.aTexturImpl).remove(di);
+	}
+
+	void addObjectToRenderMap(GLTextur tex, DisplayItem di) {
+		if (di instanceof GLHimmel)
+			sky = (GLHimmel) di;
+		else {
+			CopyOnWriteArrayList<DisplayItem> dil;
+			if (renderItemMap.containsKey(tex.aTexturImpl))
+				(dil = renderItemMap.get(tex.aTexturImpl)).add(di);
+			else {
+				(dil = new CopyOnWriteArrayList<DisplayItem>()).add(di);
+				renderItemMap.put(tex.aTexturImpl, dil);
+			}
+			dil.sort(tc);
 		}
 	}
 
@@ -123,7 +140,7 @@ class GLRenderer implements GLEventListener {
 		// Setup the depth buffer and enable the depth testing
 		gl.glClearDepth(10000.0f); // clear z-buffer to the farthest
 		gl.glEnable(GL2.GL_DEPTH_TEST); // enables depth testing
-		gl.glDepthFunc(GL2.GL_LEQUAL); // the type of depth test to do
+		 gl.glDepthFunc(GL2.GL_LEQUAL); // the type of depth test to do
 		if(gl.isFunctionAvailable("glBindBuffer"))
 			gl.glBindBuffer( GL.GL_ARRAY_BUFFER, 0);
 		else
@@ -136,21 +153,18 @@ class GLRenderer implements GLEventListener {
 		gl.glHint(GL2.GL_PERSPECTIVE_CORRECTION_HINT, GL2.GL_NICEST);
 		doLighting(gl);
 
-		/*
 		gl.glEnable(GL2.GL_LINE_SMOOTH);
 		gl.glEnable(GL2.GL_BLEND);
 		gl.glBlendFunc(GL2.GL_SRC_ALPHA, GL2.GL_ONE_MINUS_SRC_ALPHA);
 		gl.glHint(GL2.GL_LINE_SMOOTH_HINT, GL2.GL_DONT_CARE);
-		*/
+
 		gl.glLineWidth(wconf.wireframeLineWidth);
 
 		window_rendering_needed = wconf.doubleBuffering?3:1;
-		// Volker zusätzlich
-		/*
-		 * gl.glEnable(GL2.GL_ALPHA_TEST); gl.glAlphaFunc(GL2.GL_GREATER, 0.1F);
-		 * 
-		 * this.gl.glEnable(GL2.GL_RESCALE_NORMAL);
-		 */
+		gl.glEnable(GL2.GL_ALPHA_TEST);
+		gl.glAlphaFunc(GL2.GL_GREATER, 0.1F);
+
+		// gl.glEnable(GL2.GL_RESCALE_NORMAL);
 	}
 
 	private void doLighting(GL2 gl) {
@@ -173,12 +187,11 @@ class GLRenderer implements GLEventListener {
 
 	@Override
 	public void display(GLAutoDrawable drawable) {
-		if (window_rendering_needed > 0 && noTextureItemList != null) {
+		if (window_rendering_needed > 0) {
 			renderScene(drawable.getGL().getGL2());
 
-			if (window_rendering_needed > 0)
-				window_rendering_needed--;
-			drawable.getGL().glDisable(12288);
+			window_rendering_needed--;
+			Logger.getLogger(getClass().getName()).log(Level.INFO, "Scene rendered");
 		}
 		updateFPSView();
 
@@ -213,6 +226,12 @@ class GLRenderer implements GLEventListener {
 	}
 
 	private void renderScene(GL2 gl) {
+		Map<GLTextureImpl, ListIterator<DisplayItem>> transparencyIteratorMap = 
+				new ConcurrentHashMap<GLTextur.GLTextureImpl, ListIterator<DisplayItem>>(
+								renderItemMap.size());
+		ListIterator<DisplayItem> lit;
+		DisplayItem di = null;
+
 		GLU glu = GLU.createGLU();
 
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
@@ -225,7 +244,6 @@ class GLRenderer implements GLEventListener {
 		}
 
 		GLTextureImpl tImp = null;
-
 		// TODO this is why I needed a GLHimmel reference:
 		// render sky before all other objects
 		if (sky != null) {
@@ -238,14 +256,12 @@ class GLRenderer implements GLEventListener {
 					tImp.getTexture().bind(gl);
 				}
 				if (sky.aVisible)
-					synchronized (sky) {
-						sky.render(gl, glu);
-					}
+					sky.render(gl, glu);
 			}
 		}
 
-		// render objects without texture
-		for (ConcurrentHashMap.Entry<GLTextureImpl, CopyOnWriteArrayList<DisplayItem>> entry : textureItemMap
+		// render intransparent objects
+		for (ConcurrentHashMap.Entry<GLTextureImpl, CopyOnWriteArrayList<DisplayItem>> entry : renderItemMap
 				.entrySet()) {
 			// load texture
 			tImp = entry.getKey();
@@ -254,19 +270,36 @@ class GLRenderer implements GLEventListener {
 				tImp.getTexture().enable(gl);
 				tImp.getTexture().bind(gl);
 			}
-			// render objects
-			for (DisplayItem di : entry.getValue())
-				di.render(gl, glu);
+
+			// render intransparent objects
+			if ((lit = entry.getValue().listIterator()).hasNext()) {
+				while (lit.hasNext() && !(di = lit.next()).isTransparent())
+					di.render(gl, glu);
+				if (di.isTransparent()) {
+					lit.previous();
+					transparencyIteratorMap.put(tImp, lit);
+				}
+			}
+			if (tImp.isReady())
+				tImp.disable(gl);
 		}
 
-		if(tImp != null && tImp.isReady())
-			tImp.getTexture().disable(gl);
+		for(Map.Entry<GLTextureImpl,ListIterator<DisplayItem>> entry : transparencyIteratorMap.entrySet()) {
+			tImp = entry.getKey();
+			tImp.load(gl);
+			if (tImp.isReady()) {
+				tImp.getTexture().enable(gl);
+				tImp.getTexture().bind(gl);
+			}
+			// render transparent objects
+			lit = entry.getValue();
+			while(lit.hasNext())
+				lit.next().render(gl, glu);
 
+			if (tImp.isReady())
+				tImp.disable(gl);
+		}
 		gl.glDisable(GL2.GL_TEXTURE_2D);
-		// render objects without texture
-		for (DisplayItem di : noTextureItemList)
-			if (di.aVisible)
-					di.render(gl, glu);
 
 		synchronized (aCam) {
 			renderPostObjects(gl, glu);

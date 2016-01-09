@@ -72,3 +72,11 @@ SCREENSHOT_FILE_FORMAT = jpg
 # following a dash and then a consecutive number starting with 0001. Thus
 # <SCREENSHOT_FILE_PREFIX>-0001.<SCREENSHOT_FILE_FORMAT> will be the first filename
 SCREENSHOT_FILE_PREFIX = bgloop-screenshot
+
+# enable loggin of events in bGLOOP
+# possible values (use capital letters!):
+# - OFF     : keep quiet all the time
+# - SEVERE  : only talk about errors
+# - WARNING : warn about missuse
+# - INFO    : info messages about all kinds of stuff
+LOGGING=SEVERE

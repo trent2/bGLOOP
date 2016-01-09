@@ -1,5 +1,9 @@
 package bGLOOP;
 
+import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 import com.jogamp.opengl.glu.GLUquadric;
@@ -10,6 +14,7 @@ import com.jogamp.opengl.glu.GLUquadric;
  * @author R. Spillner
  */
 public abstract class GLObjekt extends DisplayItem implements IGLColorable {
+	private Logger log = Logger.getLogger("bGLOOP");
 	float[] aDiffuse = { 1, 1, 1, 1 };
 	final private float[] aAmbient = { 0.15f, 0.15f, 0.15f, 1 };
 	private float[] aSpecular = { 0, 0, 0, 1 };
@@ -72,7 +77,7 @@ public abstract class GLObjekt extends DisplayItem implements IGLColorable {
 	}
 
 	final GLConfig conf;
-	final GLWindowConfig wconf;
+	final WindowConfig wconf;
 
 	GLUquadric quadric;
 	// true if needed to be recomputed
@@ -158,6 +163,12 @@ public abstract class GLObjekt extends DisplayItem implements IGLColorable {
 		scheduleRender();
 	}
 
+	@Override
+	public boolean isTransparent() {
+		log.log(Level.INFO, Arrays.toString(aDiffuse) + ", " + Arrays.toString(aAmbient));
+		return aDiffuse[3] != 1 || aAmbient[3] != 1;
+	}
+
 	/**
 	 * Bestimmt, ob das Objekt gezeichnet wird oder nicht. Wenn die Sichtbarkeit
 	 * auf <code>false</code> gesetzt wird, wird keinerlei OpenGL-Code zum Rendern
@@ -177,7 +188,7 @@ public abstract class GLObjekt extends DisplayItem implements IGLColorable {
 	 * wiederherstellbar.
 	 */
 	public synchronized void loesche() {
-		associatedRenderer.getNoTextureItemList().remove(this);
+		associatedRenderer.removeObjectFromRenderMap(GLTextur.NULL_TEXTURE, this);
 		scheduleRender();
 	}
 

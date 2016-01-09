@@ -30,8 +30,14 @@ public class GLLicht extends DisplayItem implements IGLColorable {
 		lightDiffusePosition = new float[] { (float) pX, (float) pY, (float) pZ, 1.0f };
 		id = lightCount++;
 		associatedCam = GLKamera.aktiveKamera();
-		(associatedRenderer = associatedCam.associatedRenderer).getNoTextureItemList().add(this);
+
+		(associatedRenderer = associatedCam.associatedRenderer).addObjectToRenderMap(GLTextur.NULL_TEXTURE, this);
 		aVisible = true;
+	}
+
+	@Override
+	boolean isTransparent() {
+		return false;
 	}
 
 	/** Eine Lichtquelle an der Position <code>L(-10000, 10000, 10000)</code>.

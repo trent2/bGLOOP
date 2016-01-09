@@ -50,8 +50,8 @@ public class GLEntwicklerkamera extends GLSchwenkkamera {
 	 * Standardgrößen.
 	 */
 	public GLEntwicklerkamera() {
-		this(GLWindowConfig.defaultWindowConfig.globalDefaultWidth,
-				GLWindowConfig.defaultWindowConfig.globalDefaultHeight);
+		this(WindowConfig.defaultWindowConfig.globalDefaultWidth,
+				WindowConfig.defaultWindowConfig.globalDefaultHeight);
 	}
 
 	/** Erstellt eine bGLOOP-Entwicklerkamera mit vorgegebener Breite und Höhe.

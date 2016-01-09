@@ -11,4 +11,6 @@ abstract class DisplayItem {
 	boolean aVisible = false;
 
 	abstract void render(GL2 gl, GLU glu);
+
+	abstract boolean isTransparent();
 }

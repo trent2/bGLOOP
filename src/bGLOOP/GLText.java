@@ -42,12 +42,12 @@ public class GLText extends TransformableObject implements IGLColorable {
 		aText = pText;
 		verschiebe(pX, pY, pZ);
 		aFSize = pSchriftgroesse;
-		associatedRenderer.getNoTextureItemList().add(this);
+		associatedRenderer.addObjectToRenderMap(GLTextur.NULL_TEXTURE, this);
 		conf.objectRenderMode = Rendermodus.RENDER_GL;
 		conf.displayMode = Darstellungsmodus.FUELLEN;
 
 		// color of background board, if enabled
-		aDiffuse = new float[] { .3f, .3f, .3f};
+		aDiffuse = new float[] { .3f, .3f, .3f, 1};
 
 		aVisible = true;
 	}
@@ -113,7 +113,7 @@ public class GLText extends TransformableObject implements IGLColorable {
 	 * Die Farbe der Tafel wird mit {@link #setzeTafelFarbe(double, double, double)}
 	 * festgelegt.
 	 * @param pTafelAnzeigen <code>true</code>, um den Hintergrund anzuzeigen,
-	 * <code><false/code>, um ihn zu deaktivieren
+	 * <code>false</code>, um ihn zu deaktivieren
 	 */
 	public synchronized void setzeTafel(boolean pTafelAnzeigen) {
 		aBgr = pTafelAnzeigen;

@@ -1,9 +1,13 @@
 package bGLOOP;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 
 abstract class TransformableSurfaceObject extends TransformableObject implements IGLSurface, IGLSubdivisable {
+    private Logger log = Logger.getLogger("bGLOOP");
 	private GLTextur aTex;
 	int bufferName = -1;
 
@@ -14,11 +18,9 @@ abstract class TransformableSurfaceObject extends TransformableObject implements
 	TransformableSurfaceObject(GLTextur pTex) {
 		super();
 
-		aTex = pTex;
-		if (aTex != null)
-			associatedRenderer.addObjectToTextureMap(aTex.aTexturImpl, this, null);
-		else
-			associatedRenderer.getNoTextureItemList().add(this);	
+		aTex = (pTex == null ? GLTextur.NULL_TEXTURE : pTex);
+		associatedRenderer.addObjectToRenderMap(aTex, this);
+		
 	}
 
 	@Override
@@ -38,14 +40,8 @@ abstract class TransformableSurfaceObject extends TransformableObject implements
 
 	@Override
 	public synchronized void setzeTextur(GLTextur pTextur) {
-		if (aTex != null)
-			associatedRenderer.addObjectToTextureMap(pTextur.aTexturImpl, this, aTex.aTexturImpl);
-		else {
-			associatedRenderer.getNoTextureItemList().remove(this);
-			associatedRenderer.addObjectToTextureMap(pTextur.aTexturImpl, this, null);
-		}
-
-		aTex = pTextur;
+		associatedRenderer.updateObjectRenderMap(pTextur, this, aTex);
+		aTex = (pTextur == null ? GLTextur.NULL_TEXTURE : pTextur);
 		scheduleRender();
 	}
 
@@ -56,7 +52,13 @@ abstract class TransformableSurfaceObject extends TransformableObject implements
 
 	@Override
 	public GLTextur gibTextur() {
-		return aTex;
+		return aTex.getObjectOrNull();
+	}
+
+	@Override
+	public synchronized void setzeDurchsichtigkeit(double pAlpha) {
+		aDiffuse[3] = (float)pAlpha;
+		scheduleRender();
 	}
 
 	abstract void generateDisplayList_GL(GL2 gl);
@@ -72,6 +74,8 @@ abstract class TransformableSurfaceObject extends TransformableObject implements
 		// now transform the object accordingly
 		gl.glMultMatrixf(transformationMatrix.getMatrix(), 0);
 		if (needsRedraw) {
+			log.log(Level.INFO, "Redraw scene");
+
 			switch (conf.objectRenderMode) {
 			case RENDER_GLU:
 			case RENDER_GL:
@@ -101,5 +105,11 @@ abstract class TransformableSurfaceObject extends TransformableObject implements
 			break;
 		}
 
+	}
+
+	@Override
+	public synchronized void loesche() {
+		associatedRenderer.removeObjectFromRenderMap(aTex, this);
+		scheduleRender();
 	}
 }

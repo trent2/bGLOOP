@@ -1,5 +1,7 @@
 package bGLOOP;
 
+import java.util.logging.Logger;
+
 import com.jogamp.opengl.math.VectorUtil;
 
 /** Klasse, die eine virtuelle Kamera beschreibt, die die 3D-Szene betrachtet.
@@ -14,8 +16,9 @@ public class GLKamera {
 
 	// false uses NEWT
 	private static GLKamera activeCamera;
+    private Logger log = Logger.getLogger("bGLOOP");
 
-	private GLWindowConfig wconf;
+	private WindowConfig wconf;
 	boolean drawLookAt;
 
 	GLRenderer associatedRenderer;
@@ -51,8 +54,8 @@ public class GLKamera {
 	 *            <code>false</code>, dann nicht.
 	 */
 	public GLKamera(boolean pVollbild, boolean pKeineDekoration) {
-		this(GLWindowConfig.defaultWindowConfig.globalDefaultWidth,
-				GLWindowConfig.defaultWindowConfig.globalDefaultHeight, pVollbild, pKeineDekoration);
+		this(WindowConfig.defaultWindowConfig.globalDefaultWidth,
+				WindowConfig.defaultWindowConfig.globalDefaultHeight, pVollbild, pKeineDekoration);
 	}
 
 	/**
@@ -70,7 +73,8 @@ public class GLKamera {
 
 	private GLKamera(int width, int height, boolean pVollbild, boolean pKeineDekoration) {
 		activeCamera = this;
-		wconf = new GLWindowConfig();
+		wconf = new WindowConfig();
+		log.setLevel(wconf.loggingLevel);
 
 		associatedRenderer = new GLRenderer(wconf, width, height, this, pVollbild, pKeineDekoration);
 	}
@@ -93,7 +97,7 @@ public class GLKamera {
 		GLKamera.activeCamera = activeCamera;
 	}
 
-	GLWindowConfig getWconf() {
+	WindowConfig getWconf() {
 		return wconf;
 	}
 

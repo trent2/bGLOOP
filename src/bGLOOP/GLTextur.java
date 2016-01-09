@@ -17,6 +17,10 @@ import com.jogamp.opengl.util.texture.TextureIO;
 public class GLTextur {
 
 	private static HashMap<File, GLTextureImpl> textures = new HashMap<File, GLTextureImpl>(10);
+	// the NULL_TEXTURE simplifies rendering, because we don't have to
+	// distinguish between the cases "texture" and "no texture".
+	// It's not meant to be exported to the user
+	final static GLTextur NULL_TEXTURE = new GLTextur();
 	GLTextureImpl aTexturImpl = null;
 
 	// So why this? GLTextur objects are all mapped to
@@ -24,6 +28,7 @@ public class GLTextur {
 	// This safes time and space when loading the textures and enables
 	// faster drawing of textured objects
 	static class GLTextureImpl {
+		final static GLTextureImpl NULL_TEXTURE_IMPL = new GLTextureImpl(null);
 		File aTexFile;
 		Texture aTexture;
 		private boolean aReady = false, cannotBeLoaded = false;
@@ -33,7 +38,7 @@ public class GLTextur {
 		}
 
 		void load(GL2 gl) {
-			if (aTexture == null && !cannotBeLoaded && !aReady)
+			if (aTexture == null && !cannotBeLoaded && !aReady && aTexFile != null)
 				try {
 					aTexture = TextureIO.newTexture(aTexFile, false);
 					aTexture.setTexParameteri(gl, GL2.GL_TEXTURE_WRAP_S, GL2.GL_REPEAT);
@@ -69,6 +74,10 @@ public class GLTextur {
 		void disable(GL2 gl) {
 			aTexture.disable(gl);
 		}
+	}
+
+	private GLTextur() {
+		aTexturImpl = GLTextureImpl.NULL_TEXTURE_IMPL;
 	}
 
 	/** Erstellt ein Textur-Objekt. Der Dateiname wird ausgehend von dem Pfad
@@ -118,5 +127,9 @@ public class GLTextur {
 	@Override
 	public boolean equals(Object t) {
 		return (t != null) && aTexturImpl == ((GLTextur)t).aTexturImpl;
+	}
+
+	GLTextur getObjectOrNull() {
+		return this == NULL_TEXTURE ? null : this;
 	}
 }

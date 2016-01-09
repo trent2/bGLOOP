@@ -1,5 +1,5 @@
--injars dist/bGLOOP.jar
--outjars dist/bGLOOP_pg.jar
+-injars dist/bGLOOP_unguarded.jar
+-outjars dist/bGLOOP.jar
 
 -libraryjars /opt/oracle-jdk-bin-1.8.0.66/jre/lib/rt.jar
 -libraryjars /home/trent/workspace/jogamp-all-platforms/jar/gluegen-rt-natives-linux-amd64.jar

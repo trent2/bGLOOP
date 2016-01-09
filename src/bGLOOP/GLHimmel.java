@@ -27,11 +27,14 @@ public class GLHimmel extends GLObjekt implements IGLSurface {
 		conf.objectRenderMode = Rendermodus.RENDER_GL;
 		conf.displayMode = Darstellungsmodus.FUELLEN;
 
-		aTex = pTextur;
+		aTex = (pTextur == null ? GLTextur.NULL_TEXTURE : pTextur);
+		associatedRenderer.addObjectToRenderMap(aTex, this);
+		/*
 		if (aTex != null)
 			associatedRenderer.addObjectToTextureMap(aTex.aTexturImpl, this, null);
 		else
 			associatedRenderer.getNoTextureItemList().add(this);
+		*/
 
 		aVisible = true;
 	}
@@ -84,14 +87,8 @@ public class GLHimmel extends GLObjekt implements IGLSurface {
 
 	@Override
 	public synchronized void setzeTextur(GLTextur pTextur) {
-		if (aTex != null)
-			associatedRenderer.addObjectToTextureMap(pTextur.aTexturImpl, this, aTex.aTexturImpl);
-		else {
-			associatedRenderer.getNoTextureItemList().remove(this);
-			associatedRenderer.addObjectToTextureMap(pTextur.aTexturImpl, this, null);
-		}
-
-		aTex = pTextur;
+		associatedRenderer.updateObjectRenderMap(pTextur, this, aTex);
+		aTex = (pTextur == null ? GLTextur.NULL_TEXTURE : pTextur);
 		scheduleRender();
 	}
 
@@ -102,6 +99,18 @@ public class GLHimmel extends GLObjekt implements IGLSurface {
 
 	@Override
 	public GLTextur gibTextur() {
-		return aTex;
+		return aTex.getObjectOrNull();
+	}
+
+	@Override
+	public synchronized void loesche() {
+		associatedRenderer.removeObjectFromRenderMap(aTex, this);
+		scheduleRender();
+	}
+
+	@Override
+	public synchronized void setzeDurchsichtigkeit(double pAlpha) {
+		aDiffuse[3] = (float)pAlpha;
+		scheduleRender();
 	}
 }
