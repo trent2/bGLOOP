@@ -12,8 +12,8 @@ the GLOOP library (as of January 2016).
 * [jogl](www.jogamp.org) >= 2.3.2
 
 ## Building and using
-* Compile by typing ant
-* be sure to have jogl-all.jar, jogl-all-natives-???.jar, gluegen-rt.jar, and gluegen-rt-natives-???.jar along with bGLOOP.jar
+* Compile by typing <code>ant</code>
+* be sure to have <code>jogl-all.jar</code>, <code>jogl-all-natives-???.jar</code>, <code>gluegen-rt.jar</code>, and <code>gluegen-rt-natives-???.jar</code> along with <code>bGLOOP.jar</code>
 in your classpath
 * start coding
 
