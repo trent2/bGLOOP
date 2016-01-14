@@ -1,13 +1,11 @@
 package bGLOOP;
 
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 
 abstract class TransformableSurfaceObject extends TransformableObject implements IGLSurface, IGLSubdivisable {
-    private Logger log = Logger.getLogger("bGLOOP");
 	private GLTextur aTex;
 	int bufferName = -1;
 

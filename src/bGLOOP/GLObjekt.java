@@ -1,7 +1,5 @@
 package bGLOOP;
 
-import java.util.Arrays;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.jogamp.opengl.GL2;
@@ -14,7 +12,7 @@ import com.jogamp.opengl.glu.GLUquadric;
  * @author R. Spillner
  */
 public abstract class GLObjekt extends DisplayItem implements IGLColorable {
-	private Logger log = Logger.getLogger("bGLOOP");
+	Logger log = Logger.getLogger("bGLOOP");
 	float[] aDiffuse = { 1, 1, 1, 1 };
 	final private float[] aAmbient = { 0.15f, 0.15f, 0.15f, 1 };
 	private float[] aSpecular = { 0, 0, 0, 1 };
@@ -165,7 +163,6 @@ public abstract class GLObjekt extends DisplayItem implements IGLColorable {
 
 	@Override
 	public boolean isTransparent() {
-		log.log(Level.INFO, Arrays.toString(aDiffuse) + ", " + Arrays.toString(aAmbient));
 		return aDiffuse[3] != 1 || aAmbient[3] != 1;
 	}
 

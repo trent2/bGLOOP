@@ -10,7 +10,6 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -191,7 +190,7 @@ class GLRenderer implements GLEventListener {
 			renderScene(drawable.getGL().getGL2());
 
 			window_rendering_needed--;
-			Logger.getLogger(getClass().getName()).log(Level.INFO, "Scene rendered");
+			log.fine("Scene rendered " + window_rendering_needed);
 		}
 		updateFPSView();
 
@@ -211,7 +210,8 @@ class GLRenderer implements GLEventListener {
 		gl.glLoadIdentity();
 
 		// fovy, aspect, zNear, zFar
-		GLU.createGLU().gluPerspective(60, aspect, 0.1, 10000.0);
+		GLU.createGLU().gluPerspective(60, aspect, 1, 100000.0);
+		log.fine("Reshaping drawing window");
 
 		window_rendering_needed = wconf.doubleBuffering?3:1;
 	}

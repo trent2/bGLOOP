@@ -16,7 +16,7 @@ public class GLKamera {
 
 	// false uses NEWT
 	private static GLKamera activeCamera;
-    private Logger log = Logger.getLogger("bGLOOP");
+    Logger log = Logger.getLogger("bGLOOP");
 
 	private WindowConfig wconf;
 	boolean drawLookAt;
@@ -398,5 +398,17 @@ public class GLKamera {
 	 */
 	public void bildschirmfoto(String pDateiname) {
 		associatedRenderer.scheduleScreenshot(pDateiname);
+	}
+
+	/* The method computes sum of the squared length of the up vector and the
+	 * scalar product of the lookAt vector with the up vector. If all is
+	 * good, this should be very close to 0. 
+	 * If checkCameraVectors() > 2 * FloatUtil.EPSILON, the camera vectors
+	 * are considered to be faulty. The float's epsilon is used, because the
+	 * values are converted to single point precision when rotating. 
+	 */
+	double checkCameraVectors() {
+		return aUp[0] * aUp[0] + aUp[1] * aUp[1] + aUp[2] * aUp[2] + Math.abs(
+				aUp[0] * (aPos[0] - aLookAt[0]) + aUp[1] * (aPos[1] - aLookAt[1]) + aUp[2] * (aPos[2] - aLookAt[2]));
 	}
 }

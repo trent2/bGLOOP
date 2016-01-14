@@ -6,7 +6,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import bGLOOP.GLObjekt.Darstellungsmodus;
 import bGLOOP.GLObjekt.Rendermodus;
@@ -25,7 +28,7 @@ class WindowConfig {
 	 * with the camera's WindowConfig object has been done before
 	 */
 	final static WindowConfig defaultWindowConfig = new WindowConfig();
-
+	private Logger log = Logger.getLogger("bGLOOP");
 	private final static String DEFAULT_PROPERTIES_FILE_NAME = ".bgloop";
 	private Properties bgloopSetting;
 	/**
@@ -95,10 +98,15 @@ class WindowConfig {
 		globalDefaultHeight = Integer.parseInt(bgloopSetting.getProperty("DEFAULT_WINDOW_HEIGHT"));
 
 		globalShadeModel = Integer.parseInt(bgloopSetting.getProperty("DEFAULT_SHADE_MODEL"), 16);
-		loggingLevel =  Level.parse(bgloopSetting.getProperty("LOGGING"));
+		log.setLevel(loggingLevel = Level.parse(bgloopSetting.getProperty("LOGGING")));
+		for(Handler h : log.getHandlers())
+			log.removeHandler(h);
+
+		Handler ch = new ConsoleHandler();
+		ch.setLevel(loggingLevel);
+		log.addHandler(ch);
 
 		t = bgloopSetting.getProperty("DEFAULT_OBJECT_RENDER_MODE");
-
 		if ("GLU".equals(t))
 			globalObjectRenderMode = Rendermodus.RENDER_GLU;
 		else if ("GL".equals(t))
