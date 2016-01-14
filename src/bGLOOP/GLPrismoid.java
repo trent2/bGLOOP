@@ -127,8 +127,6 @@ public class GLPrismoid extends TransformableSurfaceObject {
 
 		double lNorm = 0;
 		double lMAbschnitt = aHoehe / aKonzentrischeKreise;
-		boolean texturePresent = (gibTextur() != null) && gibTextur().isReady();
-
 
 		gl.glNewList(bufferName, GL2.GL_COMPILE);
 		for (int j = 0; j < aKonzentrischeKreise; j++) {
@@ -145,26 +143,24 @@ public class GLPrismoid extends TransformableSurfaceObject {
 				double rad2 = aRad1 + (j + 1) * (aRad2 - aRad1) / aKonzentrischeKreise;
 
 				if (!aMantelglaettung) {
-					lNorm = (x + x2) * (x+x2) + (y + y2) * (y + y2);
+					lNorm = (x + x2) * (x + x2) + (y + y2) * (y + y2);
 					gl.glNormal3d((x + x2) / lNorm, (y + y2) / lNorm, 0);
 				} else {
 					gl.glNormal3d(x, y, 0);
 				}
-				if(texturePresent)
-					gl.glTexCoord2d(i * mittelpunktswinkel / (2*PI), (double)j / aKonzentrischeKreise);
+				gl.glTexCoord2d(i * mittelpunktswinkel / (2 * PI), (double) j / aKonzentrischeKreise);
 				gl.glVertex3d(x * rad1, y * rad1, aHoehe / 2 - j * lMAbschnitt);
 
-				if(texturePresent)
-					gl.glTexCoord2d(i * mittelpunktswinkel / (2*PI), (j + 1.0) / aKonzentrischeKreise);
+				gl.glTexCoord2d(i * mittelpunktswinkel / (2 * PI), (j + 1.0) / aKonzentrischeKreise);
 				gl.glVertex3d(x * rad2, y * rad2, aHoehe / 2 - (j + 1) * lMAbschnitt);
 
 				if (!aMantelglaettung) {
 					gl.glNormal3d((x + x2) / lNorm, (y + y2) / lNorm, 0);
-					if(texturePresent)
-						gl.glTexCoord2d((i * mittelpunktswinkel + mittelpunktswinkel) / (2*PI), (double)j / aKonzentrischeKreise);
+					gl.glTexCoord2d((i * mittelpunktswinkel + mittelpunktswinkel) / (2 * PI),
+							(double) j / aKonzentrischeKreise);
 					gl.glVertex3d(x2 * rad1, y2 * rad1, aHoehe / 2 - j * lMAbschnitt);
-					if(texturePresent)
-						gl.glTexCoord2d((i * mittelpunktswinkel + mittelpunktswinkel) / (2*PI), (j + 1.0) / aKonzentrischeKreise);
+					gl.glTexCoord2d((i * mittelpunktswinkel + mittelpunktswinkel) / (2 * PI),
+							(j + 1.0) / aKonzentrischeKreise);
 					gl.glVertex3d(x2 * rad2, y2 * rad2, aHoehe / 2 - (j + 1) * lMAbschnitt);
 				}
 
@@ -176,14 +172,12 @@ public class GLPrismoid extends TransformableSurfaceObject {
 		if (aRad1 != 0) {
 			gl.glBegin(GL2.GL_TRIANGLE_FAN);
 			gl.glNormal3d(0, 0, 1);
-			if(texturePresent)
-				gl.glTexCoord2d(0.5, 0.5);
+			gl.glTexCoord2d(0.5, 0.5);
 			gl.glVertex3d(0, 0, aHoehe / 2);
 			for (int i = 0; i <= aEcken; i++) {
 				double x = sin(mittelpunktswinkel / 2 + i * mittelpunktswinkel);
 				double y = -cos(mittelpunktswinkel / 2 + i * mittelpunktswinkel);
-				if(texturePresent)
-					gl.glTexCoord2d(0.5 + x / 2, 0.5 - y / 2);
+				gl.glTexCoord2d(0.5 + x / 2, 0.5 - y / 2);
 				gl.glVertex3d(x * aRad1, y * aRad1, aHoehe / 2);
 			}
 			gl.glEnd();
@@ -191,14 +185,12 @@ public class GLPrismoid extends TransformableSurfaceObject {
 		if (aRad2 != 0) {
 			gl.glBegin(GL2.GL_TRIANGLE_FAN);
 			gl.glNormal3d(0, 0, -1);
-			if(texturePresent)
-				gl.glTexCoord2d(0.5, 0.5);
+			gl.glTexCoord2d(0.5, 0.5);
 			gl.glVertex3d(0.0, 0.0, -aHoehe / 2);
 			for (int i = aEcken; i >= 0; i--) {
 				double x = sin(mittelpunktswinkel / 2 + i * mittelpunktswinkel);
 				double y = -cos(mittelpunktswinkel / 2 + i * mittelpunktswinkel);
-				if(texturePresent)
-					gl.glTexCoord2d(0.5 + x / 2, 0.5 + y / 2);
+				gl.glTexCoord2d(0.5 + x / 2, 0.5 + y / 2);
 				gl.glVertex3d(x * aRad2, y * aRad2, -aHoehe / 2);
 			}
 			gl.glEnd();

@@ -1,8 +1,10 @@
 package bGLOOP;
 
 import java.util.logging.Logger;
-
 import com.jogamp.opengl.math.VectorUtil;
+import static java.lang.Math.sin;
+import static java.lang.Math.cos;
+import static java.lang.Math.toRadians;
 
 /** Klasse, die eine virtuelle Kamera beschreibt, die die 3D-Szene betrachtet.
  * Sie bietet eine Reihe von Diensten zur Manipultion der Kamera (wie etwas
@@ -19,13 +21,12 @@ public class GLKamera {
     Logger log = Logger.getLogger("bGLOOP");
 
 	private WindowConfig wconf;
-	boolean drawLookAt;
 
 	GLRenderer associatedRenderer;
 
-	double[] aPos = { 0, 0, 500 };
-	double[] aLookAt = { 0, 0, 0 };
-	double[] aUp = { 0, 1, 0 };
+	float[] aPos = { 0, 0, 500 };
+	float[] aLookAt = { 0, 0, 0 };
+	float[] aUp = { 0, 1, 0 };
 
 	/**
 	 * Erstellt eine bGLOOP-Kamera. Die Kamera öffnet ein Fenster mit den
@@ -121,9 +122,9 @@ public class GLKamera {
 	 * @param pZ z-Koordinate des Blickpunkts
 	 */
 	synchronized public void setzeBlickpunkt(double pX, double pY, double pZ) {
-		aLookAt[0] = pX;
-		aLookAt[1] = pY;
-		aLookAt[2] = pZ;
+		aLookAt[0] = (float)pX;
+		aLookAt[1] = (float)pY;
+		aLookAt[2] = (float)pZ;
 		associatedRenderer.scheduleRender();
 	}
 
@@ -134,9 +135,9 @@ public class GLKamera {
 	 * @param pZ z-Koordinate der Position
 	 */
 	synchronized public void setzePosition(double pX, double pY, double pZ) {
-		aPos[0] = pX;
-		aPos[1] = pY;
-		aPos[2] = pZ;
+		aPos[0] = (float)pX;
+		aPos[1] = (float)pY;
+		aPos[2] = (float)pZ;
 		associatedRenderer.scheduleRender();
 	}
 
@@ -145,17 +146,17 @@ public class GLKamera {
 	 */
 	synchronized public void dreheUmXAchse(double pWinkel) {
 		double s, c, t;
-		s = Math.sin(Math.toRadians(pWinkel));
-		c = Math.cos(Math.toRadians(pWinkel));
+		s = sin(toRadians(pWinkel));
+		c = cos(toRadians(pWinkel));
 
 		t = aPos[1];
 		// rotate around x-axis
-		aPos[1] = t * c - aPos[2] * s;
-		aPos[2] = aPos[2] * c + t * s;
+		aPos[1] = (float)(t * c - aPos[2] * s);
+		aPos[2] = (float)(aPos[2] * c + t * s);
 
 		t = aUp[1];
-		aUp[1] = t * c - aUp[2] * s;
-		aUp[2] = aUp[2] * c + t * s;
+		aUp[1] = (float)(t * c - aUp[2] * s);
+		aUp[2] = (float)(aUp[2] * c + t * s);
 
 		associatedRenderer.scheduleRender();
 	}
@@ -165,13 +166,13 @@ public class GLKamera {
 	 */
 	synchronized public void dreheUmYAchse(double pWinkel) {
 		double s, c, t;
-		s = Math.sin(Math.toRadians(pWinkel));
-		c = Math.cos(Math.toRadians(pWinkel));
+		s = sin(toRadians(pWinkel));
+		c = cos(toRadians(pWinkel));
 
 		t = aPos[0];
 		// rotate around y-axis
-		aPos[0] = t * c - aPos[2] * s;
-		aPos[2] = aPos[2] * c + t * s;
+		aPos[0] = (float)(t * c - aPos[2] * s);
+		aPos[2] = (float)(aPos[2] * c + t * s);
 
 		associatedRenderer.scheduleRender();
 	}
@@ -196,32 +197,6 @@ public class GLKamera {
 
 		
 	}
-
-	/*
-	 * public void rotiere_defekt(double pWinkel, double pPunktX, double
-	 * pPunktY, double pPunktZ, double pRichtungX, double pRichtungY, double
-	 * pRichtungZ) { double x = aPos[0], y = aPos[1], z = aPos[2]; double a =
-	 * pPunktX, b = pPunktY, c = pPunktZ; double n = Math.sqrt(pRichtungX *
-	 * pRichtungX + pRichtungY * pRichtungY + pRichtungZ * pRichtungZ); double u
-	 * = pRichtungX / n, v = pRichtungY / n, w = pRichtungZ / n;
-	 * 
-	 * aPos[0] = (a * (v * v + w * w) - u (b * v + c * w - u * x - v * y - w *
-	 * z)) (1 - Math.cos(pWinkel)) + x Math.cos(pWinkel) + (-c * v + b * w - w *
-	 * y + v * z) * Math.sin(pWinkel); aPos[1] = (a * (u * u + w * w) - v (a * u
-	 * + c * w - u * x - v * y - w * z)) (1 - Math.cos(pWinkel)) + y
-	 * Math.cos(pWinkel) + (c * u - a * w + w * x - u * z) * Math.sin(pWinkel);
-	 * aPos[2] = (v * (u * u + v * v) - w (a * u + b * v - u * x - v * y - w *
-	 * z)) (1 - Math.cos(pWinkel)) + z Math.cos(pWinkel) + (-b * u + a * v - v *
-	 * x + u * y) * Math.sin(pWinkel); x = aUp[0]; y = aUp[1]; z = aUp[2];
-	 * aUp[0] = (a * (v * v + w * w) - u (b * v + c * w - u * x - v * y - w *
-	 * z)) (1 - Math.cos(pWinkel)) + x Math.cos(pWinkel) + (-c * v + b * w - w *
-	 * y + v * z) * Math.sin(pWinkel); aUp[1] = (a * (u * u + w * w) - v (a * u
-	 * + c * w - u * x - v * y - w * z)) (1 - Math.cos(pWinkel)) + y
-	 * Math.cos(pWinkel) + (c * u - a * w + w * x - u * z) * Math.sin(pWinkel);
-	 * aUp[2] = (v * (u * u + v * v) - w (a * u + b * v - u * x - v * y - w *
-	 * z)) (1 - Math.cos(pWinkel)) + z Math.cos(pWinkel) + (-b * u + a * v - v *
-	 * x + u * y) * Math.sin(pWinkel); renderer.scheduleRender(); }
-	 */
 
 	/**
 	 * Aktiviert oder deaktiviert den Vollbildmodus des Anzeigefensters. <br>
@@ -271,7 +246,7 @@ public class GLKamera {
 	 *            angezeigt, wenn <code>false</code>, dann nicht.
 	 */
 	public synchronized void zeigeBlickpunkt(boolean pBlickpunktZeichnen) {
-		drawLookAt = pBlickpunktZeichnen;
+		wconf.aDrawLookAt = pBlickpunktZeichnen;
 		associatedRenderer.scheduleRender();
 	}
 	
@@ -311,20 +286,13 @@ public class GLKamera {
 	 */
 	synchronized public void vor(double pSchrittweite) {
 		float[] dir = new float[3];
-		float[] pos = { (float) this.aPos[0], (float) this.aPos[1], (float) this.aPos[2] };
-		float[] lookAt = { (float) this.aLookAt[0], (float) this.aLookAt[1], (float) this.aLookAt[2] };
 
-		VectorUtil.subVec3(dir, lookAt, pos);
+		VectorUtil.subVec3(dir, aLookAt, aPos);
 		VectorUtil.normalizeVec3(dir);
 		VectorUtil.scaleVec3(dir, dir, (float) pSchrittweite);
-		VectorUtil.addVec3(pos, pos, dir);
-		VectorUtil.addVec3(lookAt, lookAt, dir);
-		this.aPos[0] = pos[0];
-		this.aPos[1] = pos[1];
-		this.aPos[2] = pos[2];
-		this.aLookAt[0] = lookAt[0];
-		this.aLookAt[1] = lookAt[1];
-		this.aLookAt[2] = lookAt[2];
+		VectorUtil.addVec3(aPos, aPos, dir);
+		VectorUtil.addVec3(aLookAt, aLookAt, dir);
+
 		associatedRenderer.scheduleRender();
 	}
 

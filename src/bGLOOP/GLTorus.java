@@ -78,8 +78,6 @@ public class GLTorus extends TransformableSurfaceObject {
 	@Override
 	void generateDisplayList_GL(GL2 gl) {
 		double lxy, lz;
-		
-		boolean texturePresent = (gibTextur() != null) && gibTextur().isReady();
 
 		float qStrip = (float) (2 * PI / conf.yDivision);
 		float qRound = (float) (2 * PI / conf.xDivision);
@@ -94,16 +92,14 @@ public class GLTorus extends TransformableSurfaceObject {
 			gl.glBegin(GL2.GL_QUAD_STRIP);
 			for (int j = 0; j <= conf.yDivision; j++) {
 				lxy = cos(j * qStrip);
-				lz  = sin(j * qStrip);
+				lz = sin(j * qStrip);
 
 				gl.glNormal3d(lxy * ring1X, lxy * ring1Y, lz);
-				if (texturePresent)
-					gl.glTexCoord2d(1f * i / conf.xDivision, 1f * j / conf.yDivision);
+				gl.glTexCoord2d(1f * i / conf.xDivision, 1f * j / conf.yDivision);
 				gl.glVertex3d(ring1X * (aRadA + lxy * aRadQ), ring1Y * (aRadA + lxy * aRadQ), lz * aRadQ);
 
 				gl.glNormal3d(lxy * ring2X, lxy * ring2Y, lz);
-				if (texturePresent)
-					gl.glTexCoord2d(1f * (i+1) / conf.xDivision, 1f * j / conf.yDivision);
+				gl.glTexCoord2d(1f * (i + 1) / conf.xDivision, 1f * j / conf.yDivision);
 				gl.glVertex3d(ring2X * (aRadA + lxy * aRadQ), ring2Y * (aRadA + lxy * aRadQ), lz * aRadQ);
 			}
 			gl.glEnd();

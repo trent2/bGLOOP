@@ -77,18 +77,19 @@ public class GLSchwenkkamera extends GLKamera {
 
 	private void addMouseListener() {
 		associatedRenderer.getWindow().addMouseListener(new MouseListenerFacade() {
-			private Quaternion p = new Quaternion(), trl = new Quaternion();
+			private final Quaternion p = new Quaternion(),  trl = new Quaternion();
 			private float[] rotAxisUp = new float[3], tempVec = new float[3], rotAxisRight = new float[3];
 
 			float[] oldDir = new float[3];
 			int xstart, ystart;
-			double[] aPrevPos, aPrevUp;
+			float[] aPrevPos, aPrevUp;
+
 			@Override
 			public void handleMouseWheel(float wheelRotation) {
 				synchronized (GLSchwenkkamera.this) {
 					float[] dir = new float[3];
-					float[] pos = { (float) aPos[0], (float) aPos[1], (float) aPos[2] };
-					float[] lookAt = { (float) aLookAt[0], (float) aLookAt[1], (float) aLookAt[2] };
+					float[] pos = aPos.clone();
+					float[] lookAt = aLookAt.clone();
 
 					VectorUtil.subVec3(dir, pos, lookAt);
 					VectorUtil.normalizeVec3(dir);
@@ -106,47 +107,51 @@ public class GLSchwenkkamera extends GLKamera {
 			
 			@Override
 			public void handleMousePressed(boolean button1, boolean button3, int x, int y) {
-				if(button1 | button3) {
+				if(button1 || button3) {
 					xstart = x;
 					ystart = y;
 					aPrevPos = aPos.clone();
 					aPrevUp = aUp.clone();
+					/*
+					getWconf().aDrawRotAxis = button1;
+					associatedRenderer.scheduleRender();
+					*/
 				}
 			}
 			
 			@Override
 			public void handleMouseDragged(boolean button1, boolean button3, int x, int y) {
 				if (button1 || button3) {
-					trl.set((float) aLookAt[0], (float) aLookAt[1], (float) aLookAt[2], 0);
+					trl.set(aLookAt[0], aLookAt[1], aLookAt[2], 0);
 					synchronized (GLSchwenkkamera.this) {
 						if (button1) {
 							// rotate camera position around up vector through aLookAt
-							rotAxisUp[0] = (float) aPrevUp[0];
-							rotAxisUp[1] = (float) aPrevUp[1];
-							rotAxisUp[2] = (float) aPrevUp[2];
+							rotAxisUp[0] = aPrevUp[0];
+							rotAxisUp[1] = aPrevUp[1];
+							rotAxisUp[2] = aPrevUp[2];
 							VectorUtil.normalizeVec3(rotAxisUp);
 
-							p.set((float) aPrevPos[0], (float) aPrevPos[1], (float) aPrevPos[2], 0).subtract(trl)
-							.rotateByAngleNormalAxis((float) toRadians(x - xstart), rotAxisUp[0], rotAxisUp[1],
-									rotAxisUp[2]).add(trl);
+							p.set(aPrevPos[0], aPrevPos[1],aPrevPos[2], 0).subtract(trl)
+							.rotateByAngleNormalAxis((float) toRadians(x - xstart),
+									rotAxisUp[0], rotAxisUp[1], rotAxisUp[2]).add(trl);
 
 							// rotate camera position around right vector through aLookAt
-							tempVec[0] = (float) (aLookAt[0] - p.getX());
-							tempVec[1] = (float) (aLookAt[1] - p.getY());
-							tempVec[2] = (float) (aLookAt[2] - p.getZ());
+							tempVec[0] = aLookAt[0] - p.getX();
+							tempVec[1] = aLookAt[1] - p.getY();
+							tempVec[2] = aLookAt[2] - p.getZ();
 							VectorUtil.crossVec3(rotAxisRight, rotAxisUp, tempVec);
 							VectorUtil.normalizeVec3(rotAxisRight);
 
-							p.subtract(trl).rotateByAngleNormalAxis((float) toRadians(y - ystart), rotAxisRight[0],
-									rotAxisRight[1], rotAxisRight[2]).add(trl);
+							p.subtract(trl).rotateByAngleNormalAxis((float) toRadians(ystart - y),
+									rotAxisRight[0], rotAxisRight[1], rotAxisRight[2]).add(trl);
 							aPos[0] = p.getX();
 							aPos[1] = p.getY();
 							aPos[2] = p.getZ();							
 
 							//--- rotate up vector, rotation is only necessary around the right axis --------------
-							p.set((float) aPrevUp[0], (float) aPrevUp[1], (float) aPrevUp[2], 0)
-									.rotateByAngleNormalAxis((float) toRadians(y - ystart), rotAxisRight[0],
-											rotAxisRight[1], rotAxisRight[2]);
+							p.set(aPrevUp[0], aPrevUp[1], aPrevUp[2], 0)
+									.rotateByAngleNormalAxis((float) toRadians(ystart - y),
+											rotAxisRight[0], rotAxisRight[1], rotAxisRight[2]);
 							aUp[0] = p.getX();
 							aUp[1] = p.getY();
 							aUp[2] = p.getZ();
@@ -154,13 +159,13 @@ public class GLSchwenkkamera extends GLKamera {
 							associatedRenderer.scheduleRender();
 						} else if (button3) {
 							// rotate around lookAt to camera axis
-							rotAxisUp[0] = (float)(aLookAt[0] - aPrevPos[0]);
-							rotAxisUp[1] = (float)(aLookAt[1] - aPrevPos[1]);
-							rotAxisUp[2] = (float)(aLookAt[2] - aPrevPos[2]);
+							rotAxisUp[0] = aLookAt[0] - aPrevPos[0];
+							rotAxisUp[1] = aLookAt[1] - aPrevPos[1];
+							rotAxisUp[2] = aLookAt[2] - aPrevPos[2];
 							VectorUtil.normalizeVec3(rotAxisUp);
-							p.set((float) aPrevUp[0], (float)aPrevUp[1],
-									(float) aPrevUp[2], 0);
-							p.rotateByAngleNormalAxis((float) toRadians(xstart-x), rotAxisUp[0], rotAxisUp[1], rotAxisUp[2]);
+							p.set(aPrevUp[0], aPrevUp[1],
+									aPrevUp[2], 0);
+							p.rotateByAngleNormalAxis((float) toRadians(xstart - x), rotAxisUp[0], rotAxisUp[1], rotAxisUp[2]);
 							aUp[0] = p.getX();
 							aUp[1] = p.getY();
 							aUp[2] = p.getZ();
@@ -189,7 +194,12 @@ public class GLSchwenkkamera extends GLKamera {
 			public void handleMouseMoved(int x, int y) { }
 
 			@Override
-			public void handleMouseReleased(boolean button1, boolean button3) { }
+			public void handleMouseReleased(boolean button1, boolean button3) {
+				/*
+				getWconf().aDrawRotAxis = false;
+				associatedRenderer.scheduleRender();
+				*/
+			}
 		});
 	}
 
@@ -252,12 +262,9 @@ public class GLSchwenkkamera extends GLKamera {
 
 			private void computeVectorLeft() {
 				float[] dir = new float[3];
-				float[] pos = { (float) aPos[0], (float) aPos[1], (float) aPos[2] };
-				float[] lookAt = { (float) aLookAt[0], (float) aLookAt[1], (float) aLookAt[2] };
-				float[] up =  { (float) aUp[0], (float) aUp[1], (float) aUp[2] };
 
-				VectorUtil.subVec3(dir, lookAt, pos);
-				VectorUtil.crossVec3(aLeft, up, dir);
+				VectorUtil.subVec3(dir, aLookAt, aPos);
+				VectorUtil.crossVec3(aLeft, aUp, dir);
 				VectorUtil.normalizeVec3(aLeft);
 			}
 

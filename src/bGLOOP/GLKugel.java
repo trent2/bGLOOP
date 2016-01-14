@@ -18,7 +18,7 @@ import com.jogamp.opengl.glu.GLU;
  * 
  * @author R. Spillner
  */
-public class GLKugel extends TransformableSurfaceObject {
+public final class GLKugel extends TransformableSurfaceObject {
 	private double aRad;
 	private FloatBuffer fb;
 	private int[] firstOffsets, countOffsets;
@@ -63,6 +63,7 @@ public class GLKugel extends TransformableSurfaceObject {
 			throw new IllegalArgumentException("Der Radius darf nicht negativ sein!");
 		verschiebe(pMX, pMY, pMZ);
 		aRad = pRadius;
+		log.fine("sphere created:" + hashCode());
 		aVisible = true;
 	}
 
@@ -80,13 +81,12 @@ public class GLKugel extends TransformableSurfaceObject {
 	@Override
 	void generateDisplayList_GL(GL2 gl) {
 		double lX, lZ;
-		boolean texturePresent = (gibTextur() != null) && gibTextur().isReady();
 		float qx = (float) (PI / conf.xDivision);
 		float qy = (float) (2 * PI / conf.yDivision);
 
 		gl.glNewList(bufferName, GL2.GL_COMPILE);
-		double ring1Y = 1, ring1X = 0, ring2Y, ring2X; 
-		for (int i = 0; i < conf.xDivision; ++i) { // conf.xDivision; i++) {
+		double ring1Y = 1, ring1X = 0, ring2Y, ring2X;
+		for (int i = 0; i < conf.xDivision; ++i) {
 			ring2Y = cos((i + 1) * qx);
 			ring2X = sin((i + 1) * qx);
 
@@ -98,16 +98,14 @@ public class GLKugel extends TransformableSurfaceObject {
 
 				// first vertex of the quad is the third of the previous
 				gl.glNormal3d(lX * ring1X, lZ * ring1X, ring1Y);
-				if (texturePresent)
-					gl.glTexCoord2d(1.0 * (conf.yDivision - j) / conf.yDivision,
-							1.0 * (conf.yDivision - i) / conf.yDivision);
+				gl.glTexCoord2d(1.0 * (conf.yDivision - j) / conf.yDivision,
+						1.0 * (conf.yDivision - i) / conf.yDivision);
 				gl.glVertex3d(lX * aRad * ring1X, lZ * aRad * ring1X, ring1Y * aRad);
 
 				// second vertex of the quad is the fourth of the previous
 				gl.glNormal3d(lX * ring2X, lZ * ring2X, ring2Y);
-				if (texturePresent)
-					gl.glTexCoord2d(1.0 * (conf.yDivision - j) / conf.yDivision,
-							1.0 * (conf.yDivision - i - 1) / conf.yDivision);
+				gl.glTexCoord2d(1.0 * (conf.yDivision - j) / conf.yDivision,
+						1.0 * (conf.yDivision - i - 1) / conf.yDivision);
 				gl.glVertex3d(lX * aRad * ring2X, lZ * aRad * ring2X, ring2Y * aRad);
 			}
 			gl.glEnd();

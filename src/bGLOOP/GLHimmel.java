@@ -1,10 +1,11 @@
 package bGLOOP;
 
+import static java.lang.Math.PI;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
+
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
-import static java.lang.Math.PI;
-import static java.lang.Math.sin;
-import static java.lang.Math.cos;
 
 /**
  * Sichtbarer Himmel in einer Szene. Die Darstellung erfolgt durch das
@@ -29,12 +30,7 @@ public class GLHimmel extends GLObjekt implements IGLSurface {
 
 		aTex = (pTextur == null ? GLTextur.NULL_TEXTURE : pTextur);
 		associatedRenderer.addObjectToRenderMap(aTex, this);
-		/*
-		if (aTex != null)
-			associatedRenderer.addObjectToTextureMap(aTex.aTexturImpl, this, null);
-		else
-			associatedRenderer.getNoTextureItemList().add(this);
-		*/
+		log.fine("sky created");
 
 		aVisible = true;
 	}
@@ -50,9 +46,7 @@ public class GLHimmel extends GLObjekt implements IGLSurface {
 			// the GLHimmel sphere is permanently moved to the position of the
 			// camera.
 			// therefore it is displayed all the time
-
 			gl.glDisable(GL2.GL_DEPTH_TEST);
-			// gl.glDisable(GL2.GL_CULL_FACE);
 			gl.glCullFace(GL2.GL_FRONT);
 			gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
 			gl.glTranslated(associatedCam.aPos[0], associatedCam.aPos[1], associatedCam.aPos[2]);
@@ -82,6 +76,7 @@ public class GLHimmel extends GLObjekt implements IGLSurface {
 			gl.glEnable(GL2.GL_DEPTH_TEST);
 			gl.glCullFace(GL2.GL_BACK);
 			gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
+			log.info("redrawing " + getClass().getName() + ":" + hashCode() );
 		}
 	}
 

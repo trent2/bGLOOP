@@ -1,5 +1,7 @@
 package bGLOOP;
 
+import java.util.logging.Logger;
+
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 
@@ -19,6 +21,7 @@ public class GLLicht extends DisplayItem implements IGLColorable {
 	private float[] attenuation = { 1, 0, 0 };
 	private float[] lightDiffusePosition;
 	private boolean isOn = true;
+	private Logger log = Logger.getLogger("bGLOOP");
 
 	/** Eine Lichtquelle an der Position <code>L(pX, pY, pZ)</code>
 	 * 
@@ -32,6 +35,7 @@ public class GLLicht extends DisplayItem implements IGLColorable {
 		associatedCam = GLKamera.aktiveKamera();
 
 		(associatedRenderer = associatedCam.associatedRenderer).addObjectToRenderMap(GLTextur.NULL_TEXTURE, this);
+		log.fine("light created");
 		aVisible = true;
 	}
 
@@ -106,6 +110,7 @@ public class GLLicht extends DisplayItem implements IGLColorable {
 			gl.glLightf(LIGHT_NUMS[id], GL2.GL_LINEAR_ATTENUATION, attenuation[1]);
 			gl.glLightf(LIGHT_NUMS[id], GL2.GL_QUADRATIC_ATTENUATION, attenuation[2]);
 			gl.glEnable(LIGHT_NUMS[id]);
+			log.fine("rendering light " + id);
 		} else
 			gl.glDisable(LIGHT_NUMS[id]);
 	}

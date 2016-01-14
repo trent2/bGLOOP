@@ -92,7 +92,7 @@ class GLRenderer implements GLEventListener {
 
 	// remove oldImpl from map
 	void updateObjectRenderMap(GLTextur tex, DisplayItem di, GLTextur oldTex) {
-		if ((di instanceof GLHimmel))  // treat sky separately
+		if (di instanceof GLHimmel)  // treat sky separately
 			sky = (GLHimmel)di;
 		else {
 			CopyOnWriteArrayList<DisplayItem> dil;
@@ -187,10 +187,10 @@ class GLRenderer implements GLEventListener {
 	@Override
 	public void display(GLAutoDrawable drawable) {
 		if (window_rendering_needed > 0) {
+			log.fine("render scene , run " + window_rendering_needed);
 			renderScene(drawable.getGL().getGL2());
 
 			window_rendering_needed--;
-			log.fine("Scene rendered " + window_rendering_needed);
 		}
 		updateFPSView();
 
@@ -254,9 +254,12 @@ class GLRenderer implements GLEventListener {
 				if (tImp.isReady()) {
 					tImp.getTexture().enable(gl);
 					tImp.getTexture().bind(gl);
+					log.fine("enabling texture " + tImp.aTexFile);
 				}
-				if (sky.aVisible)
-					sky.render(gl, glu);
+			}
+			if (sky.aVisible) {
+				log.fine("render sky");
+				sky.render(gl, glu);
 			}
 		}
 
@@ -269,7 +272,9 @@ class GLRenderer implements GLEventListener {
 			if (tImp.isReady()) {
 				tImp.getTexture().enable(gl);
 				tImp.getTexture().bind(gl);
-			}
+				log.fine("enabling texture " + tImp.aTexFile);
+			} else
+				gl.glDisable(GL2.GL_TEXTURE_2D);
 
 			// render intransparent objects
 			if ((lit = entry.getValue().listIterator()).hasNext()) {
@@ -280,8 +285,6 @@ class GLRenderer implements GLEventListener {
 					transparencyIteratorMap.put(tImp, lit);
 				}
 			}
-			if (tImp.isReady())
-				tImp.disable(gl);
 		}
 
 		for(Map.Entry<GLTextureImpl,ListIterator<DisplayItem>> entry : transparencyIteratorMap.entrySet()) {
@@ -290,14 +293,14 @@ class GLRenderer implements GLEventListener {
 			if (tImp.isReady()) {
 				tImp.getTexture().enable(gl);
 				tImp.getTexture().bind(gl);
-			}
+				log.fine("enabling texture " + tImp.aTexFile);
+			} else
+				gl.glDisable(GL2.GL_TEXTURE_2D);
+
 			// render transparent objects
 			lit = entry.getValue();
 			while(lit.hasNext())
 				lit.next().render(gl, glu);
-
-			if (tImp.isReady())
-				tImp.disable(gl);
 		}
 		gl.glDisable(GL2.GL_TEXTURE_2D);
 
@@ -380,12 +383,56 @@ class GLRenderer implements GLEventListener {
 	private void renderPostObjects(GL2 gl, GLU glu) {
 		if (wconf.aDisplayAxes)
 			drawAxes(gl);
-		if (aCam.drawLookAt)
+		if (wconf.aDrawLookAt)
 			drawLookAt(gl);
+		/*
+		if(wconf.aDrawRotAxis)
+			drawRotAxis(gl);
+		*/
 	}
 
-	private void drawAxes(GL2 gl) {
+/*
+	private void drawRotAxis(GL2 gl) {
+		float[][] dirVec = new float[2][3];
+		float[] currPos = new float[3];		
 		double axesLength = wconf.axesLength;
+
+		VectorUtil.subVec3(currPos, aCam.aPos, aCam.aLookAt);
+		VectorUtil.crossVec3(dirVec[0], aCam.aUp, currPos);
+		VectorUtil.normalizeVec3(dirVec[0]);
+		VectorUtil.scaleVec3(dirVec[0], dirVec[0], 10);
+		dirVec[1] = aCam.aUp.clone();
+		VectorUtil.normalizeVec3(dirVec[1]);
+		VectorUtil.scaleVec3(dirVec[1], dirVec[1], 10);
+
+		gl.glDisable(GL2.GL_LIGHTING);
+		gl.glEnable(GL2.GL_COLOR_MATERIAL);
+		gl.glDisable(GL2.GL_TEXTURE_2D);
+		gl.glPolygonMode(GL2.GL_FRONT_AND_BACK, GL2.GL_LINE);
+		gl.glLineWidth(1);
+		for (int k = 0; k < 2; ++k) {
+			currPos = aCam.aLookAt.clone();
+			gl.glBegin(GL2.GL_LINE_STRIP);
+			for (int i = 0; i < axesLength; i += 10) {
+				gl.glColor3f((i / 10) % 2, (i / 10) % 2, (i / 10) % 2);
+				gl.glVertex3fv(currPos, 0);
+				VectorUtil.addVec3(currPos, currPos, dirVec[k]);
+				gl.glVertex3fv(currPos, 0);
+			}
+			gl.glEnd();
+		}
+
+		if (wconf.globalLighting)
+			gl.glEnable(GL2.GL_LIGHTING);
+
+		gl.glDisable(GL2.GL_COLOR_MATERIAL);
+		gl.glLineWidth(wconf.wireframeLineWidth);
+	}
+*/
+
+	private void drawAxes(GL2 gl) {
+		double axesLength = Math.ceil(wconf.axesLength/20)*20;
+		
 		gl.glDisable(GL2.GL_LIGHTING);
 		gl.glEnable(GL2.GL_COLOR_MATERIAL);
 		gl.glDisable(GL2.GL_TEXTURE_2D);
@@ -393,10 +440,9 @@ class GLRenderer implements GLEventListener {
 		gl.glLineWidth(wconf.axesWidth);
 		gl.glBegin(GL2.GL_LINE_STRIP);
 		for (int i = 0; i < axesLength; i += 20) {
-			gl.glColor3f(1, 1, 1);
+			gl.glColor3f(1,(i/20)%2,(i/20)%2);
 			gl.glVertex3f(i, 0, 0);
-			gl.glColor3f(1, 0, 0);
-			gl.glVertex3f(i + 1, 0, 0);
+			gl.glVertex3f(i + 20, 0, 0);
 		}
 		gl.glColor3f(1, 1, 1);
 		gl.glVertex3f((float) axesLength, 0, 0);
@@ -405,12 +451,11 @@ class GLRenderer implements GLEventListener {
 		gl.glVertex3f((float) axesLength - 20, 10, 0);
 		gl.glEnd();
 
-		gl.glBegin(3);
+		gl.glBegin(GL2.GL_LINE_STRIP);
 		for (int i = 0; i < axesLength; i += 20) {
-			gl.glColor3f(1, 1, 1);
+			gl.glColor3f((i/20)%2, 1, (i/20)%2);
 			gl.glVertex3f(0, i, 0);
-			gl.glColor3f(0, 1, 0);
-			gl.glVertex3f(0, i + 1, 0);
+			gl.glVertex3f(0, i + 20, 0);
 		}
 		gl.glColor3f(1, 1, 1);
 		gl.glVertex3f(0, (float) axesLength, 0);
@@ -419,12 +464,11 @@ class GLRenderer implements GLEventListener {
 		gl.glVertex3f(-10, (float) axesLength - 20, 0);
 		gl.glEnd();
 
-		gl.glBegin(3);
+		gl.glBegin(GL2.GL_LINE_STRIP);
 		for (int i = 0; i < axesLength; i += 20) {
-			gl.glColor3f(1, 1, 1);
+			gl.glColor3f((i/20)%2, (i/20)%2, 1);
 			gl.glVertex3f(0, 0, i);
-			gl.glColor3f(0, 0, 1);
-			gl.glVertex3f(0, 0, i + 1);
+			gl.glVertex3f(0, 0, i + 20);
 		}
 		gl.glColor3f(1, 1, 1);
 		gl.glVertex3f(0, 0, (float) axesLength);

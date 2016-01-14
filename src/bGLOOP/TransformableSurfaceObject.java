@@ -1,7 +1,5 @@
 package bGLOOP;
 
-import java.util.logging.Level;
-
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 
@@ -15,10 +13,8 @@ abstract class TransformableSurfaceObject extends TransformableObject implements
 
 	TransformableSurfaceObject(GLTextur pTex) {
 		super();
-
 		aTex = (pTex == null ? GLTextur.NULL_TEXTURE : pTex);
 		associatedRenderer.addObjectToRenderMap(aTex, this);
-		
 	}
 
 	@Override
@@ -72,7 +68,7 @@ abstract class TransformableSurfaceObject extends TransformableObject implements
 		// now transform the object accordingly
 		gl.glMultMatrixf(transformationMatrix.getMatrix(), 0);
 		if (needsRedraw) {
-			log.log(Level.INFO, "Redraw scene");
+			log.info("redrawing " + getClass().getName() + ":" + hashCode() );
 
 			switch (conf.objectRenderMode) {
 			case RENDER_GLU:
@@ -93,6 +89,7 @@ abstract class TransformableSurfaceObject extends TransformableObject implements
 
 			needsRedraw = false;
 		}
+		log.fine("rendering " + getClass().getName() + ":" + hashCode() );
 		switch (conf.objectRenderMode) {
 		case RENDER_GL:
 		case RENDER_GLU:

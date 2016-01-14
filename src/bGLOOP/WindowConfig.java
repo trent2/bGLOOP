@@ -6,9 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
-import java.util.logging.ConsoleHandler;
-import java.util.logging.Handler;
 import java.util.logging.Level;
+import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
 import bGLOOP.GLObjekt.Darstellungsmodus;
@@ -23,6 +22,7 @@ import bGLOOP.GLObjekt.Rendermodus;
  * @author Robert Spillner
  */
 class WindowConfig {
+
 	/**
 	 * Configuration object for initialization of the camera when no tampering
 	 * with the camera's WindowConfig object has been done before
@@ -48,14 +48,21 @@ class WindowConfig {
 	Level loggingLevel;
 	Darstellungsmodus globalDrawMode = Darstellungsmodus.FUELLEN;
 	int globalShadeModel = 0x1D01; // GL_SMOOTH
+	// boolean aDrawRotAxis = false;
 	Rendermodus globalObjectRenderMode = Rendermodus.RENDER_GLU;
 	boolean globalLighting = true, aDisplayAxes = false, aWireframe = false,
-			doubleBuffering = true;
+			doubleBuffering = true, aDrawLookAt = false;
 
 	long clickTimeRange, moveTimeRange;
 	String screenshotFormat, screenshotPrefix;
 
 	WindowConfig() {
+		try {
+			LogManager.getLogManager().readConfiguration(getClass().getResourceAsStream("/log.properties"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
 		InputStream defaultSettings;
 		File userFileName;
 		bgloopSetting = new Properties();
@@ -99,12 +106,6 @@ class WindowConfig {
 
 		globalShadeModel = Integer.parseInt(bgloopSetting.getProperty("DEFAULT_SHADE_MODEL"), 16);
 		log.setLevel(loggingLevel = Level.parse(bgloopSetting.getProperty("LOGGING")));
-		for(Handler h : log.getHandlers())
-			log.removeHandler(h);
-
-		Handler ch = new ConsoleHandler();
-		ch.setLevel(loggingLevel);
-		log.addHandler(ch);
 
 		t = bgloopSetting.getProperty("DEFAULT_OBJECT_RENDER_MODE");
 		if ("GLU".equals(t))

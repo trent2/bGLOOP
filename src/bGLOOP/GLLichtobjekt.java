@@ -1,5 +1,7 @@
 package bGLOOP;
 
+import java.util.logging.Logger;
+
 import bGLOOP.GLObjekt.Darstellungsmodus;
 
 /** <p>Ein GLLichtobjekt ein normales bGLOOP-Objekt, das leuchtet. Dies kann
@@ -20,6 +22,7 @@ import bGLOOP.GLObjekt.Darstellungsmodus;
  */
 public class GLLichtobjekt
  implements IGLTransformierbar, IGLDisplayable, IGLSubdivisable, IGLSurface, IGLColorable {
+	private Logger log = Logger.getLogger("bGLOOP");
 	// designed after the Decorator pattern, see
 	// GoF, Design Patterns, Addison Wesley
 	private TransformableSurfaceObject aLichtobjekt;
@@ -43,6 +46,7 @@ public class GLLichtobjekt
 
 		// make aLichtobjekt emitting light
 		aLichtobjekt.aEmission = aLichtobjekt.aDiffuse;
+		log.fine("light object created");
 	}
 
 	@Override

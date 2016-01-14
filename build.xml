@@ -73,6 +73,7 @@ package bGLOOP;
 				<attribute name="Implementation-Vendor" value="Robert Spillner" />
 			</manifest>
 			<fileset file="src/.bgloop" />
+			<fileset file="src/log.properties" />
 			<fileset dir="build/classes" />
 		</jar>
 		<echo message="Building built ${build.number}" />

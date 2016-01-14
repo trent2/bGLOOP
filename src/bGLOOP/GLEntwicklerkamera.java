@@ -73,7 +73,7 @@ public class GLEntwicklerkamera extends GLSchwenkkamera {
 					zeigeAchsen(!getWconf().aDisplayAxes);
 					break; // "zeigeAchsen" does a scheduleRender()
 				case 'b':  // show axis
-					zeigeBlickpunkt(!drawLookAt);
+					zeigeBlickpunkt(!getWconf().aDrawLookAt);
 					break; // "zeigeAchsen" does a scheduleRender()
 				case 'g':  // wireframe
 					synchronized (GLEntwicklerkamera.this) {

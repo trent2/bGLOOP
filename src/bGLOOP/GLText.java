@@ -74,8 +74,9 @@ public class GLText extends TransformableObject implements IGLColorable {
 	}
 
 	/** Legt die Größe des Randes der Hintergrundtafel fest.
-	 * Standardmäßig ist dies 3.
-	 * @param pRand
+	 * Standardmäßig ist dies 3. Dabei ist der Abstand vom Text zum
+	 * Tafelrand gemeint.
+	 * @param pRand Abstand des Textes vom Rand der Hintergrundtafel
 	 */
 	public synchronized void setzeTafelrand(double pRand) {
 		if(aBorderSize != (aBorderSize = pRand)) {
