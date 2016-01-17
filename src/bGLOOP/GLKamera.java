@@ -125,6 +125,7 @@ public class GLKamera {
 		aLookAt[0] = (float)pX;
 		aLookAt[1] = (float)pY;
 		aLookAt[2] = (float)pZ;
+		computeUpVector();
 		associatedRenderer.scheduleRender();
 	}
 
@@ -138,6 +139,7 @@ public class GLKamera {
 		aPos[0] = (float)pX;
 		aPos[1] = (float)pY;
 		aPos[2] = (float)pZ;
+		computeUpVector();
 		associatedRenderer.scheduleRender();
 	}
 
@@ -368,15 +370,22 @@ public class GLKamera {
 		associatedRenderer.scheduleScreenshot(pDateiname);
 	}
 
-	/* The method computes sum of the squared length of the up vector and the
-	 * scalar product of the lookAt vector with the up vector. If all is
+	/* The method the scalar product of the lookAt vector with the up vector. If all is
 	 * good, this should be very close to 0. 
 	 * If checkCameraVectors() > 2 * FloatUtil.EPSILON, the camera vectors
 	 * are considered to be faulty. The float's epsilon is used, because the
-	 * values are converted to single point precision when rotating. 
+	 * aPos, aLookAt, and aUp are float vectors. 
 	 */
 	double checkCameraVectors() {
-		return aUp[0] * aUp[0] + aUp[1] * aUp[1] + aUp[2] * aUp[2] + Math.abs(
-				aUp[0] * (aPos[0] - aLookAt[0]) + aUp[1] * (aPos[1] - aLookAt[1]) + aUp[2] * (aPos[2] - aLookAt[2]));
+		return Math.abs(aUp[0] * (aPos[0] - aLookAt[0]) + aUp[1] * (aPos[1] - aLookAt[1]) + aUp[2] * (aPos[2] - aLookAt[2]));
+	}
+
+	private void computeUpVector() {
+		final float res[] = new float[3];
+		VectorUtil.subVec3(aPos, aPos, aLookAt);
+		VectorUtil.crossVec3(res, aUp, aPos);
+		VectorUtil.crossVec3(aUp, aPos, res);
+		VectorUtil.normalizeVec3(aUp);
+		VectorUtil.addVec3(aPos, aPos, aLookAt);
 	}
 }

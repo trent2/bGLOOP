@@ -20,11 +20,11 @@ public class GLText extends TransformableObject implements IGLColorable {
 	private boolean aAutoRotation = false, aBgr = false, aCenter = false;
 	// matrix for centering the text and auto rotating
 	private Matrix4 autoPositionMatrix = new Matrix4();
-//    private Logger log = Logger.getLogger(getClass().getName());
-    private double aFSize, aBorderSize = 3;
-    private static final int MAX_FONT_RENDER_SIZE = 72;
-	private static final TextRenderer textWriter = 
-			new TextRenderer(new Font("Serif", Font.PLAIN, MAX_FONT_RENDER_SIZE), true, true);
+	// private Logger log = Logger.getLogger(getClass().getName());
+	private double aFSize, aBorderSize = 3;
+	private static final int MAX_FONT_RENDER_SIZE = 72;
+	private static final TextRenderer textWriter =
+		new TextRenderer(new Font("Serif", Font.PLAIN, MAX_FONT_RENDER_SIZE), true, true);
 	private int bufferName = -1;
 	private float[] aTextColor = {1, 1, 1, 1};
 
@@ -259,13 +259,12 @@ public class GLText extends TransformableObject implements IGLColorable {
 		 * (float)(associatedCam.aPos[1]-tM[13]),
 		 * (float)(associatedCam.aPos[2]-tM[14]) };
 		 */
-		float[] v3 = { (float) (associatedCam.aPos[0] - associatedCam.aLookAt[0]),
-				(float) (associatedCam.aPos[1] - associatedCam.aLookAt[1]),
-				(float) (associatedCam.aPos[2] - associatedCam.aLookAt[2]) };
-
+		float[] v3 = new float[3];
+		VectorUtil.subVec3(v3, associatedCam.aPos, associatedCam.aLookAt);
 		VectorUtil.normalizeVec3(v3);
 
-		float[] v2 = { (float) associatedCam.aUp[0], (float) associatedCam.aUp[1], (float) associatedCam.aUp[2] };
+		float[] v2 = associatedCam.aUp.clone();
+
 		float[] t = new float[3];
 		VectorUtil.scaleVec3(t, v3, VectorUtil.dotVec3(v2, v3));
 		VectorUtil.subVec3(v2, v2, t);

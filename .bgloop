@@ -79,4 +79,5 @@ SCREENSHOT_FILE_PREFIX = bgloop-screenshot
 # - SEVERE  : only talk about errors
 # - WARNING : warn about missuse
 # - INFO    : info messages about all kinds of stuff
+# - FINE    : debug messages
 LOGGING=SEVERE

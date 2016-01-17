@@ -7,6 +7,7 @@ import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.math.Quaternion;
 
 /**
  * Ein Quadermodell.<br>
@@ -16,7 +17,7 @@ import com.jogamp.opengl.glu.GLU;
  */
 public class GLQuader extends TransformableSurfaceObject {
 	private FloatBuffer fb;
-	private int[] firstOffsets = { 0, 10, 14 }, countOffsets = { 10, 4, 4 };
+	private int[] firstOffsets = { 0, 4, 8, 12, 16, 20}, countOffsets = { 4, 4, 4, 4, 4, 4 };
 
 	/**
 	 * Erzeugt einen Quader mit Mittelpunkt <code>M(pMX, pMY, pMZ)</code> und
@@ -72,11 +73,7 @@ public class GLQuader extends TransformableSurfaceObject {
         gl.glTexCoordPointer( 2, GL.GL_FLOAT, 8 * Buffers.SIZEOF_FLOAT, 3 * Buffers.SIZEOF_FLOAT );
         gl.glVertexPointer(3, GL.GL_FLOAT, 8 * Buffers.SIZEOF_FLOAT, 5 * Buffers.SIZEOF_FLOAT);
 
-        gl.glMultiDrawArrays(GL2.GL_TRIANGLE_STRIP, firstOffsets, 0, countOffsets, 0, 3);
-
-        gl.glDrawArrays(GL2.GL_TRIANGLE_STRIP, 0, 10); 
-        gl.glDrawArrays(GL2.GL_TRIANGLE_STRIP, 0, 10); 
-        gl.glDrawArrays(GL2.GL_TRIANGLE_STRIP, 0, 10); 
+        gl.glMultiDrawArrays(GL2.GL_TRIANGLE_STRIP, firstOffsets, 0, countOffsets, 0, 6);
 
         gl.glDisableClientState( GL2.GL_VERTEX_ARRAY );
         gl.glDisableClientState( GL2.GL_NORMAL_ARRAY );
@@ -93,93 +90,37 @@ public class GLQuader extends TransformableSurfaceObject {
 
 	@Override		
 	void generateDisplayList_GL(GL2 gl) {
+		float[] v = new float[] { 0.5f, 0.5f, -0.5f },
+				n = new float[] { 1, 0, 0};
+		Quaternion rot1 = new Quaternion().rotateByAngleNormalAxis((float)Math.PI/2, n[0], n[1], n[2]),
+				rot2 = new Quaternion().rotateByAngleY((float)Math.PI/2);
+
 		gl.glNewList(bufferName, GL2.GL_COMPILE);
-		gl.glBegin(GL2.GL_QUAD_STRIP);
-		gl.glNormal3d(-0.5, 0.5, 0.5);
-		gl.glTexCoord2d(0, 1);
-		gl.glVertex3d(-0.5, 0.5, 0.5);
-
-		gl.glNormal3d(-0.5, -0.5, 0.5);
-		gl.glTexCoord2d(0, 0);
-		gl.glVertex3d(-0.5, -0.5, 0.5);
-
-		gl.glNormal3d(0.5, 0.5, 0.5);
-		gl.glTexCoord2d(1, 1);
-		gl.glVertex3d(0.5, 0.5, 0.5);
-
-		gl.glNormal3d(0.5, -0.5, 0.5);
-		gl.glTexCoord2d(1, 0);
-		gl.glVertex3d(0.5, -0.5, 0.5);
-
-		gl.glNormal3d(0.5, 0.5, -0.5);
-		gl.glTexCoord2d(0, 1);
-		gl.glVertex3d(0.5, 0.5, -0.5);
-
-		gl.glNormal3d(0.5, -0.5, -0.5);
-		gl.glTexCoord2d(0, 0);
-		gl.glVertex3d(0.5, -0.5, -0.5);
-
-		gl.glNormal3d(-0.5, 0.5, -0.5);
-		gl.glTexCoord2d(1, 1);
-		gl.glVertex3d(-0.5, 0.5, -0.5);
-
-		gl.glNormal3d(-0.5, -0.5, -0.5);
-		gl.glTexCoord2d(1, 0);
-		gl.glVertex3d(-0.5, -0.5, -0.5);
-
-		gl.glNormal3d(-0.5, 0.5, 0.5);
-		gl.glTexCoord2d(0, 1);
-		gl.glVertex3d(-0.5, 0.5, 0.5);
-
-		gl.glNormal3d(-0.5, -0.5, 0.5);
-		gl.glTexCoord2d(0, 0);
-		gl.glVertex3d(-0.5, -0.5, 0.5);
-		gl.glEnd();
-
-		// Deckel
 		gl.glBegin(GL2.GL_QUADS);
-
-		gl.glNormal3d(-0.5, 0.5, 0.5);
-		gl.glTexCoord2d(0, 0);
-		gl.glVertex3d(-0.5, 0.5, 0.5);
-
-		gl.glNormal3d(0.5, 0.5, 0.5);
-		gl.glTexCoord2d(0, 1);
-		gl.glVertex3d(0.5, 0.5, 0.5);
-
-		gl.glNormal3d(0.5, 0.5, -0.5);
-		gl.glTexCoord2d(1, 1);
-		gl.glVertex3d(0.5, 0.5, -0.5);
-
-		gl.glNormal3d(-0.5, 0.5, -0.5);
-		gl.glTexCoord2d(1, 0);
-		gl.glVertex3d(-0.5, 0.5, -0.5);
-
-		// Boden
-		gl.glNormal3d(-0.5, -0.5, 0.5);
-		gl.glTexCoord2d(0, 0);
-		gl.glVertex3d(-0.5, -0.5, 0.5);
-
-		gl.glNormal3d(-0.5, -0.5, -0.5);
-		gl.glTexCoord2d(0, 1);
-		gl.glVertex3d(-0.5, -0.5, -0.5);
-
-		gl.glNormal3d(0.5, -0.5, -0.5);
-		gl.glTexCoord2d(1, 1);
-		gl.glVertex3d(0.5, -0.5, -0.5);
-
-		gl.glNormal3d(0.5, -0.5, 0.5);
-		gl.glTexCoord2d(1, 0);
-		gl.glVertex3d(0.5, -0.5, 0.5);
+		for(int k=0; k<2; ++k) {
+			for(int face = 0; face < 4-(2*k); ++face) {
+				for(int vertex = 0; vertex < 4; ++vertex) {
+					gl.glNormal3fv(n, 0);
+					gl.glTexCoord2f(((vertex+3)%4) >> 1, 1-(vertex >> 1));
+					gl.glVertex3fv(v, 0);
+					rot1.rotateVector(v, 0, v, 0);
+				}
+				rot2.rotateVector(n, 0, n, 0);
+				rot2.rotateVector(v, 0, v, 0);
+				rot1.setIdentity().rotateByAngleNormalAxis((float)Math.PI/2, n[0], n[1], n[2]);
+			}
+			n[0] = 0; n[1] = 1; n[2] = 0;
+			rot1.setIdentity().rotateByAngleY((float)Math.PI/2);
+			rot2.setIdentity().rotateByAngleZ((float)Math.PI);
+		}
 		gl.glEnd();
-
 		gl.glEndList();
 	}
 
 	@Override
 	void generateVBO(GL2 gl) {
 		int[] t = new int[1];
-		if(fb != null && bufferName != -1) {
+		if (fb != null && bufferName != -1) {
 			t[0] = bufferName;
 			gl.glDeleteBuffers(1, t, 0);
 			fb.clear();
@@ -187,173 +128,35 @@ public class GLQuader extends TransformableSurfaceObject {
 		gl.glGenBuffers(1, t, 0);
 		bufferName = t[0];
 		gl.glBindBuffer(GL.GL_ARRAY_BUFFER, bufferName);
-		gl.glBufferData(GL.GL_ARRAY_BUFFER, 144 * Buffers.SIZEOF_FLOAT, null,
-				GL2.GL_STATIC_DRAW);
-		fb = gl.glMapBuffer(GL.GL_ARRAY_BUFFER, GL.GL_WRITE_ONLY).order(ByteOrder.nativeOrder())
-				.asFloatBuffer();
+		gl.glBufferData(GL.GL_ARRAY_BUFFER, 192 * Buffers.SIZEOF_FLOAT, null, GL2.GL_STATIC_DRAW);
+		fb = gl.glMapBuffer(GL.GL_ARRAY_BUFFER, GL.GL_WRITE_ONLY).order(ByteOrder.nativeOrder()).asFloatBuffer();
 
-		// ready for drawing (to buffer)
-		fb.put(-0.5f);
-		fb.put(0.5f);
-		fb.put(0.5f);
-		fb.put(0);
-		fb.put(1);
-		fb.put(-0.5f);
-		fb.put(0.5f);
-		fb.put(0.5f);
+		float[] v = new float[] { 0.5f, 0.5f, -0.5f }, n = new float[] { 1, 0, 0 };
 
-		fb.put(-0.5f);
-		fb.put(-0.5f);
-		fb.put(0.5f);
-		fb.put(0);
-		fb.put(0);
-		fb.put(-0.5f);
-		fb.put(-0.5f);
-		fb.put(0.5f);
+		Quaternion rot1 = new Quaternion().rotateByAngleNormalAxis((float) Math.PI / 2, n[0], n[1], n[2]),
+				rot2 = new Quaternion().rotateByAngleY((float) Math.PI / 2);
 
-		fb.put(0.5f);
-		fb.put(0.5f);
-		fb.put(0.5f);
-		fb.put(1);
-		fb.put(1);
-		fb.put(0.5f);
-		fb.put(0.5f);
-		fb.put(0.5f);
-
-		fb.put(0.5f);
-		fb.put(-0.5f);
-		fb.put(0.5f);
-		fb.put(1);
-		fb.put(0);
-		fb.put(0.5f);
-		fb.put(-0.5f);
-		fb.put(0.5f);
-
-		fb.put(0.5f);
-		fb.put(0.5f);
-		fb.put(-0.5f);
-		fb.put(0);
-		fb.put(1);
-		fb.put(0.5f);
-		fb.put(0.5f);
-		fb.put(-0.5f);
-
-		fb.put(0.5f);
-		fb.put(-0.5f);
-		fb.put(-0.5f);
-		fb.put(0);
-		fb.put(0);
-		fb.put(0.5f);
-		fb.put(-0.5f);
-		fb.put(-0.5f);
-
-		fb.put(-0.5f);
-		fb.put(0.5f);
-		fb.put(-0.5f);
-		fb.put(1);
-		fb.put(1);
-		fb.put(-0.5f);
-		fb.put(0.5f);
-		fb.put(-0.5f);
-
-		fb.put(-0.5f);
-		fb.put(-0.5f);
-		fb.put(-0.5f);
-		fb.put(1);
-		fb.put(0);
-		fb.put(-0.5f);
-		fb.put(-0.5f);
-		fb.put(-0.5f);
-
-		fb.put(-0.5f);
-		fb.put(0.5f);
-		fb.put(0.5f);
-		fb.put(0);
-		fb.put(1);
-		fb.put(-0.5f);
-		fb.put(0.5f);
-		fb.put(0.5f);
-
-		fb.put(-0.5f);
-		fb.put(-0.5f);
-		fb.put(0.5f);
-		fb.put(0);
-		fb.put(0);
-		fb.put(-0.5f);
-		fb.put(-0.5f);
-		fb.put(0.5f);
-
-		fb.put(-0.5f);
-		fb.put(0.5f);
-		fb.put(0.5f);
-		fb.put(0);
-		fb.put(0);
-		fb.put(-0.5f);
-		fb.put(0.5f);
-		fb.put(0.5f);
-
-		fb.put(0.5f);
-		fb.put(0.5f);
-		fb.put(0.5f);
-		fb.put(0);
-		fb.put(1);
-		fb.put(0.5f);
-		fb.put(0.5f);
-		fb.put(0.5f);
-
-		fb.put(-0.5f);
-		fb.put(0.5f);
-		fb.put(-0.5f);
-		fb.put(1);
-		fb.put(0);
-		fb.put(-0.5f);
-		fb.put(0.5f);
-		fb.put(-0.5f);
-
-		fb.put(0.5f);
-		fb.put(0.5f);
-		fb.put(-0.5f);
-		fb.put(1);
-		fb.put(1);
-		fb.put(0.5f);
-		fb.put(0.5f);
-		fb.put(-0.5f);
-
-		fb.put(-0.5f);
-		fb.put(-0.5f);
-		fb.put(0.5f);
-		fb.put(0);
-		fb.put(0);
-		fb.put(-0.5f);
-		fb.put(-0.5f);
-		fb.put(0.5f);
-
-		fb.put(-0.5f);
-		fb.put(-0.5f);
-		fb.put(-0.5f);
-		fb.put(0);
-		fb.put(1);
-		fb.put(-0.5f);
-		fb.put(-0.5f);
-		fb.put(-0.5f);
-
-		fb.put(0.5f);
-		fb.put(-0.5f);
-		fb.put(0.5f);
-		fb.put(1);
-		fb.put(0);
-		fb.put(0.5f);
-		fb.put(-0.5f);
-		fb.put(0.5f);
-
-		fb.put(0.5f);
-		fb.put(-0.5f);
-		fb.put(-0.5f);
-		fb.put(1);
-		fb.put(1);
-		fb.put(0.5f);
-		fb.put(-0.5f);
-		fb.put(-0.5f);
+		for (int k = 0; k < 2; ++k) {
+			for (int face = 0; face < 4-(2*k); ++face) {
+				for (int vertex = 0; vertex < 4; ++vertex) {
+					fb.put(n);
+					fb.put((vertex+1) & 1);
+					fb.put(1-(vertex >> 1));
+					fb.put(v);
+					rot1.rotateVector(v, 0, v, 0);
+					rot1.rotateByAngleNormalAxis((float) Math.PI / 2, n[0], n[1], n[2]);
+				}
+				rot1.set(rot2).rotateByAngleNormalAxis((float) Math.PI, n[0], n[1], n[2]);
+				rot2.rotateVector(n, 0, n, 0);
+				rot1.rotateVector(v, 0, v, 0);
+				rot1.setIdentity().rotateByAngleNormalAxis((float) Math.PI / 2, n[0], n[1], n[2]);
+			}
+			n[0] = 0;
+			n[1] = 1;
+			n[2] = 0;
+			rot1.setIdentity().rotateByAngleY((float) Math.PI / 2);
+			rot2.setIdentity().rotateByAngleZ((float) Math.PI);
+		}
 
 		gl.glUnmapBuffer(GL.GL_ARRAY_BUFFER);
 		needsRedraw = false;
