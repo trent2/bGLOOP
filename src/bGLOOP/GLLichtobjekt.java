@@ -58,6 +58,12 @@ public class GLLichtobjekt
 	public void drehe(double pWinkelX, double pWinkelY, double pWinkelZ) {
 		aLichtobjekt.drehe(pWinkelX, pWinkelY, pWinkelZ);
 	}
+	
+	@Override
+	public void drehe(double pWinkel, double pOrtX, double pOrtY, double pOrtZ, double pRichtX, double pRichtY,
+			double pRichtZ) {
+		aLichtobjekt.drehe(pWinkel, pOrtX, pOrtY, pOrtZ, pRichtX, pRichtY, pRichtZ);
+	}
 
 	@Override
 	public void verschiebe(double pX, double pY, double pZ) {
@@ -190,6 +196,12 @@ public class GLLichtobjekt
 	@Override
 	@Deprecated public void dreheDich(double pWinkelX, double pWinkelY, double pWinkelZ, double pX, double pY, double pZ) {
 		drehe(pWinkelX, pWinkelY, pWinkelZ, pX, pY, pZ);
+	}
+
+	@Override
+	@Deprecated public void rotiere(double pWinkel, double pOrtX, double pOrtY, double pOrtZ, double pRichtX, double pRichtY,
+			double pRichtZ) {
+		drehe(pWinkel, pOrtX, pOrtY, pOrtZ, pRichtX, pRichtY, pRichtZ);
 	}
 
 	@Override

@@ -1,8 +1,10 @@
 package bGLOOP;
 
-import static java.lang.Math.cos;
-import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
+
+import com.jogamp.opengl.math.Quaternion;
+import com.jogamp.opengl.math.VectorUtil;
+
 import bGLOOP.linalg.Matrix4;
 
 abstract class TransformableObject extends GLObjekt implements IGLTransformierbar, IGLDisplayable {
@@ -41,27 +43,16 @@ abstract class TransformableObject extends GLObjekt implements IGLTransformierba
 
 	@Override
 	public synchronized void drehe(double pWinkelX, double pWinkelY, double pWinkelZ, double pX, double pY, double pZ) {
+		Quaternion rot = new Quaternion().rotateByEuler((float) toRadians(pWinkelX), (float) toRadians(pWinkelY),
+				(float) toRadians(pWinkelZ));
+		float[] r_mat = new float[16];
+
 		transformationMatrix.translateFromLeft((float) -pX, (float) -pY, (float) -pZ);
-
-		// c.f. http://www.j3d.org/matrix_faq/matrfaq_latest.html, Q36
-		// don't open link in eclipse, it's a 404!
-		// rotation is done in the following order:
-		// first x-axis, then y-axis, then z-axis
-		double A = cos(toRadians(pWinkelX));
-		double B = sin(toRadians(pWinkelX));
-		double C = cos(toRadians(pWinkelY));
-		double D = sin(toRadians(pWinkelY));
-		double E = cos(toRadians(pWinkelZ));
-		double F = sin(toRadians(pWinkelZ));
-		double AD = A * D;
-		double BD = B * D;
-		float[] r_mat = { (float) (C * E), (float) (BD * E + A * F), (float) (-AD * E + B * F), 0, (float) (-C * F),
-				(float) (-BD * F + A * E), (float) (AD * F + B * E), 0, (float) D, (float) (-B * C), (float) (A * C), 0,
-				(float) 0, (float) 0, 0, 1 };
+		rot.toMatrix(r_mat, 0);
 		transformationMatrix.multMatrixFromLeft(r_mat);
-
 		// shift to it's position from before
 		transformationMatrix.translateFromLeft((float) pX, (float) pY, (float) pZ);
+
 		scheduleRender();
 	}
 
@@ -81,6 +72,29 @@ abstract class TransformableObject extends GLObjekt implements IGLTransformierba
 	@Deprecated
 	public void dreheDich(double pWinkelX, double pWinkelY, double pWinkelZ) {
 		drehe(pWinkelX, pWinkelY, pWinkelZ);
+	}
+
+	@Override
+	public void drehe(double pWinkel, double pOrtX, double pOrtY, double pOrtZ, double pRichtX, double pRichtY,
+			double pRichtZ) {
+		float[] axis = new float[] { (float)pRichtX, (float)pRichtY, (float)pRichtZ };
+		VectorUtil.normalizeVec3(axis);
+		Quaternion rot = new Quaternion().rotateByAngleNormalAxis((float) toRadians(pWinkel), axis[0], axis[1], axis[2]);
+		float[] r_mat = new float[16];
+
+		transformationMatrix.translateFromLeft((float) -pOrtX, (float) -pOrtY, (float) -pOrtZ);
+		rot.toMatrix(r_mat, 0);
+		transformationMatrix.multMatrixFromLeft(r_mat);
+		// shift to it's position from before
+		transformationMatrix.translateFromLeft((float) pOrtX, (float) pOrtY, (float) pOrtZ);
+
+		scheduleRender();
+	}
+
+	@Override
+	@Deprecated	public void rotiere(double pWinkel, double pOrtX, double pOrtY, double pOrtZ, double pRichtX, double pRichtY,
+			double pRichtZ) {
+		drehe(pWinkel, pOrtX, pOrtY, pOrtZ, pRichtX, pRichtY, pRichtZ);
 	}
 
 	@Override

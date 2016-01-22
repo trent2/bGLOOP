@@ -279,7 +279,8 @@ class GLRenderer implements GLEventListener {
 			// render intransparent objects
 			if ((lit = entry.getValue().listIterator()).hasNext()) {
 				while (lit.hasNext() && !(di = lit.next()).isTransparent())
-					di.render(gl, glu);
+					if(di.aVisible)
+						di.render(gl, glu);
 				if (di.isTransparent()) {
 					lit.previous();
 					transparencyIteratorMap.put(tImp, lit);
@@ -300,7 +301,8 @@ class GLRenderer implements GLEventListener {
 			// render transparent objects
 			lit = entry.getValue();
 			while(lit.hasNext())
-				lit.next().render(gl, glu);
+				if((di = lit.next()).aVisible)
+					di.render(gl, glu);
 		}
 		gl.glDisable(GL2.GL_TEXTURE_2D);
 
