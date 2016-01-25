@@ -16,7 +16,7 @@ import java.util.logging.Logger;
 import bGLOOP.mesh.builder.BuilderInterface;
 
 public class Parse {
-    private Logger log = Logger.getLogger(Parse.class.getName());
+    private Logger log = Logger.getLogger("bGLOOP");
 
     // Tokens for parsing. 
     private final static String OBJ_VERTEX_TEXTURE = "vt";
@@ -64,7 +64,6 @@ public class Parse {
 
     public Parse(BuilderInterface builder, File file) throws FileNotFoundException, IOException {
         this.builder = builder;
-        log.setLevel(INFO);
         builder.setObjFilename(file.getName());
         parseObjFile(file);
 

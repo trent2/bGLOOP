@@ -13,7 +13,7 @@ import static bGLOOP.mesh.builder.BuilderPOJOs.*;
 
 public class Build implements BuilderInterface {
 
-    private Logger log = Logger.getLogger(Build.class.getName());
+    private Logger log = Logger.getLogger("bGLOOP");
 
     public String objFilename = null;
     // these accumulate each type of vertex as they are parsed, so they can then be referenced via index.
@@ -46,11 +46,6 @@ public class Build implements BuilderInterface {
     public int faceErrorCount = 0;
 
     public float[] vertexCoordinateRanges;
-    
-
-    public Build() {
-    	log.setLevel(java.util.logging.Level.INFO);
-    }
 
     @Override
 	public void setObjFilename(String filename) {

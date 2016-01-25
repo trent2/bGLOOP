@@ -18,7 +18,7 @@ import java.util.logging.Logger;
 import bGLOOP.mesh.builder.BuilderInterface;
 
 public class StringUtils {
-    private static Logger log = Logger.getLogger(StringUtils.class.getName());
+    private static Logger log = Logger.getLogger("bGLOOP");
 
     // ----------------------------------------------------------------------
     // String parsing stuff

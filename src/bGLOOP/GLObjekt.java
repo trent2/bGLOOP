@@ -219,10 +219,15 @@ public abstract class GLObjekt extends DisplayItem implements IGLColorable {
 	}
 
 	void loadMaterial(GL2 gl, float[] pAmb, float[] pDiff, float[] pSpec, float[] pEmiss, float pGlanz) {
-		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, pAmb, 0);
-		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, pDiff, 0);
-		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, pSpec, 0);
-		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_EMISSION, pEmiss, 0);
+		float[] t = new float[] { 0, 0, 0, 1};
+		System.arraycopy(pAmb, 0, t, 0, 3);
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_AMBIENT, t, 0);
+		System.arraycopy(pDiff, 0, t, 0, 3);
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_DIFFUSE, t, 0);
+		System.arraycopy(pSpec, 0, t, 0, 3);
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_SPECULAR, t, 0);
+		System.arraycopy(pEmiss, 0, t, 0, 3);
+		gl.glMaterialfv(GL2.GL_FRONT, GL2.GL_EMISSION, t, 0);
 		gl.glMaterialf(GL2.GL_FRONT, GL2.GL_SHININESS, pGlanz);
 	}
 
