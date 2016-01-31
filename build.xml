@@ -37,10 +37,13 @@
 	</target>
 
 	<target name="doc">
+		<script language="javascript"><![CDATA[
+		      project.setProperty("build.number2", project.getProperty("build.number")-1);
+		    ]]></script>
 		<echo file="src/bGLOOP/package-info.java" append="false">
 /**
  *  bGLOOP &amp;mdash; a better GLOOP&lt;br&gt;
- *  Version: ${VERSION}, Build: ${build.number}
+ *  Version: ${VERSION}, Build: ${build.number2}
  */
 package bGLOOP;
 		</echo>
@@ -56,7 +59,7 @@ package bGLOOP;
 			</doctitle>
 		</javadoc>
 		<delete file="src/bGLOOP/package-info.java" />
-		<zip destfile="dist/doc-bGLOOP-b${build.number}.zip">
+		<zip destfile="dist/doc-bGLOOP-b${build.number2}.zip">
 			<fileset dir="doc" />
 		</zip>
 	</target>

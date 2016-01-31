@@ -1,10 +1,12 @@
 package bGLOOP;
 
-import java.util.logging.Logger;
-import com.jogamp.opengl.math.VectorUtil;
-import static java.lang.Math.sin;
 import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 import static java.lang.Math.toRadians;
+
+import java.util.logging.Logger;
+
+import com.jogamp.opengl.math.VectorUtil;
 
 /** Klasse, die eine virtuelle Kamera beschreibt, die die 3D-Szene betrachtet.
  * Sie bietet eine Reihe von Diensten zur Manipultion der Kamera (wie etwas
@@ -27,6 +29,8 @@ public class GLKamera {
 	float[] aPos = { 0, 0, 500 };
 	float[] aLookAt = { 0, 0, 0 };
 	float[] aUp = { 0, 1, 0 };
+
+	GLObjekt selectedObj = null;
 
 	/**
 	 * Erstellt eine bGLOOP-Kamera. Die Kamera öffnet ein Fenster mit den
@@ -298,6 +302,38 @@ public class GLKamera {
 		associatedRenderer.scheduleRender();
 	}
 
+	/** Gibt das {@link GLObjekt} zurück, was im Kamerafenster an der gegebenen
+	 * Position ist.
+	 * <p>
+	 * Dabei beziehen sich die Koordinaten der Parameter auf
+	 * das Kamerafenster &mdash; hier hat die linke obere Ecke die Koordinaten
+	 * <code>(0|0)</code>. {@link GLMaus Maus}-Objekte liefern ebenfalls Kamerafenster-
+	 * Koordinaten mittels der Methoden {@link GLMaus#gibX() gibX} und {@link GLMaus#gibY()
+	 * gibY} zurück, so dass man auf diese Art und Weise einen einfachen Objekt-
+	 * Selektionsmechanismus mit der Maus realisieren kann.</p><p>
+	 * Liegen an der Mausposition mehrere Objekte hintereinander, so wird das vorderste
+	 * Objekt zurückgegeben. Die Methode liefert <code>null</code>, wenn kein Objekt
+	 * an der Stelle liegt.
+	 * </p>
+	 * @param pFensterX x-Koordinate, an der nach einem GLObjekt gesucht wird
+	 * @param pFensterY y-Koordinate, an der nach einem GLObjekt gesucht wird
+	 * @return {@link GLObjekt}-Objekt oder <code>null</null>
+	 */
+	synchronized public GLObjekt gibObjekt(int pFensterX, int pFensterY) {
+		GLObjekt r;
+		log.info("scheduling an object selection run");
+		associatedRenderer.scheduleSelection(pFensterX, pFensterY);
+		try { // wait for selection mechanism to finish
+			wait();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		r = selectedObj;
+		selectedObj = null;
+		return r;
+	}
+	
 	/** Gibt die x-Koordinate des Blickpunkts der Kamera zurück.
 	 * @return x-Koordinate des Blickpunkts
 	 */

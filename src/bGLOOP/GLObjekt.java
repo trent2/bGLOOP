@@ -18,6 +18,8 @@ public abstract class GLObjekt extends DisplayItem implements IGLColorable {
 	private float[] aSpecular = { 0, 0, 0, 1 };
 	float[] aEmission = { 0, 0, 0, 1 };
 	private float aGlanz = 70; // between 0 and 128
+	private static int maxSelectionID = 0;
+	int selectionID = 0;
 
 	/**
 	 * Der Darstellungsmodus beschreibt, wie ein Objekt gezeichnet wird. Dabei
@@ -84,6 +86,7 @@ public abstract class GLObjekt extends DisplayItem implements IGLColorable {
 	abstract void renderDelegate(GL2 gl, GLU glu);
 
 	GLObjekt() {
+		selectionID = ++maxSelectionID;
 		conf = new GLConfig();
 		associatedCam = GLKamera.aktiveKamera();
 		associatedRenderer = associatedCam.associatedRenderer;

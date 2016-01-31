@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.IntBuffer;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.ListIterator;
@@ -15,6 +16,7 @@ import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 
+import com.jogamp.common.nio.Buffers;
 import com.jogamp.opengl.GL;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.GLAutoDrawable;
@@ -51,18 +53,23 @@ class GLRenderer implements GLEventListener {
 	private WindowConfig wconf;
 	private ConcurrentHashMap<GLTextureImpl, CopyOnWriteArrayList<DisplayItem>>
 		renderItemMap;
+	private ConcurrentHashMap<Integer, GLObjekt> objectNameMap;
+
 	private TransparencyComparator tc = new TransparencyComparator();
 
 	private Window win;
 	private boolean currentLighting;
 
 	private boolean makeScreenshot = false;
+	boolean selectionRun = false;
 	private String screenshotFilename = null;
 
 	// TODO this does not belong here!!!!!!! This is just a hack
 	// to be removed when I know better --- and when I have to subclass
 	// ConcurrentHashMap for that
 	private GLHimmel sky;
+
+	private int selX = -1, selY = -1;
 
 	GLRenderer(WindowConfig wc, int width, int height, GLKamera cam, boolean pFullscreen, boolean pNoDecoration) {
 		wconf = wc;
@@ -87,7 +94,7 @@ class GLRenderer implements GLEventListener {
 		win.startDisplay();
 		currentLighting = !wconf.globalLighting;
 		renderItemMap = new ConcurrentHashMap<GLTextureImpl, CopyOnWriteArrayList<DisplayItem>>(10);
-//		noTextureItemList = new CopyOnWriteArrayList<DisplayItem>();
+		objectNameMap = new ConcurrentHashMap<Integer, GLObjekt>(100);
 	}
 
 	// remove oldImpl from map
@@ -106,6 +113,9 @@ class GLRenderer implements GLEventListener {
 
 	void removeObjectFromRenderMap(GLTextur tex, DisplayItem di) {
 		renderItemMap.get(tex.aTexturImpl).remove(di);
+
+		if(di instanceof GLObjekt)
+			objectNameMap.remove(di);
 	}
 
 	void addObjectToRenderMap(GLTextur tex, DisplayItem di) {
@@ -121,6 +131,10 @@ class GLRenderer implements GLEventListener {
 			}
 			dil.sort(tc);
 		}
+		if(di instanceof GLObjekt) {
+			GLObjekt g = (GLObjekt)di;
+			objectNameMap.put(g.selectionID, g);
+		}
 	}
 
 	Window getWindow() {
@@ -128,7 +142,7 @@ class GLRenderer implements GLEventListener {
 	}
 
 	@Override
-	public void init(GLAutoDrawable drawable) {
+	public void init(final GLAutoDrawable drawable) {
 		// Get the OpenGL graphics context
 		GL2 gl = drawable.getGL().getGL2();
 		// Get GL Utilities after the GL context created.
@@ -181,17 +195,22 @@ class GLRenderer implements GLEventListener {
 	}
 
 	@Override
-	public void dispose(GLAutoDrawable drawable) {
+	public void dispose(final GLAutoDrawable drawable) {
 	}
 
 	@Override
-	public void display(GLAutoDrawable drawable) {
-		if (window_rendering_needed > 0) {
+	public void display(final GLAutoDrawable drawable) {
+		if(selectionRun)
+			doSelectionRun(drawable);
+
+		if (window_rendering_needed > 0 ) {
 			log.fine("render scene , run " + window_rendering_needed);
 			renderScene(drawable.getGL().getGL2());
 
 			window_rendering_needed--;
+
 		}
+
 		updateFPSView();
 
 		if(makeScreenshot) {
@@ -200,8 +219,64 @@ class GLRenderer implements GLEventListener {
 		}
 	}
 
+	private void doSelectionRun(final GLAutoDrawable drawable) {
+		GL2 gl = drawable.getGL().getGL2();
+		GLU glu = GLU.createGLU();
+		IntBuffer buffer = Buffers.newDirectIntBuffer(512);
+		int hits, n, first = -1;
+		float z, zmin = Float.POSITIVE_INFINITY;
+
+		int[] viewport = new int[4];
+
+		gl.glGetIntegerv(GL.GL_VIEWPORT, viewport, 0);
+		gl.glSelectBuffer(512, buffer);
+		gl.glRenderMode(GL2.GL_SELECT);
+		gl.glInitNames();
+
+		gl.glMatrixMode(GL2.GL_PROJECTION);
+		gl.glPushMatrix();
+		gl.glLoadIdentity();
+
+		glu.gluPickMatrix(selX, viewport[3] - selY, 1.0, 1.0, viewport, 0);
+		glu.gluPerspective(60.0, (float)viewport[2] / viewport[3], 1, 100000.0);
+
+		// draw graph
+		renderScene(drawable.getGL().getGL2());
+
+		gl.glMatrixMode(GL2.GL_PROJECTION);
+		gl.glPopMatrix();
+		gl.glFlush();
+
+		hits = gl.glRenderMode(GL2.GL_RENDER);
+		log.info("Selection run, got " + hits + " hits!");
+
+		for(int i = 0; i < hits; ++i) {
+			n = buffer.get();
+			z = (float) (buffer.get() & 0xffffffffL) / 0x7ffffff;
+			buffer.get();
+
+			// discard unnecessary stuff
+			//buffer.position(buffer.position() + n);
+			for(int j=0; j<n-1; ++j)
+				buffer.get();
+
+			n = buffer.get();
+			if(z < zmin) {
+				zmin = z;
+				first = n;
+			}
+			log.info("Buffer: " + n + ", min distance: " + z);
+		}
+		synchronized (aCam) {
+			aCam.selectedObj = objectNameMap.get(first);
+			aCam.notify();
+		}
+
+		selectionRun = false;
+	}
+
 	@Override
-	public void reshape(GLAutoDrawable drawable, int x, int y, int width, int height) {
+	public void reshape(final GLAutoDrawable drawable, int x, int y, int width, int height) {
 		GL2 gl = drawable.getGL().getGL2();
 		float aspect = (float) width / height;
 		gl.glViewport(0, 0, width, height);
@@ -225,6 +300,11 @@ class GLRenderer implements GLEventListener {
 		makeScreenshot = true;
 	}
 
+	void scheduleSelection(int pFensterX, int pFensterY) {
+		selX = pFensterX; selY = pFensterY;
+		selectionRun = true;
+	}
+
 	private void renderScene(GL2 gl) {
 		Map<GLTextureImpl, ListIterator<DisplayItem>> transparencyIteratorMap = 
 				new ConcurrentHashMap<GLTextur.GLTextureImpl, ListIterator<DisplayItem>>(
@@ -233,8 +313,8 @@ class GLRenderer implements GLEventListener {
 		DisplayItem di = null;
 
 		GLU glu = GLU.createGLU();
-
 		gl.glMatrixMode(GL2.GL_MODELVIEW);
+
 		gl.glClear(GL2.GL_COLOR_BUFFER_BIT | GL2.GL_DEPTH_BUFFER_BIT);
 		gl.glLoadIdentity(); // reset
 		doLighting(gl);

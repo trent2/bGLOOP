@@ -66,7 +66,7 @@ interface IGLTransformierbar {
 
 	/** Dreht Objekt um eine angegebene Achse im Raum.
 	 * <p>Die Achse wird dabei durch die Vektorgleichung
-	 * </p><p><img src="doc-files/gerade-1.png"</p>
+	 * </p><blockquote><img src="doc-files/gerade-1.png" alt="Geradengleichung"></blockquote>
 	 * <p>beschrieben.</p>
 	 * <p>Das bedeutet: Stellt man sich eine Linie ausgehend vom Ursprung <code>(0,0,0)</code>
 	 * zu <code>(pRichtX, pRichtY, pRichtZ)</code> vor, so verläuft die zu beschreibende

@@ -1,4 +1,4 @@
--libraryjars /opt/oracle-jdk-bin-1.8.0.66/jre/lib/rt.jar
+-libraryjars /opt/java/jre/lib/rt.jar
 -libraryjars /home/trent/workspace/jogamp-all-platforms/jar/gluegen-rt-natives-linux-amd64.jar
 -libraryjars /home/trent/workspace/jogamp-all-platforms/jar/gluegen-rt.jar
 -libraryjars /home/trent/workspace/jogamp-all-platforms/jar/jogl-all-natives-linux-amd64.jar

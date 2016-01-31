@@ -89,6 +89,9 @@ abstract class TransformableSurfaceObject extends TransformableObject implements
 
 			needsRedraw = false;
 		}
+		if(associatedRenderer.selectionRun)
+			gl.glPushName(selectionID);
+
 		log.fine("rendering " + getClass().getName() + ":" + hashCode() );
 		switch (conf.objectRenderMode) {
 		case RENDER_GL:
