@@ -3,16 +3,20 @@ package bGLOOP;
 import java.util.logging.Logger;
 
 import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GLException;
 import com.jogamp.opengl.glu.GLU;
 
 /**
- * Punktlichtquelle mit unendlicher Reichweite.
+ * Punktlichtquelle mit unendlicher Reichweite. OpenGL unterstützt in den meisten
+ * Implementationen nur 8 unterschiedliche Lichtquellen. Sollte versucht werden,
+ * eine neunte zu generieren, wird 
  * 
  * @author R. Spillner
  */
 public class GLLicht extends DisplayItem implements IGLColorable {
 	private final static int LIGHT_NUMS[] = { GL2.GL_LIGHT0, GL2.GL_LIGHT1, GL2.GL_LIGHT2, GL2.GL_LIGHT3, GL2.GL_LIGHT4,
 			GL2.GL_LIGHT5, GL2.GL_LIGHT6, GL2.GL_LIGHT7 };
+	private final static int MAX_LIGHTS = 8;
 	private static int lightCount = 0;
 	private int id;
 	private float[] lightAmbientValue = { 0.15f, 0.15f, 0.15f, 1.0f };
@@ -28,15 +32,22 @@ public class GLLicht extends DisplayItem implements IGLColorable {
 	 * @param pX x-Koordinate der Lichtquelle
 	 * @param pY y-Koordinate der Lichtquelle
 	 * @param pZ z-Koordinate der Lichtquelle
+	 * @throws GLException wird geworfen, wenn mehr als die maximal verfügbare Anzahl
+	 *   an Lichtquellen pro Szene (meistens 8) erstellt werden sollen
 	 */
-	public GLLicht(double pX, double pY, double pZ) {
+	public GLLicht(double pX, double pY, double pZ) throws GLException {
 		lightDiffusePosition = new float[] { (float) pX, (float) pY, (float) pZ, 1.0f };
-		id = lightCount++;
-		associatedCam = GLKamera.aktiveKamera();
+		if(lightCount < MAX_LIGHTS) {
+			id = lightCount++;
+			associatedCam = GLKamera.aktiveKamera();
 
-		(associatedRenderer = associatedCam.associatedRenderer).addObjectToRenderMap(GLTextur.NULL_TEXTURE, this);
-		log.fine("light created");
-		aVisible = true;
+			(associatedRenderer = associatedCam.associatedRenderer).addObjectToRenderMap(GLTextur.NULL_TEXTURE, this);
+			log.fine("light created");
+			aVisible = true;
+		} else {
+			throw new GLException("Es sind nur maximal "+ MAX_LIGHTS +" Lichtquellen in einer "
+					+ "Szene erlaubt!");
+		}
 	}
 
 	@Override

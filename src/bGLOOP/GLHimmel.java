@@ -108,4 +108,13 @@ public class GLHimmel extends GLObjekt implements IGLSurface {
 		aDiffuse[3] = (float)pAlpha;
 		scheduleRender();
 	}
+
+	@Override
+	public synchronized void setzeSelbstleuchten(double pR, double pG, double pB) {
+		aEmission[0] = (float)pR;
+		aEmission[1] = (float)pG;
+		aEmission[2] = (float)pB;
+		aEmission[3] = 1;
+		scheduleRender();		
+	}
 }

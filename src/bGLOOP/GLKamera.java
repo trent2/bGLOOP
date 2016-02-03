@@ -317,7 +317,7 @@ public class GLKamera {
 	 * </p>
 	 * @param pFensterX x-Koordinate, an der nach einem GLObjekt gesucht wird
 	 * @param pFensterY y-Koordinate, an der nach einem GLObjekt gesucht wird
-	 * @return {@link GLObjekt}-Objekt oder <code>null</null>
+	 * @return {@link GLObjekt}-Objekt oder <code>null</code>
 	 */
 	synchronized public GLObjekt gibObjekt(int pFensterX, int pFensterY) {
 		GLObjekt r;

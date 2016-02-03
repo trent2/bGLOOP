@@ -4,7 +4,7 @@ import java.util.logging.Logger;
 
 import bGLOOP.GLObjekt.Darstellungsmodus;
 
-/** <p>Ein GLLichtobjekt ein normales bGLOOP-Objekt, das leuchtet. Dies kann
+/** <p>Ein <code>GLLichtobjekt</code> ein normales bGLOOP-Objekt, das leuchtet. Dies kann
  * im einzelnen z.B. eine {@link GLKugel Kugel}, ein {@link GLZylinder Zylinder}, ein {@link GLKegel Kegel},
  * ein {@link GLKegelstumpf Kegelstumpf} usw. sein. Die Klasse kann dazu verwendet werden, um
  * etwa Kerzenflammen oder Lampen darzustellen.</p>
@@ -17,7 +17,15 @@ import bGLOOP.GLObjekt.Darstellungsmodus;
  *   lobj = new GLLichtobjekt(new GLKugel(100, 200, 50, 10));
  *   lobj.setzeFarbe(.4, .5, .2);
  *   lobj.skaliere(1.5);
- * </pre> 
+ * </pre>
+ * <p>In der Implementierung dieser Klasse wird für jedes Objekt eine Lichtquelle erzeugt.
+ * Dabei ist zu beachten, dass pro Szene von OpenGL in der Regel nur 8 Lichtquellen
+ * unterstützt werden. Werden weitere Lichter benötigt, so sollte die Methode
+ * {@link GLObjekt#setzeSelbstleuchten(double, double, double)} verwendet werden. Der
+ * Nachteil eines lediglich selbstleuchtendes Objekt besteht darin, dass es keine Objekte
+ * in seiner Umgebung beleuchten kann und die Szene ohne weitere Lichtquellen dunkel
+ * bleibt. 
+ * </p> 
  * @author R. Spillner
  */
 public class GLLichtobjekt
@@ -217,5 +225,10 @@ public class GLLichtobjekt
 	@Override
 	public void setzeDurchsichtigkeit(double pAlpha) {
 		aLichtobjekt.setzeDurchsichtigkeit(pAlpha);
+	}
+
+	@Override
+	public void setzeSelbstleuchten(double pR, double pG, double pB) {
+		aLichtobjekt.setzeSelbstleuchten(pR, pG, pB);
 	}
 }

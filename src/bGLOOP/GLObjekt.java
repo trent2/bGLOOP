@@ -16,7 +16,7 @@ public abstract class GLObjekt extends DisplayItem implements IGLColorable {
 	float[] aDiffuse = { 1, 1, 1, 1 };
 	final private float[] aAmbient = { 0.15f, 0.15f, 0.15f, 1 };
 	private float[] aSpecular = { 0, 0, 0, 1 };
-	float[] aEmission = { 0, 0, 0, 1 };
+	float[] aEmission = { 0, 0, 0, 0 };
 	private float aGlanz = 70; // between 0 and 128
 	private static int maxSelectionID = 0;
 	int selectionID = 0;
@@ -124,14 +124,6 @@ public abstract class GLObjekt extends DisplayItem implements IGLColorable {
 		return new double[] { aDiffuse[0], aDiffuse[1], aDiffuse[2] };
 	}
 
-	/** Setzt die Farbe des Objekts. Standardmäßig ist hier die Farbe weiß,
-	 * also <code>(1,1,1)</code> voreingestellt.
-	 * Die Parameterwerte müssen zwischen 0 und 1 liegen.
-	 * 
-	 * @param pR Rotanteil, zwischen 0 und 1
-	 * @param pG Grünanteil, zwischen 0 und 1
-	 * @param pB Blauanteil, zwischen 0 und 1
-	 */
 	@Override
 	public synchronized void setzeFarbe(double pR, double pG, double pB) {
 		aDiffuse[0] = (float) pR;
@@ -139,7 +131,6 @@ public abstract class GLObjekt extends DisplayItem implements IGLColorable {
 		aDiffuse[2] = (float) pB;
 		scheduleRender();
 	}
-
 
 	/**
 	 * Setzt die Reflektivität und Farbe der Reflexion. Eine hohe Reflektivität
