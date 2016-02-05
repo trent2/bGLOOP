@@ -1,8 +1,8 @@
 -libraryjars /opt/java/jre/lib/rt.jar
--libraryjars /home/trent/workspace/jogamp-all-platforms/jar/gluegen-rt-natives-linux-amd64.jar
--libraryjars /home/trent/workspace/jogamp-all-platforms/jar/gluegen-rt.jar
--libraryjars /home/trent/workspace/jogamp-all-platforms/jar/jogl-all-natives-linux-amd64.jar
--libraryjars /home/trent/workspace/jogamp-all-platforms/jar/jogl-all.jar
+-libraryjars ./jogl-2.3.2/gluegen-rt.jar
+-libraryjars ./jogl-2.3.2/jogl-all.jar
+# -libraryjars ./jogl-2.3.2/gluegen-rt-natives-linux-amd64.jar
+# -libraryjars ./jogl-2.3.2/jogl-all-natives-linux-amd64.jar
 
 -target 1.7
 -optimizationpasses 3
