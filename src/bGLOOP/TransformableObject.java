@@ -18,9 +18,9 @@ abstract class TransformableObject extends GLObjekt implements IGLTransformierba
 	}
 
 	@Override
-	public synchronized void verschiebe(double pX, double pY, double pZ) {
-		transformationMatrix.translateFromLeft((float) pX, (float) pY, (float) pZ);
-		scheduleRender();
+	public void verschiebe(double pX, double pY, double pZ) {
+		final float[] m = transformationMatrix.getMatrix();
+		setzePosition(m[12] + pX*m[15], m[13] + pY*m[15], m[14] + pZ*m[15]);
 	}
 
 	@Override
@@ -30,6 +30,7 @@ abstract class TransformableObject extends GLObjekt implements IGLTransformierba
 		m[13] = (float) pY;
 		m[14] = (float) pZ;
 		m[15] = 1;
+		scheduleRender();
 	}
 
 	@Override

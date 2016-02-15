@@ -21,7 +21,7 @@ import bGLOOP.GLObjekt.Darstellungsmodus;
  * <p>In der Implementierung dieser Klasse wird für jedes Objekt eine Lichtquelle erzeugt.
  * Dabei ist zu beachten, dass pro Szene von OpenGL in der Regel nur 8 Lichtquellen
  * unterstützt werden. Werden weitere Lichter benötigt, so sollte die Methode
- * {@link GLObjekt#setzeSelbstleuchten(double, double, double)} verwendet werden. Der
+ * {@link IGLSurface#setzeSelbstleuchten(double, double, double)} verwendet werden. Der
  * Nachteil eines lediglich selbstleuchtendes Objekt besteht darin, dass es keine Objekte
  * in seiner Umgebung beleuchten kann und die Szene ohne weitere Lichtquellen dunkel
  * bleibt. 
