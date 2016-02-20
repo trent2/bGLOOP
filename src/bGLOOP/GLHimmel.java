@@ -49,7 +49,9 @@ public class GLHimmel extends GLObjekt implements IGLSurface {
 			gl.glDisable(GL2.GL_DEPTH_TEST);
 			gl.glCullFace(GL2.GL_FRONT);
 			gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_REPLACE);
-			gl.glTranslated(associatedCam.aPos[0], associatedCam.aPos[1], associatedCam.aPos[2]);
+			synchronized (associatedCam) {
+				gl.glTranslated(associatedCam.aPos[0], associatedCam.aPos[1], associatedCam.aPos[2]);				
+			}
 			gl.glRotatef(90, 1, 0, 0);
 
 			double lY1 = 1, lRT1 = 0, lY2, lRT2;
@@ -76,7 +78,7 @@ public class GLHimmel extends GLObjekt implements IGLSurface {
 			gl.glEnable(GL2.GL_DEPTH_TEST);
 			gl.glCullFace(GL2.GL_BACK);
 			gl.glTexEnvi(GL2.GL_TEXTURE_ENV, GL2.GL_TEXTURE_ENV_MODE, GL2.GL_MODULATE);
-			log.info("redrawing " + getClass().getName() + ":" + hashCode() );
+			log.fine("redrawing " + getClass().getName() + ":" + hashCode() );
 		}
 	}
 

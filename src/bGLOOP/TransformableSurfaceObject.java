@@ -75,7 +75,9 @@ abstract class TransformableSurfaceObject extends TransformableObject implements
 	@Override
 	void renderDelegate(GL2 gl, GLU glu) {
 		// now transform the object accordingly
-		gl.glMultMatrixf(transformationMatrix.getMatrix(), 0);
+		synchronized (this) {
+			gl.glMultMatrixf(transformationMatrix.getMatrix(), 0);
+		}
 		if (needsRedraw) {
 			log.info("redrawing " + getClass().getName() + ":" + hashCode() );
 

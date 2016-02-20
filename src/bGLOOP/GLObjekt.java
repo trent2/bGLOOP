@@ -184,7 +184,7 @@ public abstract class GLObjekt extends DisplayItem implements IGLColorable {
 	}
 
 	@Override
-	synchronized void render(GL2 gl, GLU glu) {
+	void render(GL2 gl, GLU glu) {
 		if (conf.objectRenderMode == Rendermodus.RENDER_GLU)
 			if (quadric == null)
 				quadric = glu.gluNewQuadric();

@@ -76,10 +76,8 @@ public class GLEntwicklerkamera extends GLSchwenkkamera {
 					zeigeBlickpunkt(!getWconf().aDrawLookAt);
 					break; // "zeigeAchsen" does a scheduleRender()
 				case 'g':  // wireframe
-					synchronized (GLEntwicklerkamera.this) {
-						getWconf().aWireframe = !getWconf().aWireframe;
-						associatedRenderer.scheduleRender();
-					}
+					getWconf().aWireframe = !getWconf().aWireframe;
+					associatedRenderer.scheduleRender();
 					break;
 				case 'f':  // fullscreen
 					associatedRenderer.getWindow().toggleFullscreen();
