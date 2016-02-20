@@ -1,5 +1,7 @@
 package bGLOOP;
 
+import java.util.logging.Logger;
+
 import com.jogamp.newt.event.KeyEvent;
 
 import bGLOOP.windowimpl.listener.KeyboardListenerFacade;
@@ -23,17 +25,40 @@ import bGLOOP.windowimpl.listener.KeyboardListenerFacade;
  *
  */
 public class GLTastatur {
-	private boolean aAlt = false;
-	private boolean aBack = false;
-	private boolean aEsc = false;
-	private boolean aEnter = false;
-	private boolean aLeft = false;
-	private boolean aUp = false;
-	private boolean aRight = false;
-	private boolean aShift = false;
-	private boolean aStrg = false;
-	private boolean aTab = false;
-	private boolean aDown = false;
+
+	static private class KeyLog {
+		private final static long MAX_DIFF_TIME = 30; 
+		long aKeyReleaseTime = -1;
+		boolean isPressed = false;
+
+		private static boolean useStaticCurrentTime = false;
+		private static long lastCallCurrentTime = -1;
+
+		void recordRelease() {
+			aKeyReleaseTime = System.currentTimeMillis();
+			isPressed = false;
+		}
+
+		boolean isHeld() {
+			if(useStaticCurrentTime)
+				return isPressed ||lastCallCurrentTime - aKeyReleaseTime < MAX_DIFF_TIME;
+			else
+				return isPressed || System.currentTimeMillis()- aKeyReleaseTime < MAX_DIFF_TIME;
+		}
+	}
+
+	Logger log = Logger.getLogger("bGLOOP");
+	private KeyLog aAlt = new KeyLog();
+	private KeyLog aBack = new KeyLog();
+	private KeyLog aEsc = new KeyLog();
+	private KeyLog aEnter = new KeyLog();
+	private KeyLog aLeft = new KeyLog();
+	private KeyLog aUp = new KeyLog();
+	private KeyLog aRight = new KeyLog();
+	private KeyLog aDown = new KeyLog();
+	private KeyLog aShift = new KeyLog();
+	private KeyLog aStrg = new KeyLog();
+	private KeyLog aTab = new KeyLog();
 
 	private String cbuf = "";
 	
@@ -47,37 +72,37 @@ public class GLTastatur {
 				// identical (whew)
 				switch(keycode) {
 				case KeyEvent.VK_ALT:
-					aAlt = true;
+					aAlt.isPressed = true;
 					break;
 				case KeyEvent.VK_CONTROL:
-					aBack = true;
+					aBack.isPressed = true;
 					break;
 				case KeyEvent.VK_SHIFT:
-					aShift = true;
+					aShift.isPressed = true;
 					break;
 				case KeyEvent.VK_LEFT:
-					aLeft = true;
+					aLeft.isPressed = true;
 					break;
 				case KeyEvent.VK_RIGHT:
-					aRight = true;
+					aRight.isPressed = true;
 					break;
 				case KeyEvent.VK_UP:
-					aUp = true;
+					aUp.isPressed = true;
 					break;
 				case KeyEvent.VK_DOWN:
-					aDown = true;
+					aDown.isPressed= true;
 					break;
 				case KeyEvent.VK_ESCAPE:
-					aEsc = true;
+					aEsc.isPressed = true;
 					break;
 				case KeyEvent.VK_TAB:
-					aTab = true;
+					aTab.isPressed = true;
 					break;
 				case KeyEvent.VK_ENTER:
-					aEnter = true;
+					aEnter.isPressed = true;
 					break;
 				case KeyEvent.VK_BACK_SPACE:
-					aBack = true;
+					aBack.isPressed = true;
 					break;
 				default:
 					synchronized (cbuf) {
@@ -90,37 +115,37 @@ public class GLTastatur {
 			public void handleKeyReleased(char key, int keycode) {
 				switch(keycode) {
 				case KeyEvent.VK_ALT:
-					aAlt = false;
+					aAlt.recordRelease();
 					break;
 				case KeyEvent.VK_CONTROL:
-					aBack = false;
+					aBack.recordRelease();
 					break;
 				case KeyEvent.VK_SHIFT:
-					aShift = false;
+					aShift.recordRelease();
 					break;
 				case KeyEvent.VK_LEFT:
-					aLeft = false;
+					aLeft.recordRelease();
 					break;
 				case KeyEvent.VK_RIGHT:
-					aRight = false;
+					aRight.recordRelease();
 					break;
 				case KeyEvent.VK_UP:
-					aUp = false;
+					aUp.recordRelease();
 					break;
 				case KeyEvent.VK_DOWN:
-					aDown = false;
+					aDown.recordRelease();
 					break;
 				case KeyEvent.VK_ESCAPE:
-					aEsc = false;
+					aEsc.recordRelease();
 					break;
 				case KeyEvent.VK_TAB:
-					aTab = false;
+					aTab.recordRelease();
 					break;
 				case KeyEvent.VK_ENTER:
-					aEnter = false;
+					aEnter.recordRelease();
 					break;
 				case KeyEvent.VK_BACK_SPACE:
-					aBack = false;
+					aBack.recordRelease();
 					break;
 				}
 			}
@@ -165,8 +190,12 @@ public class GLTastatur {
 	 * <code>false</code>
 	 */
 	public boolean istGedrueckt() {
-		return wurdeGedrueckt() ||	aBack || aEsc || aEnter || aLeft || aUp || aRight ||
-		aShift || aStrg || aTab || aDown;
+		KeyLog.useStaticCurrentTime = true;
+		KeyLog.lastCallCurrentTime = System.currentTimeMillis();
+		boolean r = wurdeGedrueckt() || aBack.isHeld() || aEsc.isHeld() || aEnter.isHeld() || aLeft.isHeld() || aUp.isHeld()
+				|| aRight.isHeld() || aShift.isHeld() || aStrg.isHeld() || aTab.isHeld() || aDown.isHeld();
+		KeyLog.useStaticCurrentTime = false;
+		return r;
 	}
 
 	/** Leert den Puffer der normalen Zeichen.
@@ -181,76 +210,76 @@ public class GLTastatur {
 	 * @return <code>true</code>, wenn die Alt-Taste gerade gedrückt wird.
 	 */
 	public boolean alt() {
-		return aAlt;
+		return aAlt.isHeld();
 	}
 
 	/**
 	 * @return <code>true</code>, wenn die Backspace-Taste gerade gedrückt wird.
 	 */
 	public boolean backspace() {
-		return aBack;
+		return aBack.isHeld();
 	}
 
 	/**
 	 * @return <code>true</code>, wenn die ESC-Taste gerade gedrückt wird.
 	 */
 	public boolean esc() {
-		return aEsc;
+		return aEsc.isHeld();
 	}
 
 	/**
 	 * @return <code>true</code>, wenn die Enter-Taste gerade gedrückt wird.
 	 */
 	public boolean enter() {
-		return aEnter;
+		return aEnter.isHeld();
 	}
 
 	/**
 	 * @return <code>true</code>, wenn die linke Pfeiltaste gerade gedrückt wird.
 	 */
 	public boolean links() {
-		return aLeft;
+		return aLeft.isHeld();
 	}
 
 	/**
 	 * @return <code>true</code>, wenn die Pfeil-Nach-Oben-Taste gerade gedrückt wird.
 	 */
 	public boolean oben() {
-		return aUp;
+		return aUp.isHeld();
 	}
 
 	/**
 	 * @return <code>true</code>, wenn die rechte Pfeiltaste gerade gedrückt wird.
 	 */
 	public boolean rechts() {
-		return aRight;
+		return aRight.isHeld();
 	}
 
 	/**
 	 * @return <code>true</code>, wenn die Shift-Taste gerade gedrückt wird.
 	 */
 	public boolean shift() {
-		return aShift;
+		return aShift.isHeld();
 	}
 
 	/**
 	 * @return <code>true</code>, wenn die Strg-Taste gerade gedrückt wird.
 	 */
 	public boolean strg() {
-		return aStrg;
+		return aStrg.isHeld();
 	}
 
 	/**
 	 * @return <code>true</code>, wenn die Tab-Taste gerade gedrückt wird.
 	 */
 	public boolean tab() {
-		return aTab;
+		return aTab.isHeld();
 	}
 
 	/**
 	 * @return <code>true</code>, wenn die Pfeil-Nach-Unten-Taste gerade gedrückt wird.
 	 */
 	public boolean unten() {
-		return aDown;
+		return aDown.isHeld();
 	}
 }
