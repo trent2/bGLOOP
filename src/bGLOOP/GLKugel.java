@@ -18,7 +18,7 @@ import com.jogamp.opengl.glu.GLU;
  * 
  * @author R. Spillner
  */
-public final class GLKugel extends TransformableSurfaceObject {
+public class GLKugel extends TransformableSurfaceObject {
 	private double aRad;
 	private FloatBuffer fb;
 	private int[] firstOffsets, countOffsets;
