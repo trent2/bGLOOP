@@ -156,7 +156,7 @@ public abstract class GLObjekt extends DisplayItem implements IGLColorable {
 	}
 
 	@Override
-	public boolean isTransparent() {
+	boolean isTransparent() {
 		return aDiffuse[3] != 1 || aAmbient[3] != 1;
 	}
 

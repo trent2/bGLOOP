@@ -14,7 +14,7 @@ import bGLOOP.GLObjekt.Darstellungsmodus;
  * <em>Beispiel:</em>
  * <pre>
  *   GLLichtobjekt lobj;
- *   lobj = new GLLichtobjekt(new GLKugel(100, 200, 50, 10));
+ *   lobj = <b>new</b> GLLichtobjekt(<b>new</b> GLKugel(100, 200, 50, 10));
  *   lobj.setzeFarbe(.4, .5, .2);
  *   lobj.skaliere(1.5);
  * </pre>

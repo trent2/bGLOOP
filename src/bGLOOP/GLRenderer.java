@@ -204,11 +204,8 @@ class GLRenderer implements GLEventListener {
 			doSelectionRun(drawable);
 
 		if (window_rendering_needed > 0 ) {
-			log.fine("render scene , run " + window_rendering_needed);
+			log.fine("render scene , run " + window_rendering_needed--);
 			renderScene(drawable.getGL().getGL2());
-
-			window_rendering_needed--;
-
 		}
 
 		updateFPSView();
@@ -248,7 +245,7 @@ class GLRenderer implements GLEventListener {
 		gl.glFlush();
 
 		hits = gl.glRenderMode(GL2.GL_RENDER);
-		log.info("Selection run, got " + hits + " hits!");
+		// log.info("Selection run, got " + hits + " hits!");
 
 		for(int i = 0; i < hits; ++i) {
 			n = buffer.get();
@@ -269,10 +266,9 @@ class GLRenderer implements GLEventListener {
 		}
 		synchronized (aCam) {
 			aCam.selectedObj = objectNameMap.get(first);
+			selectionRun = false;
 			aCam.notify();
 		}
-
-		selectionRun = false;
 	}
 
 	@Override
@@ -302,7 +298,9 @@ class GLRenderer implements GLEventListener {
 
 	void scheduleSelection(int pFensterX, int pFensterY) {
 		selX = pFensterX; selY = pFensterY;
-		selectionRun = true;
+		synchronized (aCam) {
+			selectionRun = true;
+		}
 	}
 
 	private void renderScene(GL2 gl) {

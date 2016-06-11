@@ -7,10 +7,15 @@ import com.jogamp.opengl.math.VectorUtil;
 
 import bGLOOP.linalg.Matrix4;
 
-abstract class TransformableObject extends GLObjekt implements IGLTransformierbar, IGLDisplayable {
+/** 
+ * Oberklasse aller bewegbaren {@link GLObjekt}e. Enthält alle Methoden
+ * zur Transformation der graphischen Objekte.
+ * @author R. Spillner
+ */
+public abstract class GLBewegbaresObjekt extends GLObjekt implements IGLTransformierbar, IGLDisplayable {
 	Matrix4 transformationMatrix;
 
-	TransformableObject() {
+	GLBewegbaresObjekt() {
 		super();
 		// this must be initialized BEFORE adding to any display lists
 		transformationMatrix = new Matrix4();

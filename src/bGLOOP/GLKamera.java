@@ -327,7 +327,12 @@ public class GLKamera {
 	 * <code>(0|0)</code>. {@link GLMaus Maus}-Objekte liefern ebenfalls Kamerafenster-
 	 * Koordinaten mittels der Methoden {@link GLMaus#gibX() gibX} und {@link GLMaus#gibY()
 	 * gibY} zurück, so dass man auf diese Art und Weise einen einfachen Objekt-
-	 * Selektionsmechanismus mit der Maus realisieren kann.</p><p>
+	 * Selektionsmechanismus mit der Maus realisieren kann:</p>
+	 * <pre>
+	 *   <b>if</b>(maus.linksklick())
+	 *     GLObjekt selectedObject = kamera.gibObjekt(maus.gibX(), maus.gibY());
+	 * </pre>
+	 * <p>
 	 * Liegen an der Mausposition mehrere Objekte hintereinander, so wird das vorderste
 	 * Objekt zurückgegeben. Die Methode liefert <code>null</code>, wenn kein Objekt
 	 * an der Stelle liegt.

@@ -15,7 +15,7 @@ import bGLOOP.linalg.Matrix4;
  * Bildern in das Projektverzeichnis zu legen.
  * @author R. Spillner
  */
-public class GLText extends TransformableObject implements IGLColorable {
+public class GLText extends GLBewegbaresObjekt implements IGLColorable {
 	private String aText;
 	private boolean aAutoRotation = false, aBgr = false, aCenter = false;
 	// matrix for centering the text and auto rotating

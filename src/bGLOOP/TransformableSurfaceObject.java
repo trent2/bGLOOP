@@ -3,7 +3,7 @@ package bGLOOP;
 import com.jogamp.opengl.GL2;
 import com.jogamp.opengl.glu.GLU;
 
-abstract class TransformableSurfaceObject extends TransformableObject implements IGLSurface, IGLSubdivisable {
+abstract class TransformableSurfaceObject extends GLBewegbaresObjekt implements IGLSurface, IGLSubdivisable {
 	private GLTextur aTex;
 	int bufferName = -1;
 
