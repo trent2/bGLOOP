@@ -111,7 +111,7 @@ public class GLPrismoid extends TransformableSurfaceObject {
 		gl.glTranslated(0, 0, aHoehe/2);
 		glu.gluDisk(quadric, 0, aRad1, aEcken, 1);
 		gl.glPushMatrix();
-		gl.glRotated(180, 1, 0, 0);
+		gl.glRotated(180, 0, 1, 0);
 		gl.glTranslated(0, 0, aHoehe);
 		glu.gluDisk(quadric, 0, aRad2, aEcken, 1);
 		gl.glPopMatrix();

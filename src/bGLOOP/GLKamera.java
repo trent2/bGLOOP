@@ -134,6 +134,19 @@ public class GLKamera {
 		associatedRenderer.scheduleRender();
 	}
 
+	/** Richtet die Kamera so aus, dass "oben" auf dem Bildschirm der positiven
+	 * y-Achsen-Richtung entspricht. Dabei wird außerdem die y-Kameraposition auf die
+	 * y-Position der Kamera auf die des Kamera-Blickpunktes gesetzt. 
+	 */
+	synchronized public void setzeStandardOben() {
+		aPos[1] = aLookAt[1];
+		aUp[0] = 0;
+		aUp[1] = 1;
+		aUp[2] = 0;
+		computeUpVector();
+		associatedRenderer.scheduleRender();
+	}
+
 	/** Setzt die Position der Kamera.
 	 * 
 	 * @param pX x-Koordinate der Position
