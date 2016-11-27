@@ -4,7 +4,7 @@ import java.util.logging.Logger;
 
 import bGLOOP.GLObjekt.Darstellungsmodus;
 
-/** <p>Ein <code>GLLichtobjekt</code> ein normales bGLOOP-Objekt, das leuchtet. Dies kann
+/** <p>Ein <code>GLLichtobjekt</code> ist ein normales bGLOOP-Objekt, das leuchtet. Dies kann
  * im einzelnen z.B. eine {@link GLKugel Kugel}, ein {@link GLZylinder Zylinder}, ein {@link GLKegel Kegel},
  * ein {@link GLKegelstumpf Kegelstumpf} usw. sein. Die Klasse kann dazu verwendet werden, um
  * etwa Kerzenflammen oder Lampen darzustellen.</p>

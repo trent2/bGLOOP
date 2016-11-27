@@ -60,7 +60,7 @@ public abstract class GLBewegbaresObjekt extends GLObjekt implements IGLTransfor
 		transformationMatrix.translateFromLeft((float) -pX, (float) -pY, (float) -pZ);
 		rot.toMatrix(r_mat, 0);
 		transformationMatrix.multMatrixFromLeft(r_mat);
-		// shift to it's position from before
+		// shift to its position from before
 		transformationMatrix.translateFromLeft((float) pX, (float) pY, (float) pZ);
 
 		scheduleRender();

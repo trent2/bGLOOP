@@ -6,6 +6,7 @@ import static java.lang.Math.toRadians;
 
 import java.util.logging.Logger;
 
+import com.jogamp.opengl.math.FloatUtil;
 import com.jogamp.opengl.math.Quaternion;
 import com.jogamp.opengl.math.VectorUtil;
 
@@ -127,23 +128,20 @@ public class GLKamera {
 	 * @param pZ z-Koordinate des Blickpunkts
 	 */
 	synchronized public void setzeBlickpunkt(double pX, double pY, double pZ) {
-		aLookAt[0] = (float)pX;
-		aLookAt[1] = (float)pY;
-		aLookAt[2] = (float)pZ;
-		computeUpVector();
+		computeUpVector(aPos, new float[] {(float)pX, (float)pY, (float)pZ});
 		associatedRenderer.scheduleRender();
 	}
 
 	/** Richtet die Kamera so aus, dass "oben" auf dem Bildschirm der positiven
 	 * y-Achsen-Richtung entspricht. Dabei wird außerdem die y-Kameraposition auf die
-	 * y-Position der Kamera auf die des Kamera-Blickpunktes gesetzt. 
+	 * die des Kamera-Blickpunktes gesetzt. 
 	 */
 	synchronized public void setzeStandardOben() {
 		aPos[1] = aLookAt[1];
 		aUp[0] = 0;
 		aUp[1] = 1;
 		aUp[2] = 0;
-		computeUpVector();
+		computeUpVector(aPos, aLookAt);
 		associatedRenderer.scheduleRender();
 	}
 
@@ -154,10 +152,7 @@ public class GLKamera {
 	 * @param pZ z-Koordinate der Position
 	 */
 	synchronized public void setzePosition(double pX, double pY, double pZ) {
-		aPos[0] = (float)pX;
-		aPos[1] = (float)pY;
-		aPos[2] = (float)pZ;
-		computeUpVector();
+		computeUpVector(new float[] {(float)pX, (float)pY, (float)pZ}, aLookAt);
 		associatedRenderer.scheduleRender();
 	}
 
@@ -451,12 +446,21 @@ public class GLKamera {
 		return Math.abs(aUp[0] * (aPos[0] - aLookAt[0]) + aUp[1] * (aPos[1] - aLookAt[1]) + aUp[2] * (aPos[2] - aLookAt[2]));
 	}
 
-	private void computeUpVector() {
-		final float res[] = new float[3];
-		VectorUtil.subVec3(aPos, aPos, aLookAt);
-		VectorUtil.crossVec3(res, aUp, aPos);
-		VectorUtil.crossVec3(aUp, aPos, res);
+	private void computeUpVector(float[] newPos, float[] newLookAt) {
+		float[] newLookAtVec = new float[] {newLookAt[0] - newPos[0], newLookAt[1] - newPos[1], newLookAt[2] - newPos[2]};
+		final float temp[] = new float[3], temp2[] = new float[3];
+
+	    // check for singularity
+		if(FloatUtil.isZero(VectorUtil.normSquareVec3(VectorUtil.crossVec3(temp2, aUp, newLookAtVec)), FloatUtil.EPSILON)) {
+			VectorUtil.subVec3(temp2, aLookAt, aPos);
+			VectorUtil.crossVec3(temp, temp2, aUp);
+			VectorUtil.crossVec3(aUp, temp, newLookAtVec);
+		} else { 
+			VectorUtil.crossVec3(temp, newLookAtVec, aUp);
+			VectorUtil.crossVec3(aUp, newPos, temp);
+		}
 		VectorUtil.normalizeVec3(aUp);
-		VectorUtil.addVec3(aPos, aPos, aLookAt);
+		aLookAt = newLookAt;
+		aPos = newPos;
 	}
 }
