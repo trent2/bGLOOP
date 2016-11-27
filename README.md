@@ -9,7 +9,7 @@ the GLOOP library (as of January 2016).
 
 ## Prerequisites
 * Java JDK >= 1.7
-* [jogl](www.jogamp.org) >= 2.3.2
+* [jogl](http://www.jogamp.org) >= 2.3.2
 
 ## Building and using
 * Compile by typing <code>ant</code>
