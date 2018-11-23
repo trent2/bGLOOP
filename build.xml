@@ -1,114 +1,122 @@
-<project default="build all" name="bGLOOP built file">
-	<taskdef resource="proguard/ant/task.properties"
-		     classpath="jar/proguard.jar" />
+<project default="clean" name="bGLOOP built file">
 
-	<condition property="isWindows">
-		<os family="windows" />
-	</condition>
+    <property file="./build.properties"/>
 
-	<condition property="isLinux">
-	    <and>
-	      <os family="unix"/>
-	      <not>
-	        <os family="mac"/>
-	      </not>
-	    </and>
-	</condition>
+    <description>
+        ${ant.description}
+    </description>
 
-	<condition property="isMac">
-		<os family="mac" />
-	</condition>
+    <condition property="is.windows">
+        <os family="windows"/>
+    </condition>
 
-	<property name="VERSION" value="1.1" />
-	<property file="build.number" />
-	<target name="clean">
-		<delete dir="build" />
-		<delete file="dist/bGLOOP.jar" />
-		<delete file="dist/bGLOOP_unguarded.jar" />
-		<delete includeemptydirs="true">
-			<fileset dir="doc" includes="**/*" />
-		</delete>
-	</target>
+    <condition property="is.unix">
+        <os family="unix"/>
+    </condition>
 
-	<target name="compile" depends="clean">
-		<mkdir dir="build/classes" />
-		<javac srcdir="src/bGLOOP" destdir="build/classes" includeantruntime="false" source="1.7" target="1.7" >
-			<compilerarg value="-Xlint:-options" />
-			<classpath>
-				<pathelement location="./jogl-2.3.2/jogl-all.jar" />
-				<pathelement location="./jogl-2.3.2/gluegen-rt.jar" />
-			</classpath>
-		</javac>
-	</target>
+    <condition property="is.mac">
+        <os family="mac"/>
+    </condition>
 
-	<target name="latex">
-		<apply executable="pdflatex" dir="src/bGLOOP/doc-src">
-			<arg value="--shell-escape" />
-			<srcfile />
-			<fileset dir="src/bGLOOP/doc-src" includes="*.tex" />
-		</apply>
-		<move todir="src/bGLOOP/doc-files">
-			<fileset dir="src/bGLOOP/doc-src" includes="*.png" />
-		</move>
-		<delete dir="src/bGLOOP/doc-src" includes="*.log,*.aux,*.pdf" />
-	</target>
+    <property name="project.jar.name" value="${project.name}.jar"/>
+    <property name="project.src" value="src"/>
+    <property name="project.tmp" value="tmp"/>
+    <property name="project.bin" value="bin"/>
+    <property name="project.lib" value="lib"/>
+    <property name="project.dist" value="dist"/>
+    <property name="project.reference" value="reference"/>
+    <property name="project.dist.version" value="dist/${project.name}-${library.version}"/>
+    <property name="project.dist.latest" value="dist/${project.name}-latest"/>
 
-	<target name="doc">
-		<script language="javascript">
-			<![CDATA[
-		      project.setProperty("build.number2", project.getProperty("build.number")-1);
-		    ]]>
-		</script>
-		<echo file="src/bGLOOP/package-info.java" append="false">
-/**
- *  bGLOOP &amp;mdash; a better GLOOP&lt;br&gt;
- *  Version: ${VERSION}, Build: ${build.number2}
- */
-package bGLOOP;
-		</echo>
-		<javadoc packagenames="bGLOOP" sourcepath="src" destdir="doc"
-			windowtitle="bGLOOP Dokumentation" access="public" stylesheetfile="stylesheet.css"
-			docencoding="UTF-8" encoding="UTF-8" charset="UTF-8" noqualifier="java.lang">
-			<classpath>
-				<pathelement location="./jogl-2.3.2/jogl-all.jar" />
-				<pathelement location="./jogl-2.3.2/gluegen-rt.jar" />
-			</classpath>
-			<doctitle>
-				<![CDATA[<h1>bGLOOP Dokumentation</h1>]]>
-			</doctitle>
-	</javadoc>
-	<delete file="src/bGLOOP/package-info.java" />
-	<zip destfile="dist/doc-bGLOOP-b${build.number2}.zip">
-		<fileset dir="doc" />
-	</zip>
-</target>
+    <path id="classpath">
+        <fileset dir="${project.lib}" includes="**/*.jar"/>
+    </path>
 
-<target name="proguard">
-	<proguard>
-		<injar file="dist/bGLOOP_unguarded-b${build.number}.jar"/>
-		<outjar file="dist/bGLOOP-b${build.number}.jar"/>
-		<configuration file="bGLOOP.pro" />
-	</proguard>
-</target>
-	
-<target name="jar" depends="compile" >
-	<tstamp>
-		<format property="TODAY" pattern="dd. MMMM YYYY, HH:mm:ss" locale="de,DE" />
-	</tstamp>
-	<jar destfile="dist/bGLOOP_unguarded-b${build.number}.jar">
-		<manifest>
-			<attribute name="Implementation-Title" value="A better GLOOP" />
-			<attribute name="Implementation-Version" value="${VERSION} ${TODAY}" />
-			<attribute name="Implementation-Build" value="${build.number}" />
-			<attribute name="Implementation-Vendor" value="Robert Spillner" />
-		</manifest>
-		<fileset file="src/.bgloop" />
-		<fileset file="src/log.properties" />
-		<fileset dir="build/classes" />
-	</jar>
-	<echo message="Building built ${build.number}" />
-	<buildnumber />
-</target>
+    <target name="init">
+        <mkdir dir="${project.bin}"/>
+    </target>
 
-<target name="build all" depends="jar,proguard" />
+    <target name="run" depends="init">
+        <echo message="building library ..."/>
+        <antcall target="generate.structure">
+            <param name="folder" value="library"/>
+        </antcall>
+        <antcall target="compile"/>
+        <antcall target="generate.jar">
+            <param name="folder" value="library"/>
+        </antcall>
+        <antcall target="generate.javadoc"/>
+        <antcall target="generate.distribution"/>
+        <antcall target="generate.zip"/>
+    </target>
+
+    <target name="generate.structure">
+        <delete dir="${project.tmp}"/>
+        <mkdir dir="${project.tmp}"/>
+        <mkdir dir="${project.tmp}/${project.name}"/>
+        <mkdir dir="${project.tmp}/${project.name}/${folder}"/>
+        <mkdir dir="${project.tmp}/${project.name}/reference"/>
+        <mkdir dir="${project.tmp}/${project.name}/src"/>
+        <copy todir="${project.tmp}/${project.name}/src">
+            <fileset dir="${project.src}"/>
+        </copy>
+        <copy todir="${project.tmp}/${project.name}/${folder}">
+            <fileset dir="${project.lib}"/>
+        </copy>
+    </target>
+
+    <target name="compile">
+        <javac srcdir="${project.tmp}/${project.name}/src" destdir="${project.bin}" source="${java.target.version}"
+               target="${java.target.version}" includeantruntime="false">
+            <classpath>
+                <path refid="classpath"/>
+            </classpath>
+            <compilerarg value="-Xlint"/>
+        </javac>
+    </target>
+
+    <target name="generate.jar">
+        <jar jarfile="${project.tmp}/${project.name}/${folder}/${project.jar.name}" basedir="${project.bin}"/>
+    </target>
+
+    <target name="generate.distribution">
+        <mkdir dir="${project.dist}"/>
+        <delete dir="${project.dist.version}"/>
+        <mkdir dir="${project.dist.version}"/>
+        <mkdir dir="${project.dist.version}/${project.name}"/>
+        <move file="${project.tmp}/${project.name}" todir="${project.dist.version}"/>
+    </target>
+
+    <target name="generate.javadoc">
+        <javadoc
+                classpath="${project.bin}"
+                destdir="${project.tmp}/${project.name}/reference"
+                windowtitle="Javadocs: ${project.name}"
+                doctitle="Javadocs: ${project.name}"
+                public="true"
+                stylesheetfile="stylesheet.css"
+                sourcepath="${project.tmp}/${project.name}/src"
+                encoding="UTF-8" charset="UTF-8" docencoding="UTF-8"
+        />
+    </target>
+
+    <target name="generate.zip">
+        <move todir="${project.dist.version}/tmp/${project.name}">
+            <fileset dir="${project.dist.version}/${project.name}"/>
+        </move>
+
+        <zip destfile="${project.dist.version}/${project.name}.zip"
+             basedir="${project.dist.version}/tmp"
+             excludes="**/.DS_Store"
+        />
+
+        <delete dir="${project.dist.version}/tmp"/>
+        <copy file="${project.dist.version}/${project.name}.zip" tofile="${project.dist.version}.zip"/>
+        <delete dir="${project.dist.version}"/>
+    </target>
+
+    <target name="clean" depends="run">
+        <delete dir="${project.bin}"/>
+        <delete dir="${project.tmp}"/>
+    </target>
 </project>

@@ -1,0 +1,7 @@
+#BlueJ class context
+comment0.target=Zeiger
+comment1.params=pX\ pY\ pL\u00E4nge\ pDicke\ pGeschwindigkeit
+comment1.target=Zeiger(double,\ double,\ double,\ double,\ double)
+comment2.params=
+comment2.target=void\ weiter()
+numComments=3

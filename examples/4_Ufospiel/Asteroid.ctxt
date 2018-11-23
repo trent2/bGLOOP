@@ -1,0 +1,11 @@
+#BlueJ class context
+comment0.target=Asteroid
+comment1.params=pT\ pUfo
+comment1.target=Asteroid(bGLOOP.GLTextur,\ Ufo)
+comment2.params=
+comment2.target=void\ bewegeDich()
+comment3.params=
+comment3.target=void\ schneller()
+comment4.params=
+comment4.target=void\ langsamer()
+numComments=5
