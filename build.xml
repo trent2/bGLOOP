@@ -76,7 +76,10 @@
     </target>
 
     <target name="generate.jar">
-        <jar jarfile="${project.tmp}/${project.name}/${folder}/${project.jar.name}" basedir="${project.bin}"/>
+        <jar jarfile="${project.tmp}/${project.name}/${folder}/${project.jar.name}" basedir="${project.bin}">
+            <fileset file="src/.bgloop" />
+            <fileset file="src/log.properties" />
+        </jar>
     </target>
 
     <target name="generate.distribution">
