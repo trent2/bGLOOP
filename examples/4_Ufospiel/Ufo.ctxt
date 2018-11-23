@@ -1,0 +1,21 @@
+#BlueJ class context
+comment0.target=Ufo
+comment1.params=
+comment1.target=Ufo()
+comment2.params=
+comment2.target=double\ gibX()
+comment3.params=
+comment3.target=double\ gibY()
+comment4.params=
+comment4.target=double\ gibZ()
+comment5.params=
+comment5.target=void\ bewegeLinks()
+comment6.params=
+comment6.target=void\ bewegeRechts()
+comment7.params=
+comment7.target=void\ bewegeOben()
+comment8.params=
+comment8.target=void\ bewegeUnten()
+comment9.params=
+comment9.target=void\ explodiere()
+numComments=10

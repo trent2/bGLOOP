@@ -16,3 +16,6 @@
 /.settings/
 /checkerboard.jpg
 build.number
+*.class
+.idea
+*.iml

@@ -1,26 +1,33 @@
 <project default="build all" name="bGLOOP built file">
-	<taskdef resource="proguard/ant/task.properties"
-		     classpath="jar/proguard.jar" />
+	<property name="VERSION" value="1.3" />
+	<property file="build.number" />
+	<property file="./build.properties"/>
 
 	<condition property="isWindows">
 		<os family="windows" />
 	</condition>
 
-	<condition property="isLinux">
-	    <and>
-	      <os family="unix"/>
-	      <not>
-	        <os family="mac"/>
-	      </not>
-	    </and>
-	</condition>
+	<condition property="is.windows">
+        <os family="windows"/>
+    </condition>
+
+    <condition property="is.unix">
+        <os family="unix"/>
+    </condition>
+
+    <condition property="is.mac">
+        <os family="mac"/>
+    </condition>
 
 	<condition property="isMac">
 		<os family="mac" />
 	</condition>
 
-	<property name="VERSION" value="1.1" />
-	<property file="build.number" />
+	<script language="javascript">
+		<![CDATA[
+	      project.setProperty("build.number2", project.getProperty("build.number")-1);
+	    ]]>
+	</script>
 	<target name="clean">
 		<delete dir="build" />
 		<delete file="dist/bGLOOP.jar" />
@@ -31,26 +38,26 @@
 	</target>
 
 	<target name="compile" depends="clean">
-		<mkdir dir="build/classes" />
-		<javac srcdir="src/bGLOOP" destdir="build/classes" includeantruntime="false" source="1.7" target="1.7" >
+		<mkdir dir="${project.build}/classes" />
+		<javac srcdir="${project.src}/bGLOOP" destdir="${project.build}/classes" includeantruntime="false" source="1.7" target="1.7" >
 			<compilerarg value="-Xlint:-options" />
 			<classpath>
-				<pathelement location="./jogl-2.3.2/jogl-all.jar" />
-				<pathelement location="./jogl-2.3.2/gluegen-rt.jar" />
+				<pathelement location="./${project.jogl.path}/jogl-all.jar" />
+				<pathelement location="./${project.jogl.path}/gluegen-rt.jar" />
 			</classpath>
 		</javac>
 	</target>
 
 	<target name="latex">
-		<apply executable="pdflatex" dir="src/bGLOOP/doc-src">
+		<apply executable="pdflatex" dir="${project.src}/bGLOOP/doc-src">
 			<arg value="--shell-escape" />
 			<srcfile />
-			<fileset dir="src/bGLOOP/doc-src" includes="*.tex" />
+			<fileset dir="${project.src}/bGLOOP/doc-src" includes="*.tex" />
 		</apply>
-		<move todir="src/bGLOOP/doc-files">
-			<fileset dir="src/bGLOOP/doc-src" includes="*.png" />
+		<move todir="${project.src}/bGLOOP/doc-files">
+			<fileset dir="${project.src}/bGLOOP/doc-src" includes="*.png" />
 		</move>
-		<delete dir="src/bGLOOP/doc-src" includes="*.log,*.aux,*.pdf" />
+		<delete dir="${project.src}/bGLOOP/doc-src" includes="*.log,*.aux,*.pdf" />
 	</target>
 
 	<target name="doc">
@@ -59,7 +66,7 @@
 		      project.setProperty("build.number2", project.getProperty("build.number")-1);
 		    ]]>
 		</script>
-		<echo file="src/bGLOOP/package-info.java" append="false">
+		<echo file="${project.src}/bGLOOP/package-info.java" append="false">
 /**
  *  bGLOOP &amp;mdash; a better GLOOP&lt;br&gt;
  *  Version: ${VERSION}, Build: ${build.number2}
@@ -70,23 +77,25 @@ package bGLOOP;
 			windowtitle="bGLOOP Dokumentation" access="public" stylesheetfile="stylesheet.css"
 			docencoding="UTF-8" encoding="UTF-8" charset="UTF-8" noqualifier="java.lang">
 			<classpath>
-				<pathelement location="./jogl-2.3.2/jogl-all.jar" />
-				<pathelement location="./jogl-2.3.2/gluegen-rt.jar" />
+				<pathelement location="./${project.jogl.path}/jogl-all.jar" />
+				<pathelement location="./${project.jogl.path}/gluegen-rt.jar" />
 			</classpath>
 			<doctitle>
 				<![CDATA[<h1>bGLOOP Dokumentation</h1>]]>
 			</doctitle>
 	</javadoc>
-	<delete file="src/bGLOOP/package-info.java" />
-	<zip destfile="dist/doc-bGLOOP-b${build.number2}.zip">
+	<delete file="${project.src}/bGLOOP/package-info.java" />
+	<zip destfile="${project.dist}/doc-bGLOOP-b${build.number2}.zip">
 		<fileset dir="doc" />
 	</zip>
 </target>
+<taskdef resource="proguard/ant/task.properties"
+	     classpath="${project.lib}/proguard.jar" />
 
 <target name="proguard">
 	<proguard>
-		<injar file="dist/bGLOOP_unguarded-b${build.number}.jar"/>
-		<outjar file="dist/bGLOOP-b${build.number}.jar"/>
+		<injar file="${project.dist}/bGLOOP_unguarded-b${build.number2}.jar"/>
+		<outjar file="${project.dist}/bGLOOP-b${build.number2}.jar"/>
 		<configuration file="bGLOOP.pro" />
 	</proguard>
 </target>
@@ -95,20 +104,20 @@ package bGLOOP;
 	<tstamp>
 		<format property="TODAY" pattern="dd. MMMM YYYY, HH:mm:ss" locale="de,DE" />
 	</tstamp>
-	<jar destfile="dist/bGLOOP_unguarded-b${build.number}.jar">
+	<jar destfile="${project.dist}/bGLOOP_unguarded-b${build.number}.jar">
 		<manifest>
 			<attribute name="Implementation-Title" value="A better GLOOP" />
 			<attribute name="Implementation-Version" value="${VERSION} ${TODAY}" />
 			<attribute name="Implementation-Build" value="${build.number}" />
 			<attribute name="Implementation-Vendor" value="Robert Spillner" />
 		</manifest>
-		<fileset file="src/.bgloop" />
-		<fileset file="src/log.properties" />
-		<fileset dir="build/classes" />
+		<fileset file="${project.src}/.bgloop" />
+		<fileset file="${project.src}/log.properties" />
+		<fileset dir="${project.build}/classes" />
 	</jar>
 	<echo message="Building built ${build.number}" />
 	<buildnumber />
 </target>
 
-<target name="build all" depends="jar,proguard" />
+<target name="build all" depends="jar" />
 </project>
