@@ -13,7 +13,7 @@ public class GLZylinder extends GLKegelstumpf {
 	 * <div style="float:right"> <img alt=
 	 * "Abbildung Zylinder" src="./doc-files/Zylinder-1.png"> </div> <div>
 	 * <p>
-	 * Der Zylinder liegt in der Höhe parallel zur z-Achse. und seine Der
+	 * Der Zylinder liegt in der Höhe parallel zur z-Achse. Der
 	 * Mittelpunkt <code>M(pMX, pMY, pMT,)</code>des Kegels ist der Punkt auf
 	 * halber Höhe <code>pHoehe</code>, der Radius der Deckelflächen ist
 	 * <code>pRadius</code>.

@@ -114,8 +114,10 @@ class GLRenderer implements GLEventListener {
 	void removeObjectFromRenderMap(GLTextur tex, DisplayItem di) {
 		renderItemMap.get(tex.aTexturImpl).remove(di);
 
-		if(di instanceof GLObjekt)
-			objectNameMap.remove(di);
+		if(di instanceof GLObjekt) {
+			GLObjekt g = (GLObjekt)di;
+			objectNameMap.remove(g.selectionID);
+		}
 	}
 
 	void addObjectToRenderMap(GLTextur tex, DisplayItem di) {
