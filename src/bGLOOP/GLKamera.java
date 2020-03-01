@@ -11,7 +11,7 @@ import com.jogamp.opengl.math.Quaternion;
 import com.jogamp.opengl.math.VectorUtil;
 
 /** Klasse, die eine virtuelle Kamera beschreibt, die die 3D-Szene betrachtet.
- * Sie bietet eine Reihe von Diensten zur Manipultion der Kamera (wie etwas
+ * Sie bietet eine Reihe von Diensten zur Manipulation der Kamera (wie etwas
  * Drehen und Verschieben). Eine Kamera öffnet automatisch ein Fenster, in dem
  * dargestellt wird, was die Kamera sieht.
  * 
@@ -54,7 +54,7 @@ public class GLKamera {
 	 * 
 	 * @param pVollbild
 	 *            Wenn <code>true</code>, dann wird die Anzeige direkt in den
-	 *            Vollbildmodus geschaltet. Wenn <code>false</code>, dann nicht
+	 *            Vollbildmodus geschaltet. Wenn <code>false</code>, dann nicht.
 	 * @param pKeineDekoration
 	 *            Wenn <code>true</code>, dann wird das Anzeigefenster ohne
 	 *            Dekoration des Fenstermanagers gezeichnet, wenn
